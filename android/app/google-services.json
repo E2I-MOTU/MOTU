@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "989819456096",
+    "project_id": "motu-8ebcb",
+    "storage_bucket": "motu-8ebcb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989819456096:android:1654b3f9a804751fc1d105",
+        "android_client_info": {
+          "package_name": "com.e2i.motu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtWIkmHXOmfP4K46Bi1UkA5a2ahg_dWeA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
