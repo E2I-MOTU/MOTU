@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'quiz.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -27,6 +28,16 @@ class HomePage extends StatelessWidget {
               title: Text('홈'),
               onTap: () {
                 Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.quiz),
+              title: Text('퀴즈'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => QuizSelectionScreen()),
+                );
               },
             ),
             ListTile(
