@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '989819456096',
     projectId: 'motu-8ebcb',
     storageBucket: 'motu-8ebcb.appspot.com',
-    iosBundleId: 'com.example.motu',
+    iosBundleId: 'com.e2i.motu',
   );
 }
