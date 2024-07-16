@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class HomePageContent extends StatelessWidget {
-  const HomePageContent({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
+        children: <Widget>[
           Text(
             'Home Page',
           ),
