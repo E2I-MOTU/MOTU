@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:motu/view/scenario/scenario_list.dart';
-import 'quiz.dart';
+import 'package:provider/provider.dart';
+import 'package:motu/controller/home.dart';
+import 'package:motu/controller/bottom_navigation_bar.dart';
+import 'components/drawer_menu.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -9,68 +11,44 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('홈페이지'),
         automaticallyImplyLeading: true,
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(),
-              child: Text(
-                '메뉴',
-                style: TextStyle(
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('홈'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.quiz),
-              title: const Text('퀴즈'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => QuizSelectionScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.auto_graph),
-              title: const Text('시나리오'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ScenarioList()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('설정'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('로그아웃'),
-              onTap: () {},
-            ),
-          ],
-        ),
+      drawer: const DrawerMenu(),
+      body: Consumer<BottomNavigationBarProvider>(
+        builder: (context, provider, child) {
+          return HomeController.getPage(provider.currentIndex);
+        },
       ),
-      body: const Center(
-        child: Text(
-          '홈 화면에 오신 것을 환영합니다!',
-          style: TextStyle(fontSize: 24),
-        ),
+      bottomNavigationBar: Consumer<BottomNavigationBarProvider>(
+        builder: (context, provider, child) {
+          return BottomNavigationBar(
+            backgroundColor: Colors.white,
+            selectedItemColor: Colors.pink,
+            unselectedItemColor: Colors.grey,
+            currentIndex: provider.currentIndex,
+            onTap: (index) {
+              provider.setIndex(index);
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: '홈',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.quiz),
+                label: '학습하기',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.auto_graph),
+                label: '시나리오',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: '마이페이지',
+              ),
+            ],
+          );
+        },
       ),
     );
   }
