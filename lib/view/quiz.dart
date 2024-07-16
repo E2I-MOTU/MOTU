@@ -1,20 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'quizScreen.dart';
-import 'testSkillScreen.dart';
+import 'quiz_screen.dart';
+import 'test_skill_screen.dart';
 
 class QuizSelectionScreen extends StatelessWidget {
   final List<Map<String, String>> quizCollections = [
-    {'id': 'stock_market_terms_quiz', 'title': '투자하려는 회사,\n믿을만한 지 어떻게\n판단할까요?', 'subtitle': '재무제표 용어'},
-    {'id': 'financial_market_terms_quiz', 'title': '주식, 채권, 펀드\n어떻게 다른걸까요?', 'subtitle': '금융 시장 용어'},
-    {'id': 'quiz_question', 'title': '경제는 무엇이고,\n경제는 어떻게\n돌아가는 걸까요?', 'subtitle': '경제 기본 용어'},
-    {'id': 'economics_terms_quiz', 'title': '경제는 무엇이고,\n경제는 어떻게\n돌아가는 걸까요?', 'subtitle': '주식 용어'},
+    {
+      'id': 'stock_market_terms_quiz',
+      'title': '투자하려는 회사,\n믿을만한 지 어떻게\n판단할까요?',
+      'subtitle': '재무제표 용어'
+    },
+    {
+      'id': 'financial_market_terms_quiz',
+      'title': '주식, 채권, 펀드\n어떻게 다른걸까요?',
+      'subtitle': '금융 시장 용어'
+    },
+    {
+      'id': 'quiz_question',
+      'title': '경제는 무엇이고,\n경제는 어떻게\n돌아가는 걸까요?',
+      'subtitle': '경제 기본 용어'
+    },
+    {
+      'id': 'economics_terms_quiz',
+      'title': '경제는 무엇이고,\n경제는 어떻게\n돌아가는 걸까요?',
+      'subtitle': '주식 용어'
+    },
   ];
 
+  QuizSelectionScreen({super.key});
+
   Future<Map<String, dynamic>> getProgress(String collectionName) async {
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    final totalQuestions = (await _firestore.collection(collectionName).get()).docs.length;
-    final completedQuestions = (await _firestore.collection('user_progress').doc(collectionName).get()).data()?['completed'] ?? 0;
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final totalQuestions =
+        (await firestore.collection(collectionName).get()).docs.length;
+    final completedQuestions =
+        (await firestore.collection('user_progress').doc(collectionName).get())
+                .data()?['completed'] ??
+            0;
     return {
       'total': totalQuestions,
       'completed': completedQuestions,
@@ -26,17 +48,17 @@ class QuizSelectionScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           '퀴즈 선택',
           style: TextStyle(color: Colors.black),
         ),
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 10.0,
               crossAxisSpacing: 10.0,
@@ -49,13 +71,15 @@ class QuizSelectionScreen extends StatelessWidget {
                 future: getProgress(quiz['id']!),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
 
-                  final progress = snapshot.data as Map<String, dynamic>? ?? {'total': 0, 'completed': 0};
+                  final progress =
+                      snapshot.data ?? {'total': 0, 'completed': 0};
 
                   return Card(
-                    color: Colors.primaries[index % Colors.primaries.length][100],
+                    color: Colors.primaries[index % Colors.primaries.length]
+                        [100],
                     child: Column(
                       children: [
                         Expanded(
@@ -66,13 +90,17 @@ class QuizSelectionScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   quiz['title']!,
-                                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.left,
                                 ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Text(
                                   quiz['subtitle']!,
-                                  style: TextStyle(fontSize: 8, fontWeight: FontWeight.normal),
+                                  style: const TextStyle(
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.normal),
                                   textAlign: TextAlign.center,
                                 ),
                               ],
@@ -80,7 +108,8 @@ class QuizSelectionScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 4.0),
                           child: SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -88,7 +117,8 @@ class QuizSelectionScreen extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => QuizScreen(collectionName: quiz['id']!),
+                                    builder: (context) =>
+                                        QuizScreen(collectionName: quiz['id']!),
                                   ),
                                 );
                               },
@@ -97,7 +127,7 @@ class QuizSelectionScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
-                              child: Text(
+                              child: const Text(
                                 '경제 기본 배워보기',
                                 style: TextStyle(
                                   color: Colors.black,
@@ -108,7 +138,8 @@ class QuizSelectionScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 4.0),
                           child: SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -116,7 +147,8 @@ class QuizSelectionScreen extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => TestSkillScreen(collectionName: quiz['id']!),
+                                    builder: (context) => TestSkillScreen(
+                                        collectionName: quiz['id']!),
                                   ),
                                 );
                               },
@@ -125,7 +157,7 @@ class QuizSelectionScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
-                              child: Text(
+                              child: const Text(
                                 '테스트로 실력 확인하기',
                                 style: TextStyle(
                                   color: Colors.black,
@@ -141,7 +173,8 @@ class QuizSelectionScreen extends StatelessWidget {
                             alignment: Alignment.bottomRight,
                             child: Text(
                               '${progress['completed']} / ${progress['total']}',
-                              style: TextStyle(fontSize: 8, fontWeight: FontWeight.normal),
+                              style: const TextStyle(
+                                  fontSize: 8, fontWeight: FontWeight.normal),
                             ),
                           ),
                         ),

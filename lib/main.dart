@@ -1,7 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:motu/controller/scenario_service.dart';
 import 'package:motu/firebase_options.dart';
-import 'package:motu/view/app.dart';
+import 'package:provider/provider.dart';
 import 'package:motu/view/login.dart';
 
 Future<void> main() async {
@@ -10,7 +11,14 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ScenarioService()),
+      ],
+      builder: (context, child) => const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

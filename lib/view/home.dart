@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:motu/view/scenario/scenario_list.dart';
 import 'quiz.dart';
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('홈페이지'),
+        title: const Text('홈페이지'),
         automaticallyImplyLeading: true,
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-              ),
+            const DrawerHeader(
+              decoration: BoxDecoration(),
               child: Text(
                 '메뉴',
                 style: TextStyle(
@@ -24,38 +26,47 @@ class HomePage extends StatelessWidget {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home),
-              title: Text('홈'),
+              leading: const Icon(Icons.home),
+              title: const Text('홈'),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: Icon(Icons.quiz),
-              title: Text('퀴즈'),
+              leading: const Icon(Icons.quiz),
+              title: const Text('퀴즈'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => QuizSelectionScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => QuizSelectionScreen()),
                 );
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('설정'),
+              leading: const Icon(Icons.auto_graph),
+              title: const Text('시나리오'),
               onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ScenarioList()),
+                );
               },
             ),
             ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('로그아웃'),
-              onTap: () {
-              },
+              leading: const Icon(Icons.settings),
+              title: const Text('설정'),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('로그아웃'),
+              onTap: () {},
             ),
           ],
         ),
       ),
-      body: Center(
+      body: const Center(
         child: Text(
           '홈 화면에 오신 것을 환영합니다!',
           style: TextStyle(fontSize: 24),

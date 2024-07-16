@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class QuizScreen extends StatefulWidget {
   final String collectionName;
 
-  QuizScreen({required this.collectionName});
+  const QuizScreen({super.key, required this.collectionName});
 
   @override
   _QuizScreenState createState() => _QuizScreenState();
@@ -47,13 +47,13 @@ class _QuizScreenState extends State<QuizScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text(_correct ? '정답입니다!' : '오답입니다.'),
-            content: Container(
+            content: SizedBox(
               width: MediaQuery.of(context).size.width * 0.7,
               child: Text(_correct ? '잘했어요!' : '정답은 $correctAnswer 입니다.'),
             ),
             actions: <Widget>[
               TextButton(
-                child: Text('다음 질문'),
+                child: const Text('다음 질문'),
                 onPressed: () {
                   Navigator.of(context).pop();
                   _nextQuestion();
@@ -81,13 +81,13 @@ class _QuizScreenState extends State<QuizScreen> {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          title: Text(
+          title: const Text(
             '퀴즈 앱',
             style: TextStyle(color: Colors.black),
           ),
-          iconTheme: IconThemeData(color: Colors.black),
+          iconTheme: const IconThemeData(color: Colors.black),
         ),
-        body: Center(child: CircularProgressIndicator()),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -95,11 +95,11 @@ class _QuizScreenState extends State<QuizScreen> {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          title: Text(
+          title: const Text(
             '퀴즈 앱',
             style: TextStyle(color: Colors.black),
           ),
-          iconTheme: IconThemeData(color: Colors.black),
+          iconTheme: const IconThemeData(color: Colors.black),
         ),
         body: Center(
           child: Text('퀴즈 완료! 점수: $_score/${_questions.length}'),
@@ -112,11 +112,11 @@ class _QuizScreenState extends State<QuizScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           '퀴즈 앱',
           style: TextStyle(color: Colors.black),
         ),
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Stack(
         children: [
@@ -129,26 +129,30 @@ class _QuizScreenState extends State<QuizScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     question['question'],
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
                 ...question['options'].map<Widget>((option) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16.0),
                     child: SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: _answered
                             ? null
                             : () {
-                          setState(() {
-                            _selectedAnswer = option;
-                          });
-                        },
+                                setState(() {
+                                  _selectedAnswer = option;
+                                });
+                              },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _selectedAnswer == option ? Colors.deepPurpleAccent : null,
-                          padding: EdgeInsets.symmetric(vertical: 20.0),
-                          shape: RoundedRectangleBorder(
+                          backgroundColor: _selectedAnswer == option
+                              ? Colors.deepPurpleAccent
+                              : null,
+                          padding: const EdgeInsets.symmetric(vertical: 20.0),
+                          shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(
                               Radius.circular(10),
                             ),
@@ -170,14 +174,14 @@ class _QuizScreenState extends State<QuizScreen> {
                             ? null
                             : () => _submitAnswer(question['answer']),
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 20.0),
-                          shape: RoundedRectangleBorder(
+                          padding: const EdgeInsets.symmetric(vertical: 20.0),
+                          shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(
                               Radius.circular(10),
                             ),
                           ),
                         ),
-                        child: Text('제출'),
+                        child: const Text('제출'),
                       ),
                     ),
                   ),
@@ -190,7 +194,7 @@ class _QuizScreenState extends State<QuizScreen> {
             right: 16,
             child: Text(
               '${_currentQuestionIndex + 1} / ${_questions.length}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
         ],
