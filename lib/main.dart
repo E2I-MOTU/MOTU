@@ -2,9 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:motu/controller/scenario_service.dart';
 import 'package:motu/firebase_options.dart';
-import 'package:motu/view/scenario/scenario_chart.dart';
-import 'package:motu/view/scenario/scenario_list.dart';
 import 'package:provider/provider.dart';
+import 'package:motu/view/login.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,11 +30,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
         useMaterial3: true,
       ),
-      // home: const InitialPage(),
-      home: const ScenarioList(),
+      home: LoginPage(),
     );
   }
 }
