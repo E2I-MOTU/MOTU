@@ -47,7 +47,6 @@ class QuizSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
           '퀴즈 선택',
           style: TextStyle(color: Colors.black),

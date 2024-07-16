@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/scenario/scenario_list.dart';
-import 'quiz.dart';
+
+import '../quiz/quiz.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -106,19 +107,19 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       4,
-                        (index) => AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          width: currentSlide == index ? 15 : 8,
-                          height: 8,
-                          margin: const EdgeInsets.only(right: 3),
-                          decoration: BoxDecoration(
+                          (index) => AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        width: currentSlide == index ? 15 : 8,
+                        height: 8,
+                        margin: const EdgeInsets.only(right: 3),
+                        decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             color: currentSlide == index
                                 ? Colors.black
                                 : Colors.transparent,
                             border: Border.all(color: Colors.black)
-                          ),
                         ),
+                      ),
                     ),
                   ),
                 ),

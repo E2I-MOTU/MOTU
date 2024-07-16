@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motu/controller/scenario_service.dart';
+import 'package:motu/service/scenario_service.dart';
 import 'package:motu/model/stock_data.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +27,7 @@ class ScenarioChart extends StatelessWidget {
           zoomPanBehavior: service.zoomPanBehavior,
           series: <CandleSeries<StockData, DateTime>>[
             CandleSeries<StockData, DateTime>(
-              dataSource: service.stockDataList,
+              dataSource: service.displayedStockDataList,
               xValueMapper: (StockData data, _) => data.date,
               lowValueMapper: (StockData data, _) => data.low,
               highValueMapper: (StockData data, _) => data.high,
@@ -38,14 +38,7 @@ class ScenarioChart extends StatelessWidget {
             ),
           ],
           enableAxisAnimation: true,
-          primaryXAxis: DateTimeAxis(
-            dateFormat: DateFormat.yMMM(),
-            autoScrollingDelta: 8,
-            autoScrollingDeltaType: DateTimeIntervalType.months,
-            majorGridLines: const MajorGridLines(width: 0),
-            enableAutoIntervalOnZooming: true,
-            edgeLabelPlacement: EdgeLabelPlacement.shift,
-          ),
+          primaryXAxis: service.primaryXAxis,
           primaryYAxis: NumericAxis(
             minimum: service.yAxisMinimum,
             maximum: service.yAxisMaximum,
