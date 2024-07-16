@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motu/controller/scenario_service.dart';
+import 'package:motu/service/scenario_service.dart';
 import 'package:motu/view/scenario/scenario_chart.dart';
 
 class ScenarioList extends StatelessWidget {
