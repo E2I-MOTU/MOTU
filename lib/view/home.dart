@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:motu/view/scenario/scenario_list.dart';
 import 'quiz.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int currentSlide = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -66,11 +73,59 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      body: const Center(
-        child: Text(
-          '홈 화면에 오신 것을 환영합니다!',
-          style: TextStyle(fontSize: 24),
-        ),
+      body: Column(
+        children: [
+          Stack(
+            children: [
+              SizedBox(
+                height: 200,
+                width: double.infinity,
+                child: PageView.builder(
+                  onPageChanged: (value){
+                    setState(() {
+                      currentSlide = value;
+                    });
+                  },
+                  itemCount: 4,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.grey,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      4,
+                        (index) => AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          width: currentSlide == index ? 15 : 8,
+                          height: 8,
+                          margin: const EdgeInsets.only(right: 3),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: currentSlide == index
+                                ? Colors.black
+                                : Colors.transparent,
+                            border: Border.all(color: Colors.black)
+                          ),
+                        ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
