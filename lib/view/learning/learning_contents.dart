@@ -4,6 +4,8 @@ import 'package:motu/view/quiz/quiz.dart';
 class LearningContentscreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Column(
         children: [
@@ -19,6 +21,7 @@ class LearningContentscreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: screenHeight * 0.1), // 화면 높이에 비례한 공백
                 const Text(
                   '오늘의 공부\n함께 시작해볼까요?',
                   style: TextStyle(
