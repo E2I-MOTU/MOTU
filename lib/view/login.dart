@@ -123,11 +123,6 @@ class _LoginPageState extends State<LoginPage> {
                 width: double.infinity,
                 height: 50,
                 child: OutlinedButton.icon(
-                  icon: Image.asset(
-                    'assets/images/google_icon.png',
-                    height: 24.0,
-                    width: 24.0,
-                  ),
                   onPressed: () {},
                   label: Text('Google 아이디로 로그인'),
                   style: OutlinedButton.styleFrom(
