@@ -1,11 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:motu/controller/scenario_service.dart';
+import 'package:motu/service/scenario_service.dart';
 import 'package:motu/firebase_options.dart';
-import 'package:motu/view/home.dart';
+import 'package:motu/view/main_page.dart';
 import 'package:provider/provider.dart';
-import 'package:motu/view/login.dart';
-import 'package:motu/controller/bottom_navigation_bar.dart';
+import 'package:motu/view/login/login.dart';
+import 'package:motu/service/navigation_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,15 +17,15 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ScenarioService()),
-        ChangeNotifierProvider(create: (_) => BottomNavigationBarProvider()),
+        ChangeNotifierProvider(create: (context) => NavigationService()),
       ],
-      builder: (context, child) => const MyApp(),
+      builder: (context, child) => const App(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatelessWidget {
+  const App({super.key});
 
   // This widget is the root of your application.
   @override
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
         useMaterial3: true,
       ),
-      home: HomePage(),
+      home: const MainPage(),
     );
   }
 }
