@@ -18,7 +18,7 @@ class NavigationService with ChangeNotifier {
     const HomePage(),
     LearningContentscreen(),
     const ScenarioList(),
-    const ProfilePage(),
+    ProfilePage(),
   ];
   Widget get currentScreen => _screens[_selectedIndex];
 

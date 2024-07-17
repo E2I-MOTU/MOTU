@@ -41,6 +41,8 @@ dependencies:
   provider: ^6.1.2
   http: ^1.2.1
   csv: ^5.1.1
+  firebase_auth: ^4.20.0
+  email_validator: ^3.0.0
 
 dev_dependencies:
   flutter_test:
