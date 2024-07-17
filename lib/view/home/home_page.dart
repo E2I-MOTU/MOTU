@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../widget/drawer_menu.dart';
 
@@ -10,6 +11,33 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentSlide = 0;
+  late PageController _pageController;
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: 0);
+    _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
+      if (currentSlide < 3) {
+        currentSlide++;
+      } else {
+        currentSlide = 0;
+      }
+      _pageController.animateToPage(
+        currentSlide,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +60,7 @@ class _HomePageState extends State<HomePage> {
                       height: 200,
                       width: double.infinity,
                       child: PageView.builder(
+                        controller: _pageController,
                         onPageChanged: (value) {
                           setState(() {
                             currentSlide = value;
@@ -79,9 +108,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-
                 SizedBox(height: 20),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -117,9 +144,7 @@ class _HomePageState extends State<HomePage> {
                     }),
                   ),
                 ),
-
                 SizedBox(height: 30,),
-
                 Container(
                   height: 100,
                   decoration: BoxDecoration(
