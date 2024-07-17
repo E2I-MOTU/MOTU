@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'dart:ui';
+import 'package:flip_card/flip_card.dart';
 
 class WordsCard extends StatefulWidget {
   final String title;
@@ -39,7 +39,7 @@ class _WordsCardState extends State<WordsCard> {
             child: CarouselSlider.builder(
               itemCount: words.length,
               itemBuilder: (context, index, realIndex) {
-                return _buildCard(context, words[index]['term']!, words[index]['definition']!, Colors.blue, index == _current);
+                return _buildCard(context, words[index]['term']!, words[index]['definition']!, index == _current);
               },
               options: CarouselOptions(
                 height: 400,
@@ -71,47 +71,43 @@ class _WordsCardState extends State<WordsCard> {
     );
   }
 
-  Widget _buildCard(BuildContext context, String term, String definition, Color color, bool isCurrent) {
+  Widget _buildCard(BuildContext context, String term, String definition, bool isCurrent) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8.0),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: BackdropFilter(
-          filter: isCurrent ? ImageFilter.blur(sigmaX: 0, sigmaY: 0) : ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(isCurrent ? 1.0 : 0.5),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    term,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    definition,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+      child: FlipCard(
+        direction: FlipDirection.HORIZONTAL,
+        front: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
+            child: Text(
+              term,
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        back: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
+            child: Text(
+              definition,
+              style: const TextStyle(
+                fontSize: 15,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
