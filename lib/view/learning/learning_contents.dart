@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/quiz/quiz.dart';
+import 'chat_screen.dart';
 
 class LearningContentscreen extends StatelessWidget {
   @override
@@ -69,6 +70,15 @@ class LearningContentscreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatbotScreen()),
+          );
+        },
+        child: Icon(Icons.chat),
       ),
     );
   }
