@@ -36,7 +36,7 @@ class App extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
         useMaterial3: true,
       ),
-      home: const MainPage(),
+      home: const LoginPage(),
     );
   }
 }
