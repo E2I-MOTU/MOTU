@@ -3,6 +3,7 @@ import 'package:motu/view/home/home_page.dart';
 import 'package:motu/view/profile/profile_page.dart';
 import 'package:motu/view/quiz/quiz.dart';
 import 'package:motu/view/scenario/scenario_list.dart';
+import '../view/learning/learning_contents.dart';
 
 class NavigationService with ChangeNotifier {
   int _selectedIndex = 0;
@@ -15,7 +16,7 @@ class NavigationService with ChangeNotifier {
 
   final List<Widget> _screens = [
     const HomePage(),
-    QuizSelectionScreen(),
+    LearningContentscreen(),
     const ScenarioList(),
     const ProfilePage(),
   ];
