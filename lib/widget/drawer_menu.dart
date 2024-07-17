@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/scenario/scenario_list.dart';
+import '../view/login/logout.dart';
 
 class DrawerMenu extends StatelessWidget {
   const DrawerMenu({super.key});
@@ -44,7 +45,7 @@ class DrawerMenu extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('로그아웃'),
-            onTap: () {},
+            onTap: () => logout(context),
           ),
         ],
       ),
