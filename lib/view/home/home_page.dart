@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motu/view/scenario/scenario_list.dart';
-
 import '../../widget/drawer_menu.dart';
-import '../quiz/quiz.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
