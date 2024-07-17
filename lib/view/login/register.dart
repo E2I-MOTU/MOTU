@@ -18,11 +18,10 @@ class RegisterPage extends StatelessWidget {
         password: _passwordController.text,
       );
 
-      // Firestore에 사용자 정보와 초기 잔고 저장
       User? user = userCredential.user;
       await _firestore.collection('users').doc(user?.uid).set({
         'email': _emailController.text,
-        'balance': 1000000, // 초기 잔고 설정
+        'balance': 1000000,
       });
 
       Navigator.pushAndRemoveUntil(
@@ -31,7 +30,6 @@ class RegisterPage extends StatelessWidget {
             (Route<dynamic> route) => false,
       );
     } on FirebaseAuthException catch (e) {
-      // 회원가입 오류 처리
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? '회원가입 실패')),
       );
