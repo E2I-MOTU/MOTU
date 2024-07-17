@@ -8,9 +8,11 @@ class LoginPage extends StatefulWidget {
 
   @override
   LoginPageState createState() => LoginPageState();
+
 }
 
 class LoginPageState extends State<LoginPage> {
+
   bool _rememberMe = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
