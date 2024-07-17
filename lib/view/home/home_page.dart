@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/scenario/scenario_list.dart';
 
+import '../../widget/drawer_menu.dart';
 import '../quiz/quiz.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,60 +21,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text('홈페이지'),
         automaticallyImplyLeading: true,
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(),
-              child: Text(
-                '메뉴',
-                style: TextStyle(
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('홈'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.quiz),
-              title: const Text('퀴즈'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => QuizSelectionScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.auto_graph),
-              title: const Text('시나리오'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ScenarioList()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('설정'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('로그아웃'),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
+      drawer: const DrawerMenu(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
