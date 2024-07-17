@@ -73,7 +73,7 @@ class _WordsCardState extends State<WordsCard> {
 
   Widget _buildCard(BuildContext context, String term, String definition, bool isCurrent) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+      margin: const EdgeInsets.symmetric(horizontal: 1.0),
       child: FlipCard(
         direction: FlipDirection.HORIZONTAL,
         front: Container(
