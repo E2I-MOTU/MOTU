@@ -15,8 +15,7 @@ class _TestSkillScreenState extends State<TestSkillScreen> {
   List<DocumentSnapshot> _questions = [];
   int _currentQuestionIndex = 0;
   int _score = 0;
-  bool _answered = false;
-  bool _correct = false;
+  String? _selectedAnswer;
 
   @override
   void initState() {
@@ -33,21 +32,20 @@ class _TestSkillScreenState extends State<TestSkillScreen> {
     });
   }
 
-  void _answerQuestion(String selectedAnswer, String correctAnswer) {
-    setState(() {
-      _answered = true;
-      _correct = selectedAnswer == correctAnswer;
-      if (_correct) {
+  void _submitAnswer() {
+    if (_selectedAnswer != null) {
+      final correctAnswer = _questions[_currentQuestionIndex]['answer'];
+      if (_selectedAnswer == correctAnswer) {
         _score++;
       }
-    });
+      _nextQuestion();
+    }
   }
 
   void _nextQuestion() {
     setState(() {
       _currentQuestionIndex++;
-      _answered = false;
-      _correct = false;
+      _selectedAnswer = null;
     });
   }
 
@@ -65,73 +63,76 @@ class _TestSkillScreenState extends State<TestSkillScreen> {
       body: _questions.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : _currentQuestionIndex >= _questions.length
-              ? Center(child: Text('테스트 완료! 점수: $_score/${_questions.length}'))
-              : Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    Center(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: LinearProgressIndicator(
-                            value:
-                                (_currentQuestionIndex + 1) / _questions.length,
-                            minHeight: 10,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '${_currentQuestionIndex + 1} / ${_questions.length}',
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Text(
-                                _questions[_currentQuestionIndex]['question'],
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            ..._questions[_currentQuestionIndex]['options']
-                                .map<Widget>((option) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8.0, horizontal: 16.0),
-                                child: ElevatedButton(
-                                  onPressed: _answered
-                                      ? null
-                                      : () => _answerQuestion(
-                                          option,
-                                          _questions[_currentQuestionIndex]
-                                              ['answer']),
-                                  child: Text(option),
-                                ),
-                              );
-                            }).toList(),
-                            if (_answered)
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: ElevatedButton(
-                                  onPressed: _nextQuestion,
-                                  child: const Text('다음 질문'),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+          ? Center(child: Text('테스트 완료! 점수: $_score/${_questions.length}'))
+          : Column(
+        children: [
+          const SizedBox(height: 20),
+          Center(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: LinearProgressIndicator(
+                  value:
+                  (_currentQuestionIndex + 1) / _questions.length,
+                  minHeight: 10,
                 ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '${_currentQuestionIndex + 1} / ${_questions.length}',
+            style: const TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      _questions[_currentQuestionIndex]['question'],
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ..._questions[_currentQuestionIndex]['options']
+                      .map<Widget>((option) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _selectedAnswer = option;
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _selectedAnswer == option
+                              ? Colors.deepPurpleAccent
+                              : Colors.white,
+                        ),
+                        child: Text(option),
+                      ),
+                    );
+                  }).toList(),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      onPressed: _submitAnswer,
+                      child: const Text('제출'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
