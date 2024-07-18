@@ -10,13 +10,13 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final ProfileController _controller = ProfileController();
+  final ProfileService _service = ProfileService();
   late Future<UserModel?> _userInfoFuture;
 
   @override
   void initState() {
     super.initState();
-    _userInfoFuture = _controller.getUserInfo();
+    _userInfoFuture = _service.getUserInfo();
   }
 
   Future<void> _updateName(BuildContext context, String currentName) async {
@@ -44,9 +44,9 @@ class _ProfilePageState extends State<ProfilePage> {
             TextButton(
               child: const Text('저장'),
               onPressed: () async {
-                await _controller.updateName(_nameController.text);
+                await _service.updateName(_nameController.text);
                 setState(() {
-                  _userInfoFuture = _controller.getUserInfo();
+                  _userInfoFuture = _service.getUserInfo();
                 });
                 Navigator.of(context).pop();
               },
