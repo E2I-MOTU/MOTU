@@ -7,10 +7,10 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -22,12 +22,18 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const MainPage()),
-      );
+
+      if (userCredential.user != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MainPage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('사용자 정보를 찾을 수 없습니다.')),
+        );
+      }
     } on FirebaseAuthException catch (e) {
-      // 로그인 오류 처리
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? '로그인 실패')),
       );
@@ -148,7 +154,9 @@ class _LoginPageState extends State<LoginPage> {
                 width: double.infinity,
                 height: 50,
                 child: OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    // Google 로그인 로직 추가
+                  },
                   label: const Text('Google 아이디로 로그인'),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.black),

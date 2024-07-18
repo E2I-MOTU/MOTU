@@ -10,13 +10,13 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final ProfileController _controller = ProfileController();
+  final ProfileService _service = ProfileService();
   late Future<UserModel?> _userInfoFuture;
 
   @override
   void initState() {
     super.initState();
-    _userInfoFuture = _controller.getUserInfo();
+    _userInfoFuture = _service.getUserInfo();
   }
 
   Future<void> _updateName(BuildContext context, String currentName) async {
@@ -31,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
             controller: _nameController,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
-              labelText: '이름을 입력하세요',
+              labelText: '새 이름을 입력하세요',
             ),
           ),
           actions: <Widget>[
@@ -44,9 +44,9 @@ class _ProfilePageState extends State<ProfilePage> {
             TextButton(
               child: const Text('저장'),
               onPressed: () async {
-                await _controller.updateName(_nameController.text);
+                await _service.updateName(_nameController.text);
                 setState(() {
-                  _userInfoFuture = _controller.getUserInfo();
+                  _userInfoFuture = _service.getUserInfo();
                 });
                 Navigator.of(context).pop();
               },
@@ -68,6 +68,12 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (BuildContext context, AsyncSnapshot<UserModel?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text('오류가 발생했습니다.'));
+          }
+          if (!snapshot.hasData) {
+            return const Center(child: Text('사용자 정보를 찾을 수 없습니다.'));
           }
 
           var userData = snapshot.data!;
