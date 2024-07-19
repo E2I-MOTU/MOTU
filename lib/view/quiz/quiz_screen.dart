@@ -17,7 +17,7 @@ class _QuizScreenState extends State<QuizScreen> {
   bool _answered = false;
   bool _correct = false;
   String _selectedAnswer = '';
-  List<DocumentSnapshot> _questions = [];
+  List<Map<String, dynamic>> _questions = [];
   bool _isLoading = true;
 
   @override
@@ -27,11 +27,35 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   Future<void> _loadQuestions() async {
-    final snapshot = await _firestore.collection(widget.collectionName).get();
-    setState(() {
-      _questions = snapshot.docs;
-      _isLoading = false;
-    });
+    try {
+      final snapshot = await _firestore
+          .collection('quiz')
+          .doc(widget.collectionName)
+          .get();
+
+      List<Map<String, dynamic>> questionsList = [];
+
+      var data = snapshot.data();
+      if (data == null) {
+        print('No data found for the given collection name.');
+      } else {
+        data.forEach((key, value) {
+          if (key != 'catchphrase') {
+            questionsList.add(value as Map<String, dynamic>);
+          }
+        });
+      }
+
+      setState(() {
+        _questions = questionsList;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading questions: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _submitAnswer(String correctAnswer) {
@@ -128,12 +152,12 @@ class _QuizScreenState extends State<QuizScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    question['question'],
+                    question['question'] ?? '질문이 없습니다.',
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
-                ...question['options'].map<Widget>((option) {
+                ...(question['options'] as List<dynamic>).map<Widget>((option) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 8.0, horizontal: 16.0),
@@ -143,10 +167,10 @@ class _QuizScreenState extends State<QuizScreen> {
                         onPressed: _answered
                             ? null
                             : () {
-                                setState(() {
-                                  _selectedAnswer = option;
-                                });
-                              },
+                          setState(() {
+                            _selectedAnswer = option as String;
+                          });
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: _selectedAnswer == option
                               ? Colors.deepPurpleAccent
@@ -158,7 +182,7 @@ class _QuizScreenState extends State<QuizScreen> {
                             ),
                           ),
                         ),
-                        child: Text(option),
+                        child: Text(option as String),
                       ),
                     ),
                   );
@@ -172,7 +196,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       child: ElevatedButton(
                         onPressed: _selectedAnswer.isEmpty
                             ? null
-                            : () => _submitAnswer(question['answer']),
+                            : () => _submitAnswer(question['answer'] ?? ''),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 20.0),
                           shape: const RoundedRectangleBorder(

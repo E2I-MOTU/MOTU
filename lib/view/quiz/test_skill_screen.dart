@@ -12,7 +12,7 @@ class TestSkillScreen extends StatefulWidget {
 
 class _TestSkillScreenState extends State<TestSkillScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  List<DocumentSnapshot> _questions = [];
+  List<Map<String, dynamic>> _questions = [];
   int _currentQuestionIndex = 0;
   int _score = 0;
   String? _selectedAnswer;
@@ -24,12 +24,20 @@ class _TestSkillScreenState extends State<TestSkillScreen> {
   }
 
   Future<void> _loadRandomQuestions() async {
-    final snapshot = await _firestore.collection(widget.collectionName).get();
-    final questions = snapshot.docs;
-    questions.shuffle();
-    setState(() {
-      _questions = questions.take(10).toList();
-    });
+    final snapshot = await _firestore.collection('quiz').doc(widget.collectionName).get();
+    if (snapshot.exists) {
+      final data = snapshot.data()!;
+      List<Map<String, dynamic>> questionsList = [];
+      data.forEach((key, value) {
+        if (key.startsWith('index')) {
+          questionsList.add(value as Map<String, dynamic>);
+        }
+      });
+      questionsList.shuffle();
+      setState(() {
+        _questions = questionsList.take(10).toList();
+      });
+    }
   }
 
   void _submitAnswer() {
@@ -73,8 +81,7 @@ class _TestSkillScreenState extends State<TestSkillScreen> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: LinearProgressIndicator(
-                  value:
-                  (_currentQuestionIndex + 1) / _questions.length,
+                  value: (_currentQuestionIndex + 1) / _questions.length,
                   minHeight: 10,
                 ),
               ),
@@ -83,8 +90,7 @@ class _TestSkillScreenState extends State<TestSkillScreen> {
           const SizedBox(height: 8),
           Text(
             '${_currentQuestionIndex + 1} / ${_questions.length}',
-            style: const TextStyle(
-                fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           Expanded(
             child: Center(
@@ -96,19 +102,17 @@ class _TestSkillScreenState extends State<TestSkillScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
                       _questions[_currentQuestionIndex]['question'],
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  ..._questions[_currentQuestionIndex]['options']
+                  ...(_questions[_currentQuestionIndex]['options'] as List<dynamic>)
                       .map<Widget>((option) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            _selectedAnswer = option;
+                            _selectedAnswer = option as String;
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -116,7 +120,7 @@ class _TestSkillScreenState extends State<TestSkillScreen> {
                               ? Colors.deepPurpleAccent
                               : Colors.white,
                         ),
-                        child: Text(option),
+                        child: Text(option as String),
                       ),
                     );
                   }).toList(),
