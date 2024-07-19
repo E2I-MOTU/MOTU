@@ -57,7 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(userData.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text(userData.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         Text(userData.email),
                       ],
                     ),
@@ -102,11 +102,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     return _buildSectionCard(
                       context,
                       title: '출석 현황',
-                      children: attendance.map((date) {
-                        return ListTile(
-                          title: Text('${date.year}-${date.month}-${date.day}'),
-                        );
-                      }).toList(),
+                      children: _buildAttendanceWeek(attendance),
                     );
                   },
                 ),
@@ -114,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 _buildSectionCard(
                   context,
                   title: '학습 현황',
-                  children: [
+                  children: const [
                     Text('학습 현황 내용'),
                   ],
                 ),
@@ -136,6 +132,31 @@ class _ProfilePageState extends State<ProfilePage> {
         },
       ),
     );
+  }
+
+  List<Widget> _buildAttendanceWeek(List<DateTime> attendance) {
+    List<Widget> weekWidgets = [];
+
+    // 출석 체크한 날부터 최근 7일만 표시
+    DateTime firstCheckDate = attendance.first;
+    for (int i = 0; i < 7; i++) {
+      DateTime day = firstCheckDate.add(Duration(days: i));
+      bool isChecked = attendance.any((date) => date.year == day.year && date.month == day.month && date.day == day.day);
+      weekWidgets.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Row(
+            children: [
+              Icon(isChecked ? Icons.check_circle : Icons.radio_button_unchecked, color: isChecked ? Colors.green : Colors.grey),
+              const SizedBox(width: 10),
+              Text('${day.year}-${day.month}-${day.day}'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return weekWidgets;
   }
 
   Widget _buildActionButton(BuildContext context, String title, IconData icon) {
@@ -161,7 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
           children: <Widget>[
             Text(
               title,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const Divider(),
             ...children,

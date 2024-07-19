@@ -46,13 +46,33 @@ class ProfileService {
       });
 
       if (!alreadyChecked) {
+        // 출석 체크 날짜 추가
         attendance.add(Timestamp.fromDate(today));
-        await userDoc.update({'attendance': attendance});
+        attendance.sort((a, b) => (b as Timestamp).compareTo(a as Timestamp));
 
-        if (attendance.length % 7 == 0) {
-          int currentBalance = data['balance'] ?? 0;
-          await userDoc.update({'balance': currentBalance + 100000});
+        // 일주일 연속 출석 여부 확인
+        if (attendance.length >= 7) {
+          bool isWeeklyComplete = true;
+          for (int i = 0; i < 7; i++) {
+            DateTime day = today.subtract(Duration(days: i));
+            if (!attendance.any((date) {
+              DateTime checkDate = (date as Timestamp).toDate();
+              return checkDate.year == day.year &&
+                  checkDate.month == day.month &&
+                  checkDate.day == day.day;
+            })) {
+              isWeeklyComplete = false;
+              break;
+            }
+          }
+
+          if (isWeeklyComplete) {
+            int currentBalance = data['balance'] ?? 0;
+            await userDoc.update({'balance': currentBalance + 100000});
+            attendance.clear(); // 일주일 출석 완료 후 초기화
+          }
         }
+        await userDoc.update({'attendance': attendance});
       }
     }
   }
