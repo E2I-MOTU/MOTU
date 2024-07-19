@@ -19,44 +19,6 @@ class _ProfilePageState extends State<ProfilePage> {
     _userInfoFuture = _service.getUserInfo();
   }
 
-  Future<void> _updateName(BuildContext context, String currentName) async {
-    final TextEditingController _nameController = TextEditingController(text: currentName);
-
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('이름 수정'),
-          content: TextField(
-            controller: _nameController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: '새 이름을 입력하세요',
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('취소'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('저장'),
-              onPressed: () async {
-                await _service.updateName(_nameController.text);
-                setState(() {
-                  _userInfoFuture = _service.getUserInfo();
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,41 +44,68 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _buildSectionCard(
-                  context,
-                  title: '개인 정보',
+                Row(
                   children: [
-                    _buildListTile(
-                      leadingIcon: Icons.email,
-                      title: '이메일',
-                      subtitle: userData.email,
+                    // CircleAvatar(
+                    //   radius: 30,
+                    //   backgroundImage: AssetImage('assets/avatar_placeholder.png'),
+                    // ),
+                    // 여기에 사진 넣으면 됨!
+                    const SizedBox(width: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(userData.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text(userData.email),
+                      ],
                     ),
-                    _buildListTile(
-                      leadingIcon: Icons.account_circle,
-                      title: '이름',
-                      subtitle: userData.name,
-                      trailing: IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                          _updateName(context, userData.name);
-                        },
-                      ),
-                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildActionButton(context, '수료 현황', Icons.check_circle),
+                    _buildActionButton(context, '시나리오 기록', Icons.history),
+                    _buildActionButton(context, '잔고 내역', Icons.account_balance_wallet),
                   ],
                 ),
                 const SizedBox(height: 16),
                 _buildSectionCard(
                   context,
-                  title: '계좌 정보',
+                  title: '잔고',
                   children: [
                     _buildListTile(
                       leadingIcon: Icons.account_balance_wallet,
                       title: '잔고',
                       subtitle: '${userData.balance} 원',
                     ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _buildSectionCard(
+                  context,
+                  title: '출석 관련',
+                  children: [
+                    // 여기에 출석 관련 그래픽 추가하면 됨!
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _buildSectionCard(
+                  context,
+                  title: '학습 현황',
+                  children: [
+                    Text('학습 현황 내용'),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _buildSectionCard(
+                  context,
+                  title: '최근 저장한 용어 목록',
+                  children: [
                     _buildListTile(
-                      leadingIcon: Icons.history,
-                      title: '최근 거래 내역',
+                      title: 'title',
+                      subtitle: 'description',
                       onTap: () {},
                     ),
                   ],
@@ -126,6 +115,18 @@ class _ProfilePageState extends State<ProfilePage> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildActionButton(BuildContext context, String title, IconData icon) {
+    return Column(
+      children: [
+        IconButton(
+          icon: Icon(icon, size: 30),
+          onPressed: () {},
+        ),
+        Text(title),
+      ],
     );
   }
 
@@ -140,6 +141,7 @@ class _ProfilePageState extends State<ProfilePage> {
           children: <Widget>[
             Text(
               title,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const Divider(),
             ...children,

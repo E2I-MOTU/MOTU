@@ -1,3 +1,5 @@
+// 혹시 몰라서 아직 삭제 안했습니다!
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
