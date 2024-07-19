@@ -12,11 +12,13 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final ProfileService _service = ProfileService();
   late Future<UserModel?> _userInfoFuture;
+  late Future<List<DateTime>> _attendanceFuture;
 
   @override
   void initState() {
     super.initState();
     _userInfoFuture = _service.getUserInfo();
+    _attendanceFuture = _service.getAttendance();
   }
 
   @override
@@ -83,12 +85,30 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                _buildSectionCard(
-                  context,
-                  title: '출석 관련',
-                  children: [
-                    // 여기에 출석 관련 그래픽 추가하면 됨!
-                  ],
+                FutureBuilder<List<DateTime>>(
+                  future: _attendanceFuture,
+                  builder: (BuildContext context, AsyncSnapshot<List<DateTime>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return const Center(child: Text('출석 현황을 불러오는 중 오류가 발생했습니다.'));
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('출석 기록이 없습니다.'));
+                    }
+
+                    List<DateTime> attendance = snapshot.data!;
+                    return _buildSectionCard(
+                      context,
+                      title: '출석 현황',
+                      children: attendance.map((date) {
+                        return ListTile(
+                          title: Text('${date.year}-${date.month}-${date.day}'),
+                        );
+                      }).toList(),
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
                 _buildSectionCard(

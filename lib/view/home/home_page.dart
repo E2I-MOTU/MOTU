@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../widget/drawer_menu.dart';
+import '../../service/home_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,20 +14,19 @@ class _HomePageState extends State<HomePage> {
   int currentSlide = 0;
   late PageController _pageController;
   late Timer _timer;
+  final HomeController _controller = HomeController();
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
-    _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      if (currentSlide < 3) {
-        currentSlide++;
-      } else {
-        currentSlide = 0;
-      }
+    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+      setState(() {
+        currentSlide = (currentSlide + 1) % 4;
+      });
       _pageController.animateToPage(
         currentSlide,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeIn,
       );
     });
@@ -45,6 +45,12 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('홈페이지'),
         automaticallyImplyLeading: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () => _controller.checkAttendance(context),
+          ),
+        ],
       ),
       drawer: const DrawerMenu(),
       body: SafeArea(
@@ -108,11 +114,11 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       "오늘의 추천 학습",
                       style: TextStyle(
                         fontSize: 20,
@@ -125,7 +131,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Container(
                   height: 200,
                   child: ListView(
@@ -134,7 +140,7 @@ class _HomePageState extends State<HomePage> {
                       return AspectRatio(
                         aspectRatio: 2.6 / 3,
                         child: Container(
-                          margin: EdgeInsets.only(right: 15.0),
+                          margin: const EdgeInsets.only(right: 15.0),
                           decoration: BoxDecoration(
                             color: Colors.grey,
                             borderRadius: BorderRadius.circular(20),
@@ -144,14 +150,14 @@ class _HomePageState extends State<HomePage> {
                     }),
                   ),
                 ),
-                SizedBox(height: 30,),
+                const SizedBox(height: 30,),
                 Container(
                   height: 100,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.grey,
                   ),
-                )
+                ),
               ],
             ),
           ),
