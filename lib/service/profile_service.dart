@@ -46,11 +46,9 @@ class ProfileService {
       });
 
       if (!alreadyChecked) {
-        // 출석 체크 날짜 추가
         attendance.add(Timestamp.fromDate(today));
         attendance.sort((a, b) => (b as Timestamp).compareTo(a as Timestamp));
 
-        // 일주일 연속 출석 여부 확인
         if (attendance.length >= 7) {
           bool isWeeklyComplete = true;
           for (int i = 0; i < 7; i++) {
@@ -87,6 +85,22 @@ class ProfileService {
           : [];
       List<DateTime> attendanceDates = attendance.map((date) => (date as Timestamp).toDate()).toList();
       return attendanceDates;
+    }
+    return [];
+  }
+
+  Future<List<Map<String, dynamic>>> getBookmarks() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      QuerySnapshot snapshot = await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('bookmarks')
+          .orderBy('timestamp', descending: true)
+          .limit(10)
+          .get();
+
+      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
     }
     return [];
   }

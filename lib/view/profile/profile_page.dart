@@ -13,12 +13,14 @@ class _ProfilePageState extends State<ProfilePage> {
   final ProfileService _service = ProfileService();
   late Future<UserModel?> _userInfoFuture;
   late Future<List<DateTime>> _attendanceFuture;
+  late Future<List<Map<String, dynamic>>> _bookmarksFuture;
 
   @override
   void initState() {
     super.initState();
     _userInfoFuture = _service.getUserInfo();
     _attendanceFuture = _service.getAttendance();
+    _bookmarksFuture = _service.getBookmarks();
   }
 
   @override
@@ -115,16 +117,32 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                _buildSectionCard(
-                  context,
-                  title: '최근 저장한 용어 목록',
-                  children: [
-                    _buildListTile(
-                      title: 'title',
-                      subtitle: 'description',
-                      onTap: () {},
-                    ),
-                  ],
+                FutureBuilder<List<Map<String, dynamic>>>(
+                  future: _bookmarksFuture,
+                  builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return const Center(child: Text('저장된 용어 목록을 불러오는 중 오류가 발생했습니다.'));
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('저장된 용어가 없습니다.'));
+                    }
+
+                    List<Map<String, dynamic>> bookmarks = snapshot.data!;
+                    return _buildSectionCard(
+                      context,
+                      title: '최근 저장한 용어 목록',
+                      children: bookmarks.map((bookmark) {
+                        return _buildListTile(
+                          title: bookmark['term'],
+                          subtitle: bookmark['definition'],
+                          onTap: () {},
+                        );
+                      }).toList(),
+                    );
+                  },
                 ),
               ],
             ),
