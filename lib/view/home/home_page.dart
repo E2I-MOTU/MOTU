@@ -47,8 +47,10 @@ class _HomePageState extends State<HomePage> {
         automaticallyImplyLeading: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () => _controller.checkAttendance(context),
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              // 알림 아이콘 클릭 시 동작 (필요한 경우 구현)
+            },
           ),
         ],
       ),
@@ -151,11 +153,20 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 30,),
-                Container(
-                  height: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.grey,
+                GestureDetector(
+                  onTap: () => _controller.checkAttendance(context),
+                  child: Container(
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.grey,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '출석체크',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    ),
                   ),
                 ),
               ],
