@@ -28,6 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('마이페이지'),
+        automaticallyImplyLeading: false,
       ),
       body: FutureBuilder<UserModel?>(
         future: _userInfoFuture,
@@ -52,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     // CircleAvatar(
                     //   radius: 30,
-                    //   backgroundImage: AssetImage('assets/avatar_placeholder.png'),
+                    //   backgroundImage: AssetImage('assets/image.png'),
                     // ),
                     // 여기에 사진 넣으면 됨!
                     const SizedBox(width: 16),
@@ -155,7 +156,6 @@ class _ProfilePageState extends State<ProfilePage> {
   List<Widget> _buildAttendanceWeek(List<DateTime> attendance) {
     List<Widget> weekWidgets = [];
 
-    // 출석 체크한 날부터 최근 7일만 표시
     DateTime firstCheckDate = attendance.last;
     for (int i = 0; i < 7; i++) {
       DateTime day = firstCheckDate.add(Duration(days: i));

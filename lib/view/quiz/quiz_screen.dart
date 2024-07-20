@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 
 class QuizScreen extends StatefulWidget {
   final String collectionName;
@@ -43,6 +44,11 @@ class _QuizScreenState extends State<QuizScreen> {
           if (key != 'catchphrase') {
             questionsList.add(value as Map<String, dynamic>);
           }
+        });
+
+        questionsList.forEach((question) {
+          List<dynamic> options = question['options'];
+          options.shuffle(Random());
         });
       }
 
