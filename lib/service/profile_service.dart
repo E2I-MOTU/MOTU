@@ -85,7 +85,8 @@ class ProfileService {
       List<dynamic> attendance = data.containsKey('attendance')
           ? data['attendance'] as List<dynamic>
           : [];
-      return attendance.map((date) => (date as Timestamp).toDate()).toList();
+      List<DateTime> attendanceDates = attendance.map((date) => (date as Timestamp).toDate()).toList();
+      return attendanceDates;
     }
     return [];
   }

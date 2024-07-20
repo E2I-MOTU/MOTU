@@ -138,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
     List<Widget> weekWidgets = [];
 
     // 출석 체크한 날부터 최근 7일만 표시
-    DateTime firstCheckDate = attendance.first;
+    DateTime firstCheckDate = attendance.last;
     for (int i = 0; i < 7; i++) {
       DateTime day = firstCheckDate.add(Duration(days: i));
       bool isChecked = attendance.any((date) => date.year == day.year && date.month == day.month && date.day == day.day);
