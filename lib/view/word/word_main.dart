@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'card.dart';
+import 'bookmark.dart';
 
 class WordsLearning extends StatelessWidget {
   @override
@@ -16,7 +17,12 @@ class WordsLearning extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.bookmark_border_outlined),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => BookmarkPage()),
+              );
+            },
           ),
         ],
       ),
