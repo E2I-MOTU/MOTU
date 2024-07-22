@@ -43,6 +43,9 @@ class QuizService with ChangeNotifier {
           List<dynamic> options = question['options'];
           options.shuffle(Random());
         });
+
+        // Shuffle the questions
+        questionsList.shuffle(Random());
       }
 
       _questions = questionsList;
