@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'card.dart';
+import '../../widget/words_category_card_builder.dart';
+import 'words_term_card.dart';
 import 'bookmark.dart';
+import 'words_search_delegate.dart';
 
-class WordsLearning extends StatelessWidget {
+class WordsMain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,7 +15,12 @@ class WordsLearning extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () {},
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: WordsSearchDelegate(),
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.bookmark_border_outlined),
@@ -43,62 +50,10 @@ class WordsLearning extends StatelessWidget {
                   mainAxisSpacing: 10,
                   children: documents.map((doc) {
                     var data = doc.data() as Map<String, dynamic>;
-                    return _buildCard(context, data['title'], data['catchphrase'], Colors.grey, WordsCard(title: data['title']));
+                    return buildCategoryCard(context, data['title'], data['catchphrase'], Colors.grey, WordsTermCard(title: data['title']));
                   }).toList(),
                 );
               },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCard(BuildContext context, String title, String catchphrase, Color color, Widget? nextScreen) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Center(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-          Text(
-            catchphrase,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.white70,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (nextScreen != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => nextScreen),
-                );
-              }
-            },
-            child: const Text('배워보자'),
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
             ),
           ),
         ],

@@ -1,5 +1,5 @@
-import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flip_card/flip_card.dart';
 import '../../service/bookmark_service.dart';
 
 class BookmarkPage extends StatefulWidget {
@@ -17,11 +17,25 @@ class _BookmarkPageState extends State<BookmarkPage> {
     _bookmarksFuture = _bookmarkService.getBookmarks();
   }
 
+  Future<void> _refreshBookmarks() async {
+    setState(() {
+      _bookmarksFuture = _bookmarkService.getBookmarks();
+    });
+  }
+
+  Future<void> _deleteBookmark(String bookmarkId) async {
+    await _bookmarkService.deleteBookmark(bookmarkId);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('북마크가 삭제되었습니다.')),
+    );
+    _refreshBookmarks();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('책갈피'),
+        title: const Text('책갈피'),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _bookmarksFuture,
@@ -40,7 +54,26 @@ class _BookmarkPageState extends State<BookmarkPage> {
           return ListView.builder(
             itemCount: bookmarks.length,
             itemBuilder: (context, index) {
-              return _buildCard(context, bookmarks[index]['term'], bookmarks[index]['definition'], bookmarks[index]['example']);
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: Card(
+                  child: ListTile(
+                    title: _buildCard(
+                      context,
+                      bookmarks[index]['term'] ?? '',
+                      bookmarks[index]['definition'] ?? '',
+                      bookmarks[index]['example'] ?? '',
+                      bookmarks[index]['category'] ?? '',
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        _deleteBookmark(bookmarks[index]['id']);
+                      },
+                    ),
+                  ),
+                ),
+              );
             },
           );
         },
@@ -48,38 +81,52 @@ class _BookmarkPageState extends State<BookmarkPage> {
     );
   }
 
-  Widget _buildCard(BuildContext context, String term, String definition, String example) {
-    return Center(
-      child: AspectRatio(
-        aspectRatio: 3 / 2,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
-          child: FlipCard(
-            direction: FlipDirection.HORIZONTAL,
-            front: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.orangeAccent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(
-                child: Text(
-                  term,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+  Widget _buildCard(BuildContext context, String term, String definition, String example, String category) {
+    return AspectRatio(
+      aspectRatio: 3 / 2,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+        child: FlipCard(
+          direction: FlipDirection.HORIZONTAL,
+          front: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.orangeAccent,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    term,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
+                  const SizedBox(height: 10),
+                  Text(
+                    '카테고리: $category',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.white70,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
-            back: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.orangeAccent,
-                borderRadius: BorderRadius.circular(10),
-              ),
+          ),
+          back: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.orangeAccent,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -93,7 +140,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "예시: $example",
+                    '예시: $example',
                     style: const TextStyle(
                       fontSize: 15,
                       color: Colors.white70,
