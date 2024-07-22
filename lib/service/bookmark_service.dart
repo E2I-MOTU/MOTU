@@ -5,7 +5,7 @@ class BookmarkService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> addBookmark(String term, String definition, String example) async {
+  Future<void> addBookmark(String term, String definition, String example, String category) async {
     User? user = _auth.currentUser;
     if (user != null) {
       DocumentReference userDoc = _firestore.collection('users').doc(user.uid);
@@ -13,6 +13,7 @@ class BookmarkService {
         'term': term,
         'definition': definition,
         'example': example,
+        'category': category,
         'timestamp': FieldValue.serverTimestamp(),
       });
     }
@@ -28,8 +29,19 @@ class BookmarkService {
           .orderBy('timestamp', descending: true)
           .get();
 
-      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+      return snapshot.docs.map((doc) => {
+        ...doc.data() as Map<String, dynamic>,
+        'id': doc.id,
+      }).toList();
     }
     return [];
+  }
+
+  Future<void> deleteBookmark(String bookmarkId) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentReference userDoc = _firestore.collection('users').doc(user.uid);
+      await userDoc.collection('bookmarks').doc(bookmarkId).delete();
+    }
   }
 }
