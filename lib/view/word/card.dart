@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../service/bookmark_service.dart';
 
 class WordsCard extends StatefulWidget {
   final String title;
@@ -14,6 +15,7 @@ class _WordsCardState extends State<WordsCard> {
   List<Map<String, String>> words = [];
   PageController _pageController = PageController(initialPage: 0);
   int _current = 0;
+  final BookmarkService _bookmarkService = BookmarkService();
 
   @override
   void initState() {
@@ -56,12 +58,33 @@ class _WordsCardState extends State<WordsCard> {
     }
   }
 
+  Future<void> _saveBookmark(String term, String definition, String example) async {
+    await _bookmarkService.addBookmark(term, definition, example);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('책갈피에 저장되었습니다.')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
         automaticallyImplyLeading: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.bookmark),
+            onPressed: () {
+              if (words.isNotEmpty) {
+                _saveBookmark(
+                  words[_current]['term']!,
+                  words[_current]['definition']!,
+                  words[_current]['example']!,
+                );
+              }
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
