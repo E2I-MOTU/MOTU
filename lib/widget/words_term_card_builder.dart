@@ -33,27 +33,29 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
               color: Colors.orangeAccent,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  definition,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    definition,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "예시: $example",
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.white70,
+                  const SizedBox(height: 10),
+                  Text(
+                    "예시: $example",
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.white70,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

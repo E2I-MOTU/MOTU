@@ -4,7 +4,6 @@ import '../../service/bookmark_service.dart';
 import '../../service/words_card_service.dart';
 import '../../widget/words_term_card_builder.dart';
 
-
 class WordsTermCard extends StatelessWidget {
   final String title;
   const WordsTermCard({super.key, required this.title});
