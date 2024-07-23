@@ -33,7 +33,7 @@ class WordsProvider with ChangeNotifier {
   }
 
   void nextPage() {
-    if (current < words.length - 1) {
+    if (current < words.length) {
       pageController.animateToPage(
         current + 1,
         duration: Duration(milliseconds: 300),
@@ -59,5 +59,9 @@ class WordsProvider with ChangeNotifier {
   void setCurrentPage(int index) {
     current = index;
     notifyListeners();
+  }
+
+  bool get isLastPage {
+    return current == words.length;
   }
 }

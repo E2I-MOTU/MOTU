@@ -101,7 +101,7 @@ class QuizSelectionScreen extends StatelessWidget {
                                 child: Align(
                                   alignment: Alignment.bottomRight,
                                   child: Text(
-                                    '${progress['completed']} / ${progress['total']}',
+                                    '${progress['completed']} / ${progress['total']-1}',
                                     style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
                                   ),
                                 ),
