@@ -156,9 +156,15 @@ class _ProfilePageState extends State<ProfilePage> {
   List<Widget> _buildAttendanceWeek(List<DateTime> attendance) {
     List<Widget> weekWidgets = [];
 
-    DateTime firstCheckDate = attendance.last;
+    DateTime startDate = attendance.first;
+    for (int i = 1; i < attendance.length; i++) {
+      if (attendance[i].difference(attendance[i - 1]).inDays > 1) {
+        startDate = attendance[i];
+      }
+    }
+
     for (int i = 0; i < 7; i++) {
-      DateTime day = firstCheckDate.add(Duration(days: i));
+      DateTime day = startDate.add(Duration(days: i));
       bool isChecked = attendance.any((date) => date.year == day.year && date.month == day.month && date.day == day.day);
       weekWidgets.add(
         Padding(
