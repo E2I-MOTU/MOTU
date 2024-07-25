@@ -1,49 +1,30 @@
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 import '../model/news_article.dart';
 
 class NewsController {
-  List<NewsArticle> _allArticles = [
-    NewsArticle(
-      title: 'Breaking News: Flutter is amazing!',
-      description: 'Flutter continues to gain popularity...',
-      imageUrl: 'https://via.placeholder.com/150',
-      topic: 'Technology',
-    ),
-    NewsArticle(
-      title: 'Latest Updates in Technology',
-      description: 'New advancements in technology are changing...',
-      imageUrl: 'https://via.placeholder.com/150',
-      topic: 'Technology',
-    ),
-    // Add more articles as needed
-    NewsArticle(
-      title: 'Breaking News: Flutter is amazing!',
-      description: 'Flutter continues to gain popularity...',
-      imageUrl: 'https://via.placeholder.com/150',
-      topic: 'Science',
-    ),
-    NewsArticle(
-      title: 'Latest Updates in Technology',
-      description: 'New advancements in technology are changing...',
-      imageUrl: 'https://via.placeholder.com/150',
-      topic: 'Science',
-    ),
-    NewsArticle(
-      title: 'Latest Updates in Technology',
-      description: 'New advancements in technology are changing...',
-      imageUrl: 'https://via.placeholder.com/150',
-      topic: 'Business',
-    ),
-    NewsArticle(
-      title: 'Latest Updates in Technology',
-      description: 'New advancements in technology are changing...',
-      imageUrl: 'https://via.placeholder.com/150',
-      topic: 'Technology',
-    ),
-  ];
+  final String clientId = dotenv.env['YOUR_CLIENT_ID']!;
+  final String clientSecret = dotenv.env['YOUR_CLIENT_SECRET']!;
 
-  List<NewsArticle> getArticlesByTopic(String topic) {
-    return _allArticles.where((article) => article.topic == topic).toList();
+  Future<List<NewsArticle>> fetchNews(String topic) async {
+    final response = await http.get(
+      Uri.parse('https://openapi.naver.com/v1/search/news.json?query=$topic&display=10&sort=date'),
+      headers: {
+        'X-Naver-Client-Id': clientId,
+        'X-Naver-Client-Secret': clientSecret,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> articlesJson = data['items'];
+
+      return articlesJson.map((json) => NewsArticle.fromJson(json)).toList();
+    } else {
+      print('Failed to load news. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      throw Exception('Failed to load news');
+    }
   }
-
-  List<NewsArticle> get allArticles => _allArticles;
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../model/news_article.dart';
 
-
 class NewsListItem extends StatelessWidget {
   final NewsArticle article;
   final VoidCallback onTap;
@@ -30,15 +29,6 @@ class NewsListItem extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Image.network(
-                      article.imageUrl,
-                      height: 80,
-                      width: 80,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
                   SizedBox(width: 12),
                   Expanded(
                     child: Padding(
@@ -58,12 +48,22 @@ class NewsListItem extends StatelessWidget {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            article.description,
+                            article.summary,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[700],
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            article.press,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[500],
                             ),
                           ),
                         ],

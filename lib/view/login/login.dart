@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import '../main_page.dart';
 import 'register.dart';
+import 'package:motu/service/navigation_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -24,7 +26,10 @@ class LoginPageState extends State<LoginPage> {
       );
 
       if (userCredential.user != null) {
-        Navigator.push(
+        // 로그인 성공 시 uid로 NavigationService를 초기화
+        Provider.of<NavigationService>(context, listen: false).initialize(userCredential.user!.uid);
+
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainPage()),
         );

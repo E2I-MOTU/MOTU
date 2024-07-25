@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../model/news_article.dart';
 import '../../service/news_service.dart';
 import 'news_list_item.dart';
-
 
 class NewsListScreen extends StatefulWidget {
   @override
@@ -12,13 +12,34 @@ class NewsListScreen extends StatefulWidget {
 class _NewsListScreenState extends State<NewsListScreen> {
   final NewsController _controller = NewsController();
   String _selectedTopic = 'All';
+  Future<List<NewsArticle>>? _newsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _newsFuture = _controller.fetchNews('시사');
+  }
+
+  void _onTopicSelected(String topic) {
+    setState(() {
+      _selectedTopic = topic;
+      _newsFuture = _controller.fetchNews(topic == 'All' ? '시사' : topic);
+    });
+  }
+
+  Future<void> _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      print('Could not launch $url');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch the URL')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<NewsArticle> articles = _selectedTopic == 'All'
-        ? _controller.allArticles
-        : _controller.getArticlesByTopic(_selectedTopic);
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(100.0),
@@ -51,11 +72,7 @@ class _NewsListScreenState extends State<NewsListScreen> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _selectedTopic = topic;
-                        });
-                      },
+                      onPressed: () => _onTopicSelected(topic),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: isSelected
                             ? Color(0xff701FFF)
@@ -78,21 +95,31 @@ class _NewsListScreenState extends State<NewsListScreen> {
             ),
           ),
           Expanded(
-            child: Container(
-              color: Colors.white,
-              child: ListView.builder(
-                itemCount: articles.length,
-                itemBuilder: (context, index) {
-                  final article = articles[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: NewsListItem(
-                      article: article,
-                      onTap: () {},
-                    ),
+            child: FutureBuilder<List<NewsArticle>>(
+              future: _newsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text('No news available'));
+                } else {
+                  return ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      final article = snapshot.data![index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: NewsListItem(
+                          article: article,
+                          onTap: () => _launchURL(article.link),
+                        ),
+                      );
+                    },
                   );
-                },
-              ),
+                }
+              },
             ),
           ),
         ],

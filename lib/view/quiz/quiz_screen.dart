@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../service/quiz_service.dart';
+import 'incorrect_answers_screen.dart';
 
 class QuizScreen extends StatelessWidget {
   final String collectionName;
+  final String uid;
 
-  const QuizScreen({super.key, required this.collectionName});
+  const QuizScreen({super.key, required this.collectionName, required this.uid});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,23 @@ class QuizScreen extends StatelessWidget {
                 iconTheme: const IconThemeData(color: Colors.black),
               ),
               body: Center(
-                child: Text('퀴즈 완료! 점수: ${quizState.score}/${quizState.questions.length}'),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('퀴즈 완료! 점수: ${quizState.score}/${quizState.questions.length}'),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => IncorrectAnswersScreen(incorrectAnswers: quizState.incorrectAnswers),
+                          ),
+                        ).then((_) => Navigator.pop(context));
+                      },
+                      child: const Text('오답 확인'),
+                    ),
+                  ],
+                ),
               ),
             );
           }
@@ -124,7 +142,7 @@ class QuizScreen extends StatelessWidget {
                                           child: const Text('다음 질문'),
                                           onPressed: () {
                                             Navigator.of(context).pop();
-                                            quizState.nextQuestion();
+                                            quizState.nextQuestion(uid, collectionName);
                                           },
                                         ),
                                       ],

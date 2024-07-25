@@ -22,7 +22,7 @@ class WordsTermCard extends StatelessWidget {
                 return IconButton(
                   icon: Icon(Icons.bookmark),
                   onPressed: () {
-                    if (wordsProvider.words.isNotEmpty) {
+                    if (wordsProvider.words.isNotEmpty && wordsProvider.current < wordsProvider.words.length) {
                       BookmarkService().addBookmark(
                         wordsProvider.words[wordsProvider.current]['term'] ?? '',
                         wordsProvider.words[wordsProvider.current]['definition'] ?? '',
@@ -49,17 +49,21 @@ class WordsTermCard extends StatelessWidget {
                 Expanded(
                   child: PageView.builder(
                     controller: wordsProvider.pageController,
-                    itemCount: wordsProvider.words.length,
+                    itemCount: wordsProvider.words.length + 1,
                     onPageChanged: (index) {
                       wordsProvider.setCurrentPage(index);
                     },
                     itemBuilder: (context, index) {
-                      return buildTermCard(
-                        context,
-                        wordsProvider.words[index]['term'] ?? '',
-                        wordsProvider.words[index]['definition'] ?? '',
-                        wordsProvider.words[index]['example'] ?? '',
-                      );
+                      if (index == wordsProvider.words.length) {
+                        return _buildCompletionPage(context, title);
+                      } else {
+                        return buildTermCard(
+                          context,
+                          wordsProvider.words[index]['term'] ?? '',
+                          wordsProvider.words[index]['definition'] ?? '',
+                          wordsProvider.words[index]['example'] ?? '',
+                        );
+                      }
                     },
                   ),
                 ),
@@ -73,17 +77,18 @@ class WordsTermCard extends StatelessWidget {
                         onPressed: wordsProvider.previousPage,
                         color: wordsProvider.current > 0 ? Colors.blue : Colors.grey,
                       ),
-                      Text(
-                        "${wordsProvider.current + 1} / ${wordsProvider.words.length}",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                      if (wordsProvider.current < wordsProvider.words.length)
+                        Text(
+                          "${wordsProvider.current + 1} / ${wordsProvider.words.length}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
                       IconButton(
                         icon: Icon(Icons.arrow_forward),
                         onPressed: wordsProvider.nextPage,
-                        color: wordsProvider.current < wordsProvider.words.length - 1 ? Colors.blue : Colors.grey,
+                        color: wordsProvider.current < wordsProvider.words.length ? Colors.blue : Colors.grey,
                       ),
                     ],
                   ),
@@ -92,6 +97,31 @@ class WordsTermCard extends StatelessWidget {
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildCompletionPage(BuildContext context, String title) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            '학습 완료!',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 20),
+          Text(
+            '축하합니다! 모든 카드를 학습하셨습니다.',
+            style: TextStyle(fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {},
+            child: Text('퀴즈 풀기'),
+          ),
+        ],
       ),
     );
   }

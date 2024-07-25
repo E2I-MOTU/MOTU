@@ -5,6 +5,10 @@ import '../news/news_list_screen.dart';
 import 'chat_screen.dart';
 
 class LearningContentscreen extends StatelessWidget {
+  final String uid;
+
+  const LearningContentscreen({super.key, required this.uid});
+
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -65,7 +69,7 @@ class LearningContentscreen extends StatelessWidget {
               mainAxisSpacing: 10,
               children: [
                 _buildCard(context, '용어 공부하기', Colors.deepPurpleAccent, WordsMain()),
-                _buildCard(context, '퀴즈 풀며\n내 실력 확인해보기', Colors.pinkAccent, QuizSelectionScreen()),
+                _buildCard(context, '퀴즈 풀며\n내 실력 확인해보기', Colors.pinkAccent, QuizSelectionScreen(uid: uid)),
                 _buildCard(context, '꼭 필요한 경제칼럼 읽으며\n경제지식 쌓기', Colors.orange, null),
                 _buildCard(context, '오늘의 시사 정보 확인하기', Colors.cyan, NewsListScreen()),
               ],

@@ -30,48 +30,35 @@ class ProfileService {
     User? user = _auth.currentUser;
     if (user != null) {
       DocumentReference userDoc = _firestore.collection('users').doc(user.uid);
-
       DocumentSnapshot doc = await userDoc.get();
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      List<dynamic> attendance = data.containsKey('attendance')
-          ? data['attendance'] as List<dynamic>
-          : [];
+      List<dynamic> attendance = doc['attendance'] ?? [];
+      DateTime now = DateTime.now();
 
-      DateTime today = DateTime.now();
-      bool alreadyChecked = attendance.any((date) {
-        DateTime checkDate = (date as Timestamp).toDate();
-        return checkDate.year == today.year &&
-            checkDate.month == today.month &&
-            checkDate.day == today.day;
-      });
+      if (attendance.isEmpty || now.difference((attendance.last as Timestamp).toDate()).inDays > 1) {
+        attendance = [Timestamp.fromDate(now)];
+      } else {
+        attendance = attendance.where((date) {
+          DateTime dateTime = (date as Timestamp).toDate();
+          return now.difference(dateTime).inDays < 7;
+        }).toList();
 
-      if (!alreadyChecked) {
-        attendance.add(Timestamp.fromDate(today));
-        attendance.sort((a, b) => (b as Timestamp).compareTo(a as Timestamp));
-
-        if (attendance.length >= 7) {
-          bool isWeeklyComplete = true;
-          for (int i = 0; i < 7; i++) {
-            DateTime day = today.subtract(Duration(days: i));
-            if (!attendance.any((date) {
-              DateTime checkDate = (date as Timestamp).toDate();
-              return checkDate.year == day.year &&
-                  checkDate.month == day.month &&
-                  checkDate.day == day.day;
-            })) {
-              isWeeklyComplete = false;
-              break;
-            }
-          }
-
-          if (isWeeklyComplete) {
-            int currentBalance = data['balance'] ?? 0;
-            await userDoc.update({'balance': currentBalance + 100000});
-            attendance.clear(); // 일주일 출석 완료 후 초기화
-          }
-        }
-        await userDoc.update({'attendance': attendance});
+        attendance.add(Timestamp.fromDate(now));
       }
+
+      if (attendance.length >= 7) {
+        DateTime startDate = (attendance[attendance.length - 7] as Timestamp).toDate();
+        if (now.difference(startDate).inDays == 6) {
+          int balance = doc['balance'] ?? 0;
+          balance += 100000;
+          await userDoc.update({
+            'balance': balance,
+          });
+        }
+      }
+
+      await userDoc.update({
+        'attendance': attendance,
+      });
     }
   }
 
@@ -79,12 +66,8 @@ class ProfileService {
     User? user = _auth.currentUser;
     if (user != null) {
       DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      List<dynamic> attendance = data.containsKey('attendance')
-          ? data['attendance'] as List<dynamic>
-          : [];
-      List<DateTime> attendanceDates = attendance.map((date) => (date as Timestamp).toDate()).toList();
-      return attendanceDates;
+      List<dynamic> attendance = doc['attendance'] ?? [];
+      return attendance.map((date) => (date as Timestamp).toDate()).toList();
     }
     return [];
   }
