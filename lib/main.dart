@@ -8,7 +8,6 @@ import 'package:motu/view/login/login.dart';
 import 'package:motu/service/navigation_service.dart';
 import 'package:motu/service/chat_service.dart';
 
-
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
 
@@ -21,9 +20,8 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ScenarioService()),
-        ChangeNotifierProvider(create: (context) => NavigationService()),
         ChangeNotifierProvider(create: (context) => ChatService()),
-
+        ChangeNotifierProvider(create: (context) => NavigationService()),
       ],
       builder: (context, child) => const App(),
     ),
@@ -33,7 +31,6 @@ Future<void> main() async {
 class App extends StatelessWidget {
   const App({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

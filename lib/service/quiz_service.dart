@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import 'user_service.dart';
 
 class QuizService with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final UserService _userService = UserService();
   int _currentQuestionIndex = 0;
   int _score = 0;
   bool _answered = false;
@@ -11,6 +13,7 @@ class QuizService with ChangeNotifier {
   String _selectedAnswer = '';
   List<Map<String, dynamic>> _questions = [];
   bool _isLoading = true;
+  List<Map<String, dynamic>> _incorrectAnswers = [];
 
   int get currentQuestionIndex => _currentQuestionIndex;
   int get score => _score;
@@ -19,13 +22,11 @@ class QuizService with ChangeNotifier {
   String get selectedAnswer => _selectedAnswer;
   List<Map<String, dynamic>> get questions => _questions;
   bool get isLoading => _isLoading;
+  List<Map<String, dynamic>> get incorrectAnswers => _incorrectAnswers;
 
   Future<void> loadQuestions(String collectionName) async {
     try {
-      final snapshot = await _firestore
-          .collection('quiz')
-          .doc(collectionName)
-          .get();
+      final snapshot = await _firestore.collection('quiz').doc(collectionName).get();
 
       List<Map<String, dynamic>> questionsList = [];
 
@@ -44,7 +45,6 @@ class QuizService with ChangeNotifier {
           options.shuffle(Random());
         });
 
-        // Shuffle the questions
         questionsList.shuffle(Random());
       }
 
@@ -63,15 +63,30 @@ class QuizService with ChangeNotifier {
     _correct = _selectedAnswer == correctAnswer;
     if (_correct) {
       _score++;
+    } else {
+      _incorrectAnswers.add({
+        'question': _questions[_currentQuestionIndex]['question'],
+        'selectedAnswer': _selectedAnswer,
+        'correctAnswer': correctAnswer,
+        'options': _questions[_currentQuestionIndex]['options'],
+      });
     }
     notifyListeners();
   }
 
-  void nextQuestion() {
+  Future<void> nextQuestion(String uid, String collectionName) async {
     _currentQuestionIndex++;
     _answered = false;
     _correct = false;
     _selectedAnswer = '';
+
+    if (_currentQuestionIndex >= _questions.length) {
+      if (_score / _questions.length >= 0.9) {
+        await _userService.updateUserBalance(uid, 100000);
+      }
+      await _userService.saveQuizCompletion(uid, collectionName, _score, _incorrectAnswers);
+    }
+
     notifyListeners();
   }
 
