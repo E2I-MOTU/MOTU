@@ -128,11 +128,62 @@ class NewsCard extends StatelessWidget {
       },
       child: Card(
         margin: EdgeInsets.all(8.0),
-        child: ListTile(
-          contentPadding: EdgeInsets.all(8.0),
-          leading: Image.network(article.imageUrl, width: 100, fit: BoxFit.cover),
-          title: Text(article.title, style: TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text(article.content),
+        child: Row(
+          children: [
+            // 이미지
+            Container(
+              width: 90, // 컨테이너의 너비
+              height: 90, // 컨테이너의 높이
+              padding: EdgeInsets.all(8.0), // 이미지와 컨테이너 사이의 여백
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.network(
+                  article.imageUrl,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: 8.0),
+                      child: Wrap(
+                        spacing: 8.0,
+                        children: article.topics.map((topic) {
+                          return Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Color(0xff701FFF),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              topic,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    // 제목
+                    Text(
+                      article.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

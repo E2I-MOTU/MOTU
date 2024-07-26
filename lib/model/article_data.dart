@@ -13,9 +13,8 @@ class Article {
     required this.topics,
   });
 
-  // Firestore 데이터에서 Article 객체 생성
   factory Article.fromFirestore(DocumentSnapshot doc) {
-    Map data = doc.data() as Map<String, dynamic>;
+    final data = doc.data() as Map<String, dynamic>;
     return Article(
       title: data['title'] ?? '',
       content: data['content'] ?? '',
@@ -24,13 +23,7 @@ class Article {
     );
   }
 
-  // Firestore에 저장할 데이터 형식
-  Map<String, dynamic> toMap() {
-    return {
-      'title': title,
-      'content': content,
-      'imageUrl': imageUrl,
-      'topics': topics,
-    };
+  String get topicsAsString {
+    return topics.join(', ');
   }
 }
