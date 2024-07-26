@@ -9,20 +9,19 @@ class ArticleDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true, // AppBar의 배경색을 투명하게 하기 위해 필요
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        elevation: 0, // 그림자 제거
+        elevation: 0, //그림자 X
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            // 뒤로가기 버튼 눌렀을 때의 동작
             Navigator.of(context).pop();
           },
         ),
         title: Text('Article Example', style: TextStyle(color: Colors.white)),
       ),
-      backgroundColor: Colors.white, // 전체 배경색을 흰색으로 설정
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -46,17 +45,23 @@ class ArticleDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: 10,),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Color(0xff701FFF),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Text(
-                      article.category,
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8.0, // 각 컨테이너 사이의 간격
+                    runSpacing: 4.0, // 행 사이의 간격
+                    children: article.topics.map((topic) {
+                      return Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Color(0xff701FFF),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          topic,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      );
+                    }).toList(),
                   ),
                   SizedBox(height: 20),
                   Text(

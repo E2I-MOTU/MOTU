@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/quiz/quiz.dart';
 import 'package:motu/view/word/word_main.dart';
-import '../article/article_detail.dart';
 import '../article/article_list_screen.dart';
 import '../news/news_list_screen.dart';
 import 'chat_screen.dart';
-import '../../service/article_service.dart'; // import the article
 
 class LearningContentscreen extends StatelessWidget {
   final String uid;
@@ -74,7 +72,6 @@ class LearningContentscreen extends StatelessWidget {
                 _buildCard(context, '용어 공부하기', Colors.deepPurpleAccent, WordsMain()),
                 _buildCard(context, '퀴즈 풀며\n내 실력 확인해보기', Colors.pinkAccent, QuizSelectionScreen(uid: uid)),
                 _buildCard(context, '꼭 필요한 경제칼럼 읽으며\n경제지식 쌓기', Colors.orange, ArticleListScreen()),
-                //ArticleDetailScreen(article: article)
                 _buildCard(context, '오늘의 시사 정보 확인하기', Colors.cyan, NewsListScreen()),
               ],
             ),

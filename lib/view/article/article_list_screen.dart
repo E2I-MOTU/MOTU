@@ -1,28 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../model/article_data.dart';
+import 'article_detail.dart';
 
 class ArticleListScreen extends StatelessWidget {
-  final List<NewsArticle> articles = [
-    NewsArticle(
-      title: '뉴스 제목 1',
-      description: '뉴스 설명 1',
-      imageUrl: 'https://via.placeholder.com/150',
-    ),
-    NewsArticle(
-      title: '뉴스 제목 2',
-      description: '뉴스 설명 2',
-      imageUrl: 'https://via.placeholder.com/150',
-    ),
-    NewsArticle(
-      title: '뉴스 제목 3',
-      description: '뉴스 설명 3',
-      imageUrl: 'https://via.placeholder.com/150',
-    ),
-    NewsArticle(
-      title: '뉴스 제목 4',
-      description: '뉴스 설명 4',
-      imageUrl: 'https://via.placeholder.com/150',
-    ),
-  ];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<List<Article>> fetchArticles() async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore.collection('financial_column').get();
+      return querySnapshot.docs.map((doc) => Article.fromFirestore(doc)).toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,86 +22,118 @@ class ArticleListScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('뉴스 목록'),
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "회원님을 위한 추천 컨텐츠",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+      body: FutureBuilder<List<Article>>(
+        future: fetchArticles(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No articles found.'));
+          } else {
+            final articles = snapshot.data!;
+            return CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "회원님을 위한 추천 컨텐츠",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              height: 200,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List.generate(4, (index) {
-                  return AspectRatio(
-                    aspectRatio: 2.6 / 3,
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
                     child: Container(
-                      margin: const EdgeInsets.only(right: 15.0),
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(20),
+                      height: 200,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: List.generate(4, (index) {
+                          return AspectRatio(
+                            aspectRatio: 2.6 / 3,
+                            child: Container(
+                              margin: const EdgeInsets.only(right: 15.0),
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                          );
+                        }),
                       ),
                     ),
-                  );
-                }),
-              ),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                final article = articles[index];
-                return NewsCard(article: article);
-              },
-              childCount: articles.length,
-            ),
-          ),
-        ],
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "경제/금융 상식",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                      final article = articles[index];
+                      return NewsCard(article: article);
+                    },
+                    childCount: articles.length,
+                  ),
+                ),
+              ],
+            );
+          }
+        },
       ),
     );
   }
 }
 
-class NewsArticle {
-  final String title;
-  final String description;
-  final String imageUrl;
-
-  NewsArticle({
-    required this.title,
-    required this.description,
-    required this.imageUrl,
-  });
-}
-
 class NewsCard extends StatelessWidget {
-  final NewsArticle article;
+  final Article article;
 
   NewsCard({required this.article});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(8.0),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(8.0),
-        leading: Image.network(article.imageUrl, width: 100, fit: BoxFit.cover),
-        title: Text(article.title, style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(article.description),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ArticleDetailScreen(article: article),
+          ),
+        );
+      },
+      child: Card(
+        margin: EdgeInsets.all(8.0),
+        child: ListTile(
+          contentPadding: EdgeInsets.all(8.0),
+          leading: Image.network(article.imageUrl, width: 100, fit: BoxFit.cover),
+          title: Text(article.title, style: TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: Text(article.content),
+        ),
       ),
     );
   }
