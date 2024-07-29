@@ -132,9 +132,9 @@ class NewsCard extends StatelessWidget {
           children: [
             // 이미지
             Container(
-              width: 90, // 컨테이너의 너비
-              height: 90, // 컨테이너의 높이
-              padding: EdgeInsets.all(8.0), // 이미지와 컨테이너 사이의 여백
+              width: 90,
+              height: 90,
+              padding: EdgeInsets.all(8.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.network(
