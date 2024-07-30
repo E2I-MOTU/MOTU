@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motu/view/word/word_term_quiz.dart';
 import 'package:provider/provider.dart';
 import '../../service/bookmark_service.dart';
 import '../../service/words_card_service.dart';
@@ -118,7 +119,16 @@ class WordsTermCard extends StatelessWidget {
           ),
           SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TermQuizScreen(
+                    collectionName: 'terminology', // 실제 컬렉션 이름을 지정합니다.
+                  ),
+                ),
+              );
+            },
             child: Text('퀴즈 풀기'),
           ),
         ],
