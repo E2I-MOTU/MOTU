@@ -129,8 +129,14 @@ class ScenarioService extends ChangeNotifier {
   }
 
   void _startDataSimulation() {
+    _displayedStockDataList.add(_stockDataList[_currentIndex]);
+    _currentIndex++;
+    _calculateAxisValues();
+    updateVisibleRange();
+    notifyListeners();
+
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (_currentIndex < _stockDataList.length) {
         _displayedStockDataList.add(_stockDataList[_currentIndex]);
         _currentIndex++;

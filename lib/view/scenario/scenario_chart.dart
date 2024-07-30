@@ -33,7 +33,9 @@ class ScenarioChart extends StatelessWidget {
               highValueMapper: (StockData data, _) => data.high,
               openValueMapper: (StockData data, _) => data.open,
               closeValueMapper: (StockData data, _) => data.close,
+              enableSolidCandles: true,
 
+              animationDuration: 500,
               // onRendererCreated: (controller) {},
             ),
           ],
