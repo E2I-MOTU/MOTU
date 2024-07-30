@@ -10,6 +10,7 @@ class ScenarioList extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Scenario List'),
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: ElevatedButton(

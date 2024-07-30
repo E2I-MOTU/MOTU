@@ -1,15 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import '../main_page.dart';
+import 'register.dart';
+import 'package:motu/service/navigation_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _login() async {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      if (userCredential.user != null) {
+        // 로그인 성공 시 uid로 NavigationService를 초기화
+        Provider.of<NavigationService>(context, listen: false).initialize(userCredential.user!.uid);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainPage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('사용자 정보를 찾을 수 없습니다.')),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? '로그인 실패')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +69,18 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 50),
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: _emailController,
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: '이메일을 입력하세요',
                 ),
               ),
               const SizedBox(height: 10),
-              const TextField(
+              TextField(
+                controller: _passwordController,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: '비밀번호를 입력하세요',
                 ),
@@ -80,12 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                 width: double.infinity,
                 height: 50,
                 child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MainPage()),
-                    );
-                  },
+                  onPressed: _login,
                   style: OutlinedButton.styleFrom(),
                   child: const Text('로그인'),
                 ),
@@ -95,7 +126,12 @@ class _LoginPageState extends State<LoginPage> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterPage()),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(),
                   child: const Text('회원가입'),
                 ),
@@ -123,7 +159,9 @@ class _LoginPageState extends State<LoginPage> {
                 width: double.infinity,
                 height: 50,
                 child: OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    // Google 로그인 로직 추가
+                  },
                   label: const Text('Google 아이디로 로그인'),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.black),

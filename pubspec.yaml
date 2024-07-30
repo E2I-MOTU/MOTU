@@ -41,6 +41,13 @@ dependencies:
   provider: ^6.1.2
   http: ^1.2.1
   csv: ^5.1.1
+  firebase_auth: ^4.20.0
+  email_validator: ^3.0.0
+  carousel_slider: ^4.0.0
+  flip_card: ^0.6.0
+  google_sign_in: ^6.2.1
+  url_launcher: ^6.3.0
+  flutter_native_splash: ^2.4.0
 
 dev_dependencies:
   flutter_test:

@@ -1,42 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'quiz_screen.dart';
-import 'test_skill_screen.dart';
+import '../../service/user_service.dart';
+import '../../widget/circle_indicator.dart';
 
 class QuizSelectionScreen extends StatelessWidget {
-  final List<Map<String, String>> quizCollections = [
-    {
-      'id': 'stock_market_terms_quiz',
-      'title': '투자하려는 회사,\n믿을만한 지 어떻게\n판단할까요?',
-      'subtitle': '재무제표 용어'
-    },
-    {
-      'id': 'financial_market_terms_quiz',
-      'title': '주식, 채권, 펀드\n어떻게 다른걸까요?',
-      'subtitle': '금융 시장 용어'
-    },
-    {
-      'id': 'quiz_question',
-      'title': '경제는 무엇이고,\n경제는 어떻게\n돌아가는 걸까요?',
-      'subtitle': '경제 기본 용어'
-    },
-    {
-      'id': 'economics_terms_quiz',
-      'title': '경제는 무엇이고,\n경제는 어떻게\n돌아가는 걸까요?',
-      'subtitle': '주식 용어'
-    },
-  ];
+  final String uid;
+  final UserService _userService = UserService();
 
-  QuizSelectionScreen({super.key});
+  QuizSelectionScreen({super.key, required this.uid});
 
   Future<Map<String, dynamic>> getProgress(String collectionName) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final totalQuestions =
-        (await firestore.collection(collectionName).get()).docs.length;
-    final completedQuestions =
-        (await firestore.collection('user_progress').doc(collectionName).get())
-                .data()?['completed'] ??
-            0;
+    final totalQuestions = (await firestore.collection('quiz').doc(collectionName).get()).data()?.length ?? 0;
+    final completedQuestions = (await firestore.collection('user_progress').doc(collectionName).get()).data()?['completed'] ?? 0;
     return {
       'total': totalQuestions,
       'completed': completedQuestions,
@@ -56,129 +33,107 @@ class QuizSelectionScreen extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10.0,
-              crossAxisSpacing: 10.0,
-              childAspectRatio: 2 / 3,
-            ),
-            itemCount: quizCollections.length,
-            itemBuilder: (context, index) {
-              final quiz = quizCollections[index];
-              return FutureBuilder(
-                future: getProgress(quiz['id']!),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('quiz').snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text("퀴즈 데이터를 불러올 수 없습니다."));
+              }
+
+              var quizCollections = snapshot.data!.docs;
+              List<Future<Map<String, dynamic>?>> progressFutures = quizCollections.map((quiz) {
+                var quizId = quiz.id;
+                return _userService.getQuizProgress(uid, quizId);
+              }).toList();
+
+              return FutureBuilder<List<Map<String, dynamic>?>>(
+                future: Future.wait(progressFutures),
+                builder: (context, progressSnapshots) {
+                  if (progressSnapshots.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  final progress =
-                      snapshot.data ?? {'total': 0, 'completed': 0};
+                  List<Widget> completedQuizzes = [];
+                  List<Widget> incompleteQuizzes = [];
 
-                  return Card(
-                    color: Colors.primaries[index % Colors.primaries.length]
-                        [100],
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
+                  for (var i = 0; i < quizCollections.length; i++) {
+                    var quiz = quizCollections[i];
+                    var progress = progressSnapshots.data?[i];
+                    var data = quiz.data() as Map<String, dynamic>;
+                    var quizId = quiz.id;
+                    var score = progress != null ? (progress['score'] ?? 0) : 0;
+                    var totalQuestions = progress != null ? (progress['totalQuestions'] ?? 10) : 10;
+                    var isCompleted = progress != null ? score >= totalQuestions * 0.9 : false;
+
+                    var quizCard = InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => QuizScreen(collectionName: quizId, uid: uid),
+                          ),
+                        );
+                      },
+                      child: Stack(
+                        children: [
+                          Card(
+                            color: isCompleted ? Colors.orange[100] : Colors.primaries[i % Colors.primaries.length][100],
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(
-                                  quiz['title']!,
-                                  style: const TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.left,
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  quiz['subtitle']!,
-                                  style: const TextStyle(
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.normal),
-                                  textAlign: TextAlign.center,
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          quizId,
+                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          data['catchphrase'] ?? '설명 없음',
+                                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 4.0),
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        QuizScreen(collectionName: quiz['id']!),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: const Text(
-                                '경제 기본 배워보기',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 8,
-                                ),
+                          if (progress != null)
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: CircularScoreIndicator(
+                                score: score,
+                                totalQuestions: totalQuestions,
+                                isCompleted: isCompleted,
                               ),
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 4.0),
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => TestSkillScreen(
-                                        collectionName: quiz['id']!),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: const Text(
-                                '테스트로 실력 확인하기',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 8,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: Text(
-                              '${progress['completed']} / ${progress['total']}',
-                              style: const TextStyle(
-                                  fontSize: 8, fontWeight: FontWeight.normal),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    );
+
+                    if (isCompleted) {
+                      completedQuizzes.add(quizCard);
+                    } else {
+                      incompleteQuizzes.add(quizCard);
+                    }
+                  }
+
+                  return GridView.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10.0,
+                    crossAxisSpacing: 10.0,
+                    childAspectRatio: 2 / 3,
+                    children: incompleteQuizzes + completedQuizzes,
                   );
                 },
               );
