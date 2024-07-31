@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:motu/service/navigation_service.dart';
 import 'package:provider/provider.dart';
+import '../view/theme/color_theme.dart';
 
 Widget BottomNavBar() {
   return Consumer<NavigationService>(builder: (context, service, child) {
     return BottomNavigationBar(
-      backgroundColor: Colors.white,
-      selectedItemColor: Colors.pink,
-      unselectedItemColor: Colors.grey,
+      backgroundColor: ColorTheme.colorWhite,
+      selectedItemColor: ColorTheme.colorPrimary,
+      unselectedItemColor: ColorTheme.colorDisabled,
       currentIndex: service.selectedIndex,
       selectedFontSize: 12,
       unselectedFontSize: 12,
