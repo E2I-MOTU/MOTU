@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../widget/words_category_card_builder.dart';
+import '../../widget/terminology_category_card_builder.dart';
 import 'terminology_card.dart';
 
-class WordsSearchDelegate extends SearchDelegate {
+class TermSearchDelegate extends SearchDelegate {
+  final String uid;
+
+  TermSearchDelegate({required this.uid});
+
+  Future<bool> checkCompletionStatus(String uid, String docId) async {
+    final firestore = FirebaseFirestore.instance;
+    final userQuizRef = firestore.collection('users').doc(uid).collection('terminology_quiz').doc(docId);
+    final snapshot = await userQuizRef.get();
+    if (snapshot.exists) {
+      return snapshot.data()?['completed'] ?? false;
+    }
+    return false;
+  }
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -49,12 +63,21 @@ class WordsSearchDelegate extends SearchDelegate {
           mainAxisSpacing: 10,
           children: filteredDocs.map((doc) {
             var data = doc.data() as Map<String, dynamic>;
-            return buildCategoryCard(
-              context,
-              data['title'],
-              data['catchphrase'],
-              Colors.grey,
-              WordsTermCard(title: data['title'], documentName: doc.id),
+            return FutureBuilder<bool>(
+              future: checkCompletionStatus(uid, doc.id),
+              builder: (context, completionSnapshot) {
+                if (completionSnapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                return buildCategoryCard(
+                  context,
+                  data['title'],
+                  data['catchphrase'],
+                  Colors.grey,
+                  TermCard(title: data['title'], documentName: doc.id, uid: uid),
+                  completionSnapshot.data ?? false,
+                );
+              },
             );
           }).toList(),
         );
@@ -85,12 +108,21 @@ class WordsSearchDelegate extends SearchDelegate {
           mainAxisSpacing: 10,
           children: filteredDocs.map((doc) {
             var data = doc.data() as Map<String, dynamic>;
-            return buildCategoryCard(
-              context,
-              data['title'],
-              data['catchphrase'],
-              Colors.grey,
-              WordsTermCard(title: data['title'], documentName: doc.id),
+            return FutureBuilder<bool>(
+              future: checkCompletionStatus(uid, doc.id),
+              builder: (context, completionSnapshot) {
+                if (completionSnapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                return buildCategoryCard(
+                  context,
+                  data['title'],
+                  data['catchphrase'],
+                  Colors.grey,
+                  TermCard(title: data['title'], documentName: doc.id, uid: uid),
+                  completionSnapshot.data ?? false,
+                );
+              },
             );
           }).toList(),
         );

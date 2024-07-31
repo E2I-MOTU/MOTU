@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../service/bookmark_service.dart';
 import '../../../service/terminology_card_service.dart';
-import '../../../widget/words_term_card_builder.dart';
+import '../../../widget/terminology_card_builder.dart';
 import 'terminology_quiz.dart';
 
-class WordsTermCard extends StatelessWidget {
+class TermCard extends StatelessWidget {
   final String title;
   final String documentName;
+  final String uid;
 
-  const WordsTermCard({super.key, required this.title, required this.documentName});
+  const TermCard({super.key, required this.title, required this.documentName, required this.uid});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +59,7 @@ class WordsTermCard extends StatelessWidget {
                     },
                     itemBuilder: (context, index) {
                       if (index == wordsProvider.words.length) {
-                        return _buildCompletionPage(context, title, documentName);
+                        return _buildCompletionPage(context, title, documentName, uid);
                       } else {
                         return buildTermCard(
                           context,
@@ -104,7 +105,7 @@ class WordsTermCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCompletionPage(BuildContext context, String title, String documentName) {
+  Widget _buildCompletionPage(BuildContext context, String title, String documentName, String uid) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -128,6 +129,7 @@ class WordsTermCard extends StatelessWidget {
                   builder: (context) => TermQuizScreen(
                     collectionName: 'terminology',
                     documentName: documentName,
+                    uid: uid,
                   ),
                 ),
               );

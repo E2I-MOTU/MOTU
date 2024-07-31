@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../widget/words_category_card_builder.dart';
+import '../../widget/terminology_category_card_builder.dart';
 import 'terminology_card.dart';
 import 'bookmark.dart';
 import 'terminology_search.dart';
 
-class WordsMain extends StatelessWidget {
+class TermMain extends StatelessWidget {
+  final String uid;
+
+  const TermMain({Key? key, required this.uid}) : super(key: key);
+
+  Future<bool> checkCompletionStatus(String uid, String docId) async {
+    final firestore = FirebaseFirestore.instance;
+    final userQuizRef = firestore.collection('users').doc(uid).collection('terminology_quiz').doc(docId);
+    final snapshot = await userQuizRef.get();
+    if (snapshot.exists) {
+      return snapshot.data()?['completed'] ?? false;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +32,7 @@ class WordsMain extends StatelessWidget {
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: WordsSearchDelegate(),
+                delegate: TermSearchDelegate(uid: uid),
               );
             },
           ),
@@ -50,7 +64,22 @@ class WordsMain extends StatelessWidget {
                   mainAxisSpacing: 10,
                   children: documents.map((doc) {
                     var data = doc.data() as Map<String, dynamic>;
-                    return buildCategoryCard(context, data['title'], data['catchphrase'], Colors.grey, WordsTermCard(title: data['title'], documentName: doc.id));
+                    return FutureBuilder<bool>(
+                      future: checkCompletionStatus(uid, doc.id),
+                      builder: (context, completionSnapshot) {
+                        if (completionSnapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        }
+                        return buildCategoryCard(
+                          context,
+                          data['title'],
+                          data['catchphrase'],
+                          Colors.grey,
+                          TermCard(title: data['title'], documentName: doc.id, uid: uid),
+                          completionSnapshot.data ?? false,
+                        );
+                      },
+                    );
                   }).toList(),
                 );
               },

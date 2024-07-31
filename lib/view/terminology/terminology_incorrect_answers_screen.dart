@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class TerminologyIncorrectAnswersScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> terminologyIncorrectAnswers;
+class TermIncorrectAnswersScreen extends StatelessWidget {
+  final List<Map<String, dynamic>> termIncorrectAnswers;
 
-  const TerminologyIncorrectAnswersScreen({super.key, required this.terminologyIncorrectAnswers});
+  const TermIncorrectAnswersScreen({super.key, required this.termIncorrectAnswers});
 
   @override
   Widget build(BuildContext context) {
@@ -15,14 +15,14 @@ class TerminologyIncorrectAnswersScreen extends StatelessWidget {
         titleTextStyle: const TextStyle(color: Colors.black, fontSize: 18),
       ),
       body: PageView.builder(
-        itemCount: terminologyIncorrectAnswers.length,
+        itemCount: termIncorrectAnswers.length,
         itemBuilder: (context, index) {
-          final question = terminologyIncorrectAnswers[index]['question'] ?? '질문이 없습니다.';
-          final selectedAnswer = terminologyIncorrectAnswers[index]['selectedAnswer'] ?? '답변이 없습니다.';
-          final correctAnswer = terminologyIncorrectAnswers[index]['correctAnswer'] ?? '정답이 없습니다.';
-          final options = terminologyIncorrectAnswers[index]['options'] as List<dynamic>?;
-          final type = terminologyIncorrectAnswers[index]['type'] ?? '타입이 없습니다.';
-          final situation = terminologyIncorrectAnswers[index]['situation'] ?? '상황 설명이 없습니다.';
+          final question = termIncorrectAnswers[index]['question'] ?? '질문이 없습니다.';
+          final selectedAnswer = termIncorrectAnswers[index]['selectedAnswer'] ?? '답변이 없습니다.';
+          final correctAnswer = termIncorrectAnswers[index]['correctAnswer'] ?? '정답이 없습니다.';
+          final options = termIncorrectAnswers[index]['options'] as List<dynamic>?;
+          final type = termIncorrectAnswers[index]['type'] ?? '타입이 없습니다.';
+          final situation = termIncorrectAnswers[index]['situation'] ?? '상황 설명이 없습니다.';
 
           return Center(
             child: Padding(
