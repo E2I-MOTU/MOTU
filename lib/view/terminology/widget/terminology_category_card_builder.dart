@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/color_theme.dart';
+
 Widget buildCategoryCard(BuildContext context, String title, String catchphrase, Color color, Widget? nextScreen, bool isCompleted) {
   return Stack(
     children: [
@@ -44,6 +46,8 @@ Widget buildCategoryCard(BuildContext context, String title, String catchphrase,
               },
               child: const Text('배워보자'),
               style: ElevatedButton.styleFrom(
+                backgroundColor: ColorTheme.colorSecondary,
+                foregroundColor: ColorTheme.colorWhite,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
