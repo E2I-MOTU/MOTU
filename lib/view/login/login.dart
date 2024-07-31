@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import '../main_page.dart';
+import '../theme/color_theme.dart';
 import 'register.dart';
 import 'package:motu/service/navigation_service.dart';
 
@@ -48,6 +49,7 @@ class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorTheme.colorWhite,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -55,34 +57,38 @@ class LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const SizedBox(height: 50),
-              const Text(
+              Text(
                 '모두를 위한 투자 공부',
                 style: TextStyle(
                   fontSize: 18,
+                  color: ColorTheme.colorFont, // 색상 적용
                 ),
               ),
-              const Text(
+              Text(
                 'MOTU',
                 style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
+                  color: ColorTheme.colorPrimary, // 색상 적용
                 ),
               ),
               const SizedBox(height: 50),
               TextField(
                 controller: _emailController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
                   labelText: '이메일을 입력하세요',
+                  labelStyle: TextStyle(color: ColorTheme.colorDisabledFont), // 색상 적용
                 ),
               ),
               const SizedBox(height: 10),
               TextField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
                   labelText: '비밀번호를 입력하세요',
+                  labelStyle: TextStyle(color: ColorTheme.colorDisabledFont), // 색상 적용
                 ),
               ),
               const SizedBox(height: 10),
@@ -98,6 +104,7 @@ class LoginPageState extends State<LoginPage> {
                             _rememberMe = value!;
                           });
                         },
+                        activeColor: ColorTheme.colorPrimary,
                       ),
                       const Text('로그인 유지'),
                     ],
@@ -106,7 +113,7 @@ class LoginPageState extends State<LoginPage> {
                     onPressed: () {},
                     child: const Text(
                       '아이디/비밀번호 찾기',
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(color: ColorTheme.colorFont),
                     ),
                   ),
                 ],
@@ -117,8 +124,10 @@ class LoginPageState extends State<LoginPage> {
                 height: 50,
                 child: OutlinedButton(
                   onPressed: _login,
-                  style: OutlinedButton.styleFrom(),
-                  child: const Text('로그인'),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: ColorTheme.colorPrimary), // 색상 적용
+                  ),
+                  child: Text('로그인', style: TextStyle(color: ColorTheme.colorPrimary)), // 색상 적용
                 ),
               ),
               const SizedBox(height: 10),
@@ -132,8 +141,10 @@ class LoginPageState extends State<LoginPage> {
                       MaterialPageRoute(builder: (context) => RegisterPage()),
                     );
                   },
-                  style: ElevatedButton.styleFrom(),
-                  child: const Text('회원가입'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorTheme.colorPrimary, // 색상 적용
+                  ),
+                  child: const Text('회원가입', style: TextStyle(color: ColorTheme.colorWhite),),
                 ),
               ),
               const SizedBox(height: 20),
@@ -146,7 +157,7 @@ class LoginPageState extends State<LoginPage> {
                     padding: EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
                       '간편로그인',
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(color: ColorTheme.colorDisabledFont),
                     ),
                   ),
                   Expanded(
@@ -162,9 +173,10 @@ class LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     // Google 로그인 로직 추가
                   },
-                  label: const Text('Google 아이디로 로그인'),
+                  icon: Icon(Icons.login, color: ColorTheme.colorPrimary), // 색상 적용
+                  label: Text('Google 아이디로 로그인', style: TextStyle(color: ColorTheme.colorPrimary)), // 색상 적용
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.black),
+                    side: BorderSide(color: ColorTheme.colorPrimary), // 색상 적용
                   ),
                 ),
               ),
