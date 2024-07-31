@@ -14,27 +14,13 @@ class LearningContentscreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double appBarHeight = AppBar().preferredSize.height;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorTheme.colorFont),
-          onPressed: () {
-
-          },
-        ),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.search, color: ColorTheme.colorFont),
-            onPressed: () {
-
-            },
-          ),
-        ],
       ),
       backgroundColor: ColorTheme.colorNeutral,
       body: Column(
@@ -51,7 +37,7 @@ class LearningContentscreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: screenHeight * 0.07),
+                SizedBox(height: appBarHeight + 20), // Adjust the height to account for the app bar
                 const Text(
                   '오늘의 공부\n함께 시작해볼까요?',
                   style: TextStyle(
