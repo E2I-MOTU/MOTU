@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class WordsProvider with ChangeNotifier {
+class TerminologyCardProvider with ChangeNotifier {
   List<Map<String, String>> words = [];
   PageController pageController = PageController(initialPage: 0);
   int current = 0;

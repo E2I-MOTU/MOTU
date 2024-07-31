@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../widget/words_category_card_builder.dart';
-import 'words_term_card.dart';
+import 'terminology_card.dart';
 import 'bookmark.dart';
-import 'words_search_delegate.dart';
+import 'terminology_search.dart';
 
 class WordsMain extends StatelessWidget {
   @override
@@ -50,7 +50,7 @@ class WordsMain extends StatelessWidget {
                   mainAxisSpacing: 10,
                   children: documents.map((doc) {
                     var data = doc.data() as Map<String, dynamic>;
-                    return buildCategoryCard(context, data['title'], data['catchphrase'], Colors.grey, WordsTermCard(title: data['title']));
+                    return buildCategoryCard(context, data['title'], data['catchphrase'], Colors.grey, WordsTermCard(title: data['title'], documentName: doc.id));
                   }).toList(),
                 );
               },
