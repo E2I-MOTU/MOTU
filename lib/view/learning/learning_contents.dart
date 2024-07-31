@@ -3,6 +3,7 @@ import 'package:motu/view/quiz/quiz.dart';
 import 'package:motu/view/word/word_main.dart';
 import '../article/article_list_screen.dart';
 import '../news/news_list_screen.dart';
+import '../theme/color_theme.dart';
 import 'chat_screen.dart';
 
 class LearningContentscreen extends StatelessWidget {
@@ -15,21 +16,41 @@ class LearningContentscreen extends StatelessWidget {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0, //그림자 X
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: ColorTheme.colorFont),
+          onPressed: () {
+
+          },
+        ),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.search, color: ColorTheme.colorFont),
+            onPressed: () {
+
+            },
+          ),
+        ],
+      ),
+      backgroundColor: ColorTheme.colorNeutral,
       body: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
+                bottomLeft: Radius.circular(40),
+                bottomRight: Radius.circular(40),
               ),
-              color: Colors.green[200],
+              color: ColorTheme.colorSecondary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: screenHeight * 0.1),
+                SizedBox(height: screenHeight * 0.07),
                 const Text(
                   '오늘의 공부\n함께 시작해볼까요?',
                   style: TextStyle(
@@ -42,8 +63,8 @@ class LearningContentscreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.green[200],
-                    borderRadius: BorderRadius.circular(10),
+                    color: ColorTheme.colorSecondary,
+                    borderRadius: BorderRadius.circular(50),
                   ),
                   child: Row(
                     children: [
@@ -52,6 +73,7 @@ class LearningContentscreen extends StatelessWidget {
                       const Text(
                         '일단 시작만 해도\n누구나 1% 포인트!',
                         style: TextStyle(
+                          color: ColorTheme.colorWhite,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -65,14 +87,15 @@ class LearningContentscreen extends StatelessWidget {
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
-              padding: const EdgeInsets.all(10),
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+              padding: const EdgeInsets.all(15),
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 20,
+              childAspectRatio: 5 / 6,
               children: [
-                _buildCard(context, '용어 공부하기', Colors.deepPurpleAccent, WordsMain()),
-                _buildCard(context, '퀴즈 풀며\n내 실력 확인해보기', Colors.pinkAccent, QuizSelectionScreen(uid: uid)),
-                _buildCard(context, '꼭 필요한 경제칼럼 읽으며\n경제지식 쌓기', Colors.orange, ArticleListScreen()),
-                _buildCard(context, '오늘의 시사 정보 확인하기', Colors.cyan, NewsListScreen()),
+                _buildCard(context, '용어\n공부하기', ColorTheme.colorWhite, WordsMain()),
+                _buildCard(context, '퀴즈 풀며\n내 실력\n확인해보기', ColorTheme.colorWhite, QuizSelectionScreen(uid: uid)),
+                _buildCard(context, '꼭 필요한 경제칼럼\n읽으며\n경제지식 쌓기', ColorTheme.colorWhite, ArticleListScreen()),
+                _buildCard(context, '오늘의\n시사 정보\n확인하기', ColorTheme.colorWhite, NewsListScreen()),
               ],
             ),
           ),
@@ -86,6 +109,8 @@ class LearningContentscreen extends StatelessWidget {
           );
         },
         child: Icon(Icons.chat),
+        backgroundColor: ColorTheme.colorPrimary, // 배경색 설정
+        foregroundColor: Colors.white, // 아이콘 색상 설정
       ),
     );
   }
@@ -96,6 +121,14 @@ class LearningContentscreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2), // 그림자 색상
+            spreadRadius: 2, // 그림자 확산 범위
+            blurRadius: 2, // 그림자 흐림 반경
+            offset: Offset(0, 4), // 그림자의 위치 (x, y)
+          ),
+        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -106,7 +139,7 @@ class LearningContentscreen extends StatelessWidget {
                 text,
                 style: const TextStyle(
                   fontSize: 15,
-                  color: Colors.white,
+                  color: ColorTheme.colorFont,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.left,
@@ -127,8 +160,11 @@ class LearningContentscreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
+              backgroundColor: ColorTheme.colorSecondary,
+              foregroundColor: ColorTheme.colorWhite,
+              minimumSize: Size(140, 40), // 원하는 가로 길이와 세로 길이 설정
             ),
-          ),
+          )
         ],
       ),
     );

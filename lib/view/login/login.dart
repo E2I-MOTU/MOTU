@@ -78,7 +78,10 @@ class LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   labelText: '이메일을 입력하세요',
-                  labelStyle: TextStyle(color: ColorTheme.colorDisabledFont), // 색상 적용
+                  labelStyle: TextStyle(color: ColorTheme.colorDisabled), // 색상 적용
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: ColorTheme.colorPrimary), // 포커스 시 색상 적용
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -88,7 +91,10 @@ class LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   labelText: '비밀번호를 입력하세요',
-                  labelStyle: TextStyle(color: ColorTheme.colorDisabledFont), // 색상 적용
+                  labelStyle: TextStyle(color: ColorTheme.colorDisabled), // 색상 적용
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: ColorTheme.colorPrimary), // 포커스 시 색상 적용
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -115,6 +121,10 @@ class LoginPageState extends State<LoginPage> {
                       '아이디/비밀번호 찾기',
                       style: TextStyle(color: ColorTheme.colorFont),
                     ),
+                    style: TextButton.styleFrom(
+                      overlayColor: ColorTheme.colorPrimary, // 클릭 시 색상 적용
+                      //색 안나오게 하려면 Colors.transparent
+                    ),
                   ),
                 ],
               ),
@@ -125,7 +135,9 @@ class LoginPageState extends State<LoginPage> {
                 child: OutlinedButton(
                   onPressed: _login,
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: ColorTheme.colorPrimary), // 색상 적용
+                    side: BorderSide(color: ColorTheme.colorPrimary),
+                    backgroundColor: ColorTheme.colorWhite,
+                    overlayColor: ColorTheme.colorPrimary // 클릭 시 배경색 적용
                   ),
                   child: Text('로그인', style: TextStyle(color: ColorTheme.colorPrimary)), // 색상 적용
                 ),
@@ -157,7 +169,7 @@ class LoginPageState extends State<LoginPage> {
                     padding: EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
                       '간편로그인',
-                      style: TextStyle(color: ColorTheme.colorDisabledFont),
+                      style: TextStyle(color: ColorTheme.colorDisabled),
                     ),
                   ),
                   Expanded(

@@ -10,5 +10,5 @@ class ColorTheme {
 
   static const colorWhite= Colors.white;
   static const colorFont= Colors.black;
-  static const colorDisabledFont= Color(0xff999999);
+  static const colorDisabled= Color(0xff999999);
 }
