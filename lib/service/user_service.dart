@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -23,14 +24,26 @@ class UserService {
     }
   }
 
-  Future<void> saveQuizCompletion(String uid, String quizId, int score, List<Map<String, dynamic>> incorrectAnswers) async {
+  Future<void> saveQuizCompletion(String uid, String quizId, int score) async {
     try {
       final userQuizRef = _firestore.collection('users').doc(uid).collection('quiz').doc(quizId);
+      final snapshot = await userQuizRef.get();
+
+      bool wasPreviouslyCompleted = false;
+      int previousScore = 0;
+      if (snapshot.exists) {
+        final quizData = snapshot.data()!;
+        wasPreviouslyCompleted = quizData['completed'] ?? false;
+        previousScore = quizData['score'] ?? 0;
+      }
+
+      final newCompleted = wasPreviouslyCompleted || (score / (score + 10 - score) >= 0.9);
+      final finalScore = wasPreviouslyCompleted ? max(score, previousScore) : score;
+
       await userQuizRef.set({
-        'score': score,
+        'score': finalScore,
         'completedAt': Timestamp.now(),
-        'incorrectAnswers': incorrectAnswers,
-        'completed': score / (incorrectAnswers.length + score) >= 0.9,
+        'completed': newCompleted,
       });
     } catch (e) {
       print('Error saving quiz completion: $e');

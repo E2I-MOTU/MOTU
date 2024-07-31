@@ -122,28 +122,10 @@ class _TermQuizScreenState extends State<TermQuizScreen> {
 
           return Column(
             children: [
-              SizedBox(
-                height: 12,
-                child: LinearProgressIndicator(
-                  value: (_currentQuestionIndex + 1) / quizList.length,
-                  backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      '${_currentQuestionIndex + 1} / ${quizList.length}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+              LinearProgressIndicator(
+                value: (_currentQuestionIndex + 1) / quizList.length,
+                backgroundColor: Colors.grey[300],
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -219,6 +201,17 @@ class _TermQuizScreenState extends State<TermQuizScreen> {
                         child: const Text('다음 문제'),
                       ),
                     ],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Text(
+                  '${_currentQuestionIndex + 1} / ${quizList.length}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

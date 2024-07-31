@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/quiz/quiz.dart';
-import 'package:motu/view/word/word_main.dart';
+import 'package:motu/view/terminology/terminology_main.dart';
 import '../article/article_list_screen.dart';
 import '../news/news_list_screen.dart';
 import '../theme/color_theme.dart';
@@ -92,7 +92,7 @@ class LearningContentscreen extends StatelessWidget {
               mainAxisSpacing: 20,
               childAspectRatio: 5 / 6,
               children: [
-                _buildCard(context, '용어\n공부하기', ColorTheme.colorWhite, WordsMain()),
+                _buildCard(context, '용어\n공부하기', ColorTheme.colorWhite, TermMain(uid: uid,)),
                 _buildCard(context, '퀴즈 풀며\n내 실력\n확인해보기', ColorTheme.colorWhite, QuizSelectionScreen(uid: uid)),
                 _buildCard(context, '꼭 필요한 경제칼럼\n읽으며\n경제지식 쌓기', ColorTheme.colorWhite, ArticleListScreen()),
                 _buildCard(context, '오늘의\n시사 정보\n확인하기', ColorTheme.colorWhite, NewsListScreen()),

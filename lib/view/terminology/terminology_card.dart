@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:motu/view/word/word_term_quiz.dart';
 import 'package:provider/provider.dart';
-import '../../service/bookmark_service.dart';
-import '../../service/words_card_service.dart';
-import '../../widget/words_term_card_builder.dart';
+import '../../../service/bookmark_service.dart';
+import '../../../service/terminology_card_service.dart';
+import '../../../widget/terminology_card_builder.dart';
+import 'terminology_quiz.dart';
 
-class WordsTermCard extends StatelessWidget {
+class TermCard extends StatelessWidget {
   final String title;
-  const WordsTermCard({super.key, required this.title});
+  final String documentName;
+  final String uid;
+
+  const TermCard({super.key, required this.title, required this.documentName, required this.uid});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => WordsProvider()..fetchWords(title),
+      create: (_) => TerminologyCardProvider()..fetchWords(title),
       child: Scaffold(
         appBar: AppBar(
           title: Text(title),
           automaticallyImplyLeading: true,
           actions: [
-            Consumer<WordsProvider>(
+            Consumer<TerminologyCardProvider>(
               builder: (context, wordsProvider, child) {
                 return IconButton(
                   icon: Icon(Icons.bookmark),
@@ -40,7 +43,7 @@ class WordsTermCard extends StatelessWidget {
             ),
           ],
         ),
-        body: Consumer<WordsProvider>(
+        body: Consumer<TerminologyCardProvider>(
           builder: (context, wordsProvider, child) {
             if (wordsProvider.words.isEmpty) {
               return Center(child: CircularProgressIndicator());
@@ -56,7 +59,7 @@ class WordsTermCard extends StatelessWidget {
                     },
                     itemBuilder: (context, index) {
                       if (index == wordsProvider.words.length) {
-                        return _buildCompletionPage(context, title);
+                        return _buildCompletionPage(context, title, documentName, uid);
                       } else {
                         return buildTermCard(
                           context,
@@ -102,7 +105,7 @@ class WordsTermCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCompletionPage(BuildContext context, String title) {
+  Widget _buildCompletionPage(BuildContext context, String title, String documentName, String uid) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -124,7 +127,9 @@ class WordsTermCard extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TermQuizScreen(
-                    collectionName: 'terminology', // 실제 컬렉션 이름을 지정합니다.
+                    collectionName: 'terminology',
+                    documentName: documentName,
+                    uid: uid,
                   ),
                 ),
               );
