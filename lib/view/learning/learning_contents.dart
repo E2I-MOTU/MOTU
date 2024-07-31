@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motu/view/learning/widget/learning_contents_builder.dart';
 import 'package:motu/view/quiz/quiz.dart';
 import 'package:motu/view/terminology/terminology_main.dart';
 import '../article/article_list_screen.dart';
@@ -92,10 +93,10 @@ class LearningContentscreen extends StatelessWidget {
               mainAxisSpacing: 20,
               childAspectRatio: 5 / 6,
               children: [
-                _buildCard(context, '용어\n공부하기', ColorTheme.colorWhite, TermMain(uid: uid,)),
-                _buildCard(context, '퀴즈 풀며\n내 실력\n확인해보기', ColorTheme.colorWhite, QuizSelectionScreen(uid: uid)),
-                _buildCard(context, '꼭 필요한 경제칼럼\n읽으며\n경제지식 쌓기', ColorTheme.colorWhite, ArticleListScreen()),
-                _buildCard(context, '오늘의\n시사 정보\n확인하기', ColorTheme.colorWhite, NewsListScreen()),
+                buildCard(context, '용어\n공부하기', ColorTheme.colorWhite, TermMain(uid: uid,)),
+                buildCard(context, '퀴즈 풀며\n내 실력\n확인해보기', ColorTheme.colorWhite, QuizSelectionScreen(uid: uid)),
+                buildCard(context, '꼭 필요한 경제칼럼\n읽으며\n경제지식 쌓기', ColorTheme.colorWhite, ArticleListScreen()),
+                buildCard(context, '오늘의\n시사 정보\n확인하기', ColorTheme.colorWhite, NewsListScreen()),
               ],
             ),
           ),
@@ -111,61 +112,6 @@ class LearningContentscreen extends StatelessWidget {
         child: Icon(Icons.chat),
         backgroundColor: ColorTheme.colorPrimary, // 배경색 설정
         foregroundColor: Colors.white, // 아이콘 색상 설정
-      ),
-    );
-  }
-
-  Widget _buildCard(BuildContext context, String text, Color color, Widget? nextScreen) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2), // 그림자 색상
-            spreadRadius: 2, // 그림자 확산 범위
-            blurRadius: 2, // 그림자 흐림 반경
-            offset: Offset(0, 4), // 그림자의 위치 (x, y)
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Center(
-              child: Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: ColorTheme.colorFont,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (nextScreen != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => nextScreen),
-                );
-              }
-            },
-            child: const Text('도전하기'),
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              backgroundColor: ColorTheme.colorSecondary,
-              foregroundColor: ColorTheme.colorWhite,
-              minimumSize: Size(140, 40), // 원하는 가로 길이와 세로 길이 설정
-            ),
-          )
-        ],
       ),
     );
   }

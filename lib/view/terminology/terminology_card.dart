@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../service/bookmark_service.dart';
-import '../../../service/terminology_card_service.dart';
-import '../../../widget/terminology_card_builder.dart';
-import 'terminology_quiz.dart';
+import '../../provider/terminology_card_provider.dart';
+import 'widget/terminology_card_builder.dart';
+import 'widget/terminology_card_completion_builder.dart';
 
 class TermCard extends StatelessWidget {
   final String title;
@@ -59,7 +59,7 @@ class TermCard extends StatelessWidget {
                     },
                     itemBuilder: (context, index) {
                       if (index == wordsProvider.words.length) {
-                        return _buildCompletionPage(context, title, documentName, uid);
+                        return buildCompletionPage(context, title, documentName, uid);
                       } else {
                         return buildTermCard(
                           context,
@@ -101,42 +101,6 @@ class TermCard extends StatelessWidget {
             );
           },
         ),
-      ),
-    );
-  }
-
-  Widget _buildCompletionPage(BuildContext context, String title, String documentName, String uid) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            '학습 완료!',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 20),
-          Text(
-            '축하합니다! 모든 카드를 학습하셨습니다.',
-            style: TextStyle(fontSize: 18),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => TermQuizScreen(
-                    collectionName: 'terminology',
-                    documentName: documentName,
-                    uid: uid,
-                  ),
-                ),
-              );
-            },
-            child: Text('퀴즈 풀기'),
-          ),
-        ],
       ),
     );
   }

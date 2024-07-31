@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../widget/terminology_category_card_builder.dart';
+import 'package:motu/view/terminology/widget/terminology_category_card_builder.dart';
 import 'terminology_card.dart';
 
 class TermSearchDelegate extends SearchDelegate {

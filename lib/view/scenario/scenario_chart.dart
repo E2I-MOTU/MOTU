@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motu/service/scenario_service.dart';
+import 'package:motu/provider/scenario_service.dart';
 import 'package:motu/model/stock_data.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:provider/provider.dart';

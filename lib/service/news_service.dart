@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import '../model/news_article.dart';
+import '../model/news_data.dart';
 
-class NewsController {
+class NewsService {
   final String clientId = dotenv.env['YOUR_CLIENT_ID']!;
   final String clientSecret = dotenv.env['YOUR_CLIENT_SECRET']!;
 
