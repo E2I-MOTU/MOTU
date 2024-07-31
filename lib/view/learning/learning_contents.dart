@@ -20,7 +20,7 @@ class LearningContentscreen extends StatelessWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        elevation: 0, //그림자 X
+        elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: ColorTheme.colorFont),
           onPressed: () {
