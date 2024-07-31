@@ -75,102 +75,110 @@ class TermQuizScreen extends StatelessWidget {
               ),
               iconTheme: const IconThemeData(color: Colors.black),
             ),
-            body: Stack(
-              children: [
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          question['situation'] ?? '상황 설명이 없습니다.',
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          question['question'] ?? '질문이 없습니다.',
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      if (question['type'] == '단답형') ...[
-                        TextField(
-                          controller: quizState.answerController,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: '정답 입력',
+            body: LayoutBuilder(
+              builder: (context, constraints) {
+                final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+                final contentHeight = constraints.maxHeight;
+
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: contentHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              question['situation'] ?? '상황 설명이 없습니다.',
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                          onChanged: (value) {
-                            quizState.selectAnswer(value);
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                      ] else if (question['type'] == '객관식') ...[
-                        ...(question['options'] as List<dynamic>).map<Widget>((option) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 16.0),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: quizState.answered
-                                    ? null
-                                    : () {
-                                  quizState.selectAnswer(option as String);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: quizState.selectedAnswer == option
-                                      ? Colors.deepPurpleAccent
-                                      : null,
-                                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10),
-                                    ),
-                                  ),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              question['question'] ?? '질문이 없습니다.',
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          if (question['type'] == '단답형') ...[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: TextField(
+                                controller: quizState.answerController,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: '정답 입력',
                                 ),
-                                child: Text(option as String),
+                                onChanged: (value) {
+                                  quizState.selectAnswer(value);
+                                },
                               ),
                             ),
-                          );
-                        }).toList(),
-                      ],
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: quizState.selectedAnswer.isEmpty
-                            ? null
-                            : () {
-                          quizState.submitAnswer(question['answer'] ?? '');
-                          quizState.nextQuestion();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 20.0),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
+                          ] else if (question['type'] == '객관식') ...[
+                            ...(question['options'] as List<dynamic>).map<Widget>((option) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 16.0),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: quizState.answered
+                                        ? null
+                                        : () {
+                                      quizState.selectAnswer(option as String);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: quizState.selectedAnswer == option
+                                          ? Colors.deepPurpleAccent
+                                          : null,
+                                      padding: const EdgeInsets.symmetric(vertical: 20.0),
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                      ),
+                                    ),
+                                    child: Text(option as String),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: quizState.selectedAnswer.isEmpty
+                                ? null
+                                : () {
+                              quizState.submitAnswer(question['answer'] ?? '');
+                              quizState.nextQuestion();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 20.0),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
                             ),
+                            child: const Text('제출'),
                           ),
-                        ),
-                        child: const Text('제출'),
+                          const SizedBox(height: 20),
+                          Text(
+                            '${quizState.currentQuestionIndex + 1} / ${quizState.questions.length}',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-                Positioned(
-                  bottom: 16,
-                  right: 16,
-                  child: Text(
-                    '${quizState.currentQuestionIndex + 1} / ${quizState.questions.length}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
+                );
+              },
             ),
           );
         },
