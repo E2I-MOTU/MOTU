@@ -44,7 +44,7 @@ class TerminologyQuizService with ChangeNotifier {
 
       questionsList.shuffle(Random());
 
-      _questions = questionsList.take(1).toList();
+      _questions = questionsList.take(15).toList();
       _isLoading = false;
       notifyListeners();
     } catch (e) {
