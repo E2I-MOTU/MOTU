@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../service/quiz_service.dart';
+import '../../provider/quiz_provider.dart';
 import 'incorrect_answers_screen.dart';
 
 class QuizScreen extends StatelessWidget {

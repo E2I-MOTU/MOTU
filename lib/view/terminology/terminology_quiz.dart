@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../service/terminology_quiz_service.dart';
+import '../../provider/terminology_quiz_provider.dart';
 import 'terminology_incorrect_answers_screen.dart';
 
 class TermQuizScreen extends StatelessWidget {

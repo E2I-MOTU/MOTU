@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'quiz_screen.dart';
 import '../../service/user_service.dart';
-import '../../widget/circle_indicator.dart';
+import 'widget/circle_indicator.dart';
 
 class QuizSelectionScreen extends StatelessWidget {
   final String uid;

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../main_page.dart';
 import '../theme/color_theme.dart';
 import 'register.dart';
-import 'package:motu/service/navigation_service.dart';
+import 'package:motu/provider/navigation_provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

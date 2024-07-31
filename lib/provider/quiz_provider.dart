@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
-import 'user_service.dart';
+import '../service/user_service.dart';
 
 class QuizService with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

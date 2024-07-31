@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../widget/bookmark_card_builder.dart';
-import '../../service/bookmark_provider.dart';
+import 'widget/bookmark_card_builder.dart';
+import '../../provider/bookmark_provider.dart';
 
 class BookmarkPage extends StatelessWidget {
   @override

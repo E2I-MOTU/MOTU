@@ -1,13 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:motu/service/scenario_service.dart';
+import 'package:motu/provider/scenario_service.dart';
 import 'package:motu/firebase_options.dart';
-import 'package:motu/service/terminology_quiz_service.dart';
+import 'package:motu/provider/terminology_quiz_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:motu/view/login/login.dart';
-import 'package:motu/service/navigation_service.dart';
-import 'package:motu/service/chat_service.dart';
+import 'package:motu/provider/navigation_provider.dart';
+import 'package:motu/provider/chat_provider.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
