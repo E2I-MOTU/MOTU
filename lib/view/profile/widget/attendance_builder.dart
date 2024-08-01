@@ -4,17 +4,13 @@ import '../attendance_calendar_screen.dart';
 
 List<Widget> buildAttendanceWeek(BuildContext context, List<DateTime> attendance) {
   List<Widget> weekWidgets = [];
-  List<String> weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  List<String> weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  DateTime startDate = DateTime.now();
-  for (int i = 1; i < attendance.length; i++) {
-    if (attendance[i].difference(attendance[i - 1]).inDays > 1) {
-      startDate = attendance[i];
-    }
-  }
+  DateTime now = DateTime.now();
+  DateTime startOfWeek = now.subtract(Duration(days: now.weekday % 7));
 
   for (int i = 0; i < 7; i++) {
-    DateTime day = startDate.add(Duration(days: i));
+    DateTime day = startOfWeek.add(Duration(days: i));
     bool isChecked = attendance.any((date) => date.year == day.year && date.month == day.month && date.day == day.day);
 
     weekWidgets.add(
@@ -28,7 +24,7 @@ List<Widget> buildAttendanceWeek(BuildContext context, List<DateTime> attendance
           },
           child: Column(
             children: [
-              Text(weekdays[day.weekday - 1], style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(weekdays[i], style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Container(
                 width: 40,
