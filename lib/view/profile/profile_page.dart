@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../model/user_data.dart';
 import '../../service/profile_service.dart';
+import '../theme/color_theme.dart';
+import 'attendance_screen.dart';
 import 'balance_detail_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -27,7 +29,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorTheme.colorWhite,
       appBar: AppBar(
+        backgroundColor: ColorTheme.colorWhite,
         title: const Text('마이페이지'),
         automaticallyImplyLeading: false,
       ),
@@ -218,8 +222,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   List<Widget> _buildAttendanceWeek(List<DateTime> attendance) {
     List<Widget> weekWidgets = [];
+    List<String> weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-    DateTime startDate = attendance.first;
+    DateTime startDate = DateTime.now();
     for (int i = 1; i < attendance.length; i++) {
       if (attendance[i].difference(attendance[i - 1]).inDays > 1) {
         startDate = attendance[i];
@@ -229,20 +234,44 @@ class _ProfilePageState extends State<ProfilePage> {
     for (int i = 0; i < 7; i++) {
       DateTime day = startDate.add(Duration(days: i));
       bool isChecked = attendance.any((date) => date.year == day.year && date.month == day.month && date.day == day.day);
+
       weekWidgets.add(
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: Row(
-            children: [
-              Icon(isChecked ? Icons.check_circle : Icons.radio_button_unchecked, color: isChecked ? Colors.green : Colors.grey),
-              const SizedBox(width: 10),
-              Text('${day.year}-${day.month}-${day.day}'),
-            ],
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AttendanceScreen()),
+              );
+            },
+            child: Column(
+              children: [
+                Text(weekdays[day.weekday - 1], style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isChecked ? ColorTheme.colorPrimary : ColorTheme.colorDisabled,
+                  ),
+                  child: Icon(
+                    isChecked ? Icons.check : Icons.close,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
     }
-    return weekWidgets;
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: weekWidgets,
+      ),
+    ];
   }
 
   Widget _buildSectionCard(BuildContext context, {required String title, required List<Widget> children}) {

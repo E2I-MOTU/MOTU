@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../../../model/article_data.dart';
 import '../article_detail.dart';
+
+Future<String> getImageUrl(String imagePath) async {
+  try {
+    return await FirebaseStorage.instance.ref(imagePath).getDownloadURL();
+  } catch (e) {
+    print("Error getting image URL: $e");
+    return '';
+  }
+}
 
 Widget articleListBuilder(BuildContext context, Article article) {
   return InkWell(
@@ -23,9 +33,20 @@ Widget articleListBuilder(BuildContext context, Article article) {
             padding: EdgeInsets.all(8.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: Image.network(
-                article.imageUrl,
-                fit: BoxFit.cover,
+              child: FutureBuilder(
+                future: getImageUrl(article.imageUrl),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == '') {
+                    return Icon(Icons.error);
+                  } else {
+                    return Image.network(
+                      snapshot.data!,
+                      fit: BoxFit.cover,
+                    );
+                  }
+                },
               ),
             ),
           ),
