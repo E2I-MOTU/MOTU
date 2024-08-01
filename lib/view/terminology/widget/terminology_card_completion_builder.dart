@@ -13,7 +13,7 @@ Widget buildCompletionPage(BuildContext context, String title, String documentNa
         ),
         SizedBox(height: 20),
         Text(
-          '축하합니다! 모든 카드를 학습하셨습니다.',
+          '축하합니다! 모든 카드를 학습하셨습니다. \n 테스트를 통과하고 수료까지 해보세요!',
           style: TextStyle(fontSize: 18),
           textAlign: TextAlign.center,
         ),
@@ -31,7 +31,7 @@ Widget buildCompletionPage(BuildContext context, String title, String documentNa
               ),
             );
           },
-          child: Text('퀴즈 풀기'),
+          child: Text('테스트 응시'),
         ),
       ],
     ),

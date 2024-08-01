@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../../model/article_data.dart';
 
 class ArticleDetailScreen extends StatelessWidget {
@@ -6,34 +7,58 @@ class ArticleDetailScreen extends StatelessWidget {
 
   ArticleDetailScreen({required this.article});
 
+  Future<String> getImageUrl(String imagePath) async {
+    try {
+      return await FirebaseStorage.instance.ref(imagePath).getDownloadURL();
+    } catch (e) {
+      print("Error getting image URL: $e");
+      return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        elevation: 0, //그림자 X
+        elevation: 0, // 그림자 X
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
-        title: Text('Article Example', style: TextStyle(color: Colors.white)),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Stack(
-              children: [
-                Image.network(
-                  'https://via.placeholder.com/150',
-                  width: double.infinity,
-                  height: 250,
-                  fit: BoxFit.cover,
-                ),
-              ],
+            FutureBuilder<String>(
+              future: getImageUrl(article.imageUrl),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    width: double.infinity,
+                    height: 250,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == '') {
+                  return Container(
+                    width: double.infinity,
+                    height: 250,
+                    color: Colors.grey,
+                    child: Icon(Icons.error, color: Colors.white, size: 50),
+                  );
+                } else {
+                  return Image.network(
+                    snapshot.data!,
+                    width: double.infinity,
+                    height: 250,
+                    fit: BoxFit.cover,
+                  );
+                }
+              },
             ),
             Container(
               transform: Matrix4.translationValues(0.0, -20.0, 0.0),

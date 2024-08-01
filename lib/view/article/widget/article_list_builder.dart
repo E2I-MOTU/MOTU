@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../../../model/article_data.dart';
-import '../article_detail.dart';
+import '../article_detail_screen.dart';
 
 Future<String> getImageUrl(String imagePath) async {
   try {
