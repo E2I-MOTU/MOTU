@@ -55,57 +55,29 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 20),
-              Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: term,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '이란?',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+              Text(
+                '${term}이란?',
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
                 ),
-                textAlign: TextAlign.center,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
                 definition,
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 20,
                   color: Colors.black,
                 ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 20),
-              Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '예시\n',
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    TextSpan(
-                      text: example,
-                      style: const TextStyle(
-                        fontSize:15,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
+              Text(
+                '예시\n${example}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
                 ),
                 textAlign: TextAlign.center,
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../model/user_data.dart';
 import '../../service/profile_service.dart';
+import 'balance_detail_page.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({super.key});
@@ -51,11 +52,10 @@ class _ProfilePageState extends State<ProfilePage> {
               children: <Widget>[
                 Row(
                   children: [
-                    // CircleAvatar(
-                    //   radius: 30,
-                    //   backgroundImage: AssetImage('assets/image.png'),
-                    // ),
-                    // 여기에 사진 넣으면 됨!
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundImage: AssetImage('assets/image.png'),
+                    ),
                     const SizedBox(width: 16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,25 +67,44 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildActionButton(context, '수료 현황', Icons.check_circle),
-                    _buildActionButton(context, '시나리오 기록', Icons.history),
-                    _buildActionButton(context, '잔고 내역', Icons.account_balance_wallet),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildSectionCard(
-                  context,
-                  title: '잔고',
-                  children: [
-                    _buildListTile(
-                      leadingIcon: Icons.account_balance_wallet,
-                      title: '잔고',
-                      subtitle: '${userData.balance} 원',
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => BalanceDetailPage(balance: userData.balance)),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
                     ),
-                  ],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.account_balance_wallet, color: Colors.blueGrey),
+                            const SizedBox(width: 16),
+                            Text(
+                              '${userData.balance}',
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                        Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 FutureBuilder<List<DateTime>>(
@@ -145,6 +164,50 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   },
                 ),
+                const SizedBox(height: 16),
+                // 다양한 메뉴를 ListView로 작성
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.3, // 적당한 높이 설정
+                  child: ListView(
+                    children: [
+                      _buildMenuTile(
+                        icon: Icons.settings,
+                        title: '설정',
+                        onTap: () {
+                          // Navigate to settings page
+                        },
+                      ),
+                      _buildMenuTile(
+                        icon: Icons.help,
+                        title: '도움말',
+                        onTap: () {
+                          // Navigate to help page
+                        },
+                      ),
+                      _buildMenuTile(
+                        icon: Icons.feedback,
+                        title: '피드백',
+                        onTap: () {
+                          // Navigate to feedback page
+                        },
+                      ),
+                      _buildMenuTile(
+                        icon: Icons.notifications,
+                        title: '알림',
+                        onTap: () {
+                          // Navigate to notifications page
+                        },
+                      ),
+                      _buildMenuTile(
+                        icon: Icons.logout,
+                        title: '로그아웃',
+                        onTap: () {
+                          // Handle logout action
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           );
@@ -179,20 +242,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       );
     }
-
     return weekWidgets;
-  }
-
-  Widget _buildActionButton(BuildContext context, String title, IconData icon) {
-    return Column(
-      children: [
-        IconButton(
-          icon: Icon(icon, size: 30),
-          onPressed: () {},
-        ),
-        Text(title),
-      ],
-    );
   }
 
   Widget _buildSectionCard(BuildContext context, {required String title, required List<Widget> children}) {
@@ -231,6 +281,19 @@ class _ProfilePageState extends State<ProfilePage> {
       subtitle: subtitle != null ? Text(subtitle) : null,
       trailing: trailing,
       onTap: onTap,
+    );
+  }
+
+  Widget _buildMenuTile({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.blueGrey),
+      title: Text(title),
+      onTap: onTap,
+      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
     );
   }
 }
