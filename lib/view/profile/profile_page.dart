@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:motu/view/profile/widget/attendance_builder.dart';
+import 'package:motu/view/profile/widget/menu_tile_builder.dart';
+import 'package:motu/view/profile/widget/section_builder.dart';
 import '../../model/user_data.dart';
 import '../../service/profile_service.dart';
+import '../terminology/bookmark.dart';
 import '../theme/color_theme.dart';
-import 'attendance_screen.dart';
 import 'balance_detail_page.dart';
+import 'completion_page.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({super.key});
@@ -16,14 +20,12 @@ class _ProfilePageState extends State<ProfilePage> {
   final ProfileService _service = ProfileService();
   late Future<UserModel?> _userInfoFuture;
   late Future<List<DateTime>> _attendanceFuture;
-  late Future<List<Map<String, dynamic>>> _bookmarksFuture;
 
   @override
   void initState() {
     super.initState();
     _userInfoFuture = _service.getUserInfo();
     _attendanceFuture = _service.getAttendance();
-    _bookmarksFuture = _service.getBookmarks();
   }
 
   @override
@@ -49,6 +51,29 @@ class _ProfilePageState extends State<ProfilePage> {
           }
 
           var userData = snapshot.data!;
+          final List<Map<String, dynamic>> learningStatusItems = [
+            {'title': '수료 완료', 'onTap': () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CompletionPage(uid: userData.uid!)),
+              );
+            }},
+            {'title': '학습 진도', 'onTap': () {}},
+            {'title': '용어 목록', 'onTap': () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => BookmarkPage()),
+              );
+            }},
+            {'title': '시나리오 기록', 'onTap': () {}},
+          ];
+
+          final List<Map<String, dynamic>> customerServiceItems = [
+            {'title': 'FAQ', 'onTap': () {}},
+            {'title': '공지사항', 'onTap': () {}},
+            {'title': '문의하기', 'onTap': () {}},
+          ];
+
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -58,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     CircleAvatar(
                       radius: 30,
-                      backgroundImage: AssetImage('assets/image.png'),
+                      backgroundImage: AssetImage('assets/images/person.png'),
                     ),
                     const SizedBox(width: 16),
                     Column(
@@ -71,6 +96,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 const SizedBox(height: 16),
+                const ListTile(
+                  title: Text(
+                    '잔고 내역',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -111,6 +142,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 16),
+                const ListTile(
+                  title: Text(
+                    '출석 현황',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
                 FutureBuilder<List<DateTime>>(
                   future: _attendanceFuture,
                   builder: (BuildContext context, AsyncSnapshot<List<DateTime>> snapshot) {
@@ -125,204 +162,43 @@ class _ProfilePageState extends State<ProfilePage> {
                     }
 
                     List<DateTime> attendance = snapshot.data!;
-                    return _buildSectionCard(
+                    return buildSectionCard(
                       context,
-                      title: '출석 현황',
-                      children: _buildAttendanceWeek(attendance),
+                      children: buildAttendanceWeek(context, attendance),
                     );
                   },
                 ),
                 const SizedBox(height: 16),
-                _buildSectionCard(
-                  context,
-                  title: '학습 현황',
-                  children: const [
-                    Text('학습 현황 내용'),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                FutureBuilder<List<Map<String, dynamic>>>(
-                  future: _bookmarksFuture,
-                  builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.hasError) {
-                      return const Center(child: Text('저장된 용어 목록을 불러오는 중 오류가 발생했습니다.'));
-                    }
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('저장된 용어가 없습니다.'));
-                    }
-
-                    List<Map<String, dynamic>> bookmarks = snapshot.data!;
-                    return _buildSectionCard(
-                      context,
-                      title: '최근 저장한 용어 목록',
-                      children: bookmarks.map((bookmark) {
-                        return _buildListTile(
-                          title: bookmark['term'],
-                          subtitle: bookmark['definition'],
-                          onTap: () {},
-                        );
-                      }).toList(),
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                // 다양한 메뉴를 ListView로 작성
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.3, // 적당한 높이 설정
-                  child: ListView(
-                    children: [
-                      _buildMenuTile(
-                        icon: Icons.settings,
-                        title: '설정',
-                        onTap: () {
-                          // Navigate to settings page
-                        },
-                      ),
-                      _buildMenuTile(
-                        icon: Icons.help,
-                        title: '도움말',
-                        onTap: () {
-                          // Navigate to help page
-                        },
-                      ),
-                      _buildMenuTile(
-                        icon: Icons.feedback,
-                        title: '피드백',
-                        onTap: () {
-                          // Navigate to feedback page
-                        },
-                      ),
-                      _buildMenuTile(
-                        icon: Icons.notifications,
-                        title: '알림',
-                        onTap: () {
-                          // Navigate to notifications page
-                        },
-                      ),
-                      _buildMenuTile(
-                        icon: Icons.logout,
-                        title: '로그아웃',
-                        onTap: () {
-                          // Handle logout action
-                        },
-                      ),
-                    ],
+                const ListTile(
+                  title: Text(
+                    '학습 현황',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
+                ...learningStatusItems.map((item) {
+                  return buildMenuTile(
+                    title: item['title'],
+                    onTap: item['onTap'],
+                  );
+                }).toList(),
+                const SizedBox(height: 16),
+                const ListTile(
+                  title: Text(
+                    '고객센터',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                ...customerServiceItems.map((item) {
+                  return buildMenuTile(
+                    title: item['title'],
+                    onTap: item['onTap'],
+                  );
+                }).toList(),
               ],
             ),
           );
         },
       ),
-    );
-  }
-
-  List<Widget> _buildAttendanceWeek(List<DateTime> attendance) {
-    List<Widget> weekWidgets = [];
-    List<String> weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-    DateTime startDate = DateTime.now();
-    for (int i = 1; i < attendance.length; i++) {
-      if (attendance[i].difference(attendance[i - 1]).inDays > 1) {
-        startDate = attendance[i];
-      }
-    }
-
-    for (int i = 0; i < 7; i++) {
-      DateTime day = startDate.add(Duration(days: i));
-      bool isChecked = attendance.any((date) => date.year == day.year && date.month == day.month && date.day == day.day);
-
-      weekWidgets.add(
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AttendanceScreen()),
-              );
-            },
-            child: Column(
-              children: [
-                Text(weekdays[day.weekday - 1], style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isChecked ? ColorTheme.colorPrimary : ColorTheme.colorDisabled,
-                  ),
-                  child: Icon(
-                    isChecked ? Icons.check : Icons.close,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-    return [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: weekWidgets,
-      ),
-    ];
-  }
-
-  Widget _buildSectionCard(BuildContext context, {required String title, required List<Widget> children}) {
-    return Card(
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const Divider(),
-            ...children,
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildListTile({
-    IconData? leadingIcon,
-    Widget? leadingWidget,
-    required String title,
-    String? subtitle,
-    Widget? trailing,
-    GestureTapCallback? onTap,
-  }) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: leadingWidget ?? (leadingIcon != null ? Icon(leadingIcon) : null),
-      title: Text(title),
-      subtitle: subtitle != null ? Text(subtitle) : null,
-      trailing: trailing,
-      onTap: onTap,
-    );
-  }
-
-  Widget _buildMenuTile({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.blueGrey),
-      title: Text(title),
-      onTap: onTap,
-      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
     );
   }
 }
