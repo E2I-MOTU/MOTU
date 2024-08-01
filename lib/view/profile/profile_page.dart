@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/profile/widget/attendance_builder.dart';
-import 'package:motu/view/profile/widget/list_tile_builder.dart';
 import 'package:motu/view/profile/widget/menu_tile_builder.dart';
 import 'package:motu/view/profile/widget/section_builder.dart';
 import '../../model/user_data.dart';
 import '../../service/profile_service.dart';
+import '../terminology/bookmark.dart';
 import '../theme/color_theme.dart';
 import 'balance_detail_page.dart';
+import 'completion_page.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({super.key});
@@ -19,31 +20,16 @@ class _ProfilePageState extends State<ProfilePage> {
   final ProfileService _service = ProfileService();
   late Future<UserModel?> _userInfoFuture;
   late Future<List<DateTime>> _attendanceFuture;
-  late Future<List<Map<String, dynamic>>> _bookmarksFuture;
 
   @override
   void initState() {
     super.initState();
     _userInfoFuture = _service.getUserInfo();
     _attendanceFuture = _service.getAttendance();
-    _bookmarksFuture = _service.getBookmarks();
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> learningStatusItems = [
-      {'title': '수료 완료', 'onTap': () {}},
-      {'title': '학습 진도', 'onTap': () {}},
-      {'title': '용어 목록', 'onTap': () {}},
-      {'title': '시나리오 기록', 'onTap': () {}},
-    ];
-
-    final List<Map<String, dynamic>> customerServiceItems = [
-      {'title': 'FAQ', 'onTap': () {}},
-      {'title': '공지사항', 'onTap': () {}},
-      {'title': '문의하기', 'onTap': () {}},
-    ];
-
     return Scaffold(
       backgroundColor: ColorTheme.colorWhite,
       appBar: AppBar(
@@ -65,6 +51,29 @@ class _ProfilePageState extends State<ProfilePage> {
           }
 
           var userData = snapshot.data!;
+          final List<Map<String, dynamic>> learningStatusItems = [
+            {'title': '수료 완료', 'onTap': () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CompletionPage(uid: userData.uid!)),
+              );
+            }},
+            {'title': '학습 진도', 'onTap': () {}},
+            {'title': '용어 목록', 'onTap': () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => BookmarkPage()),
+              );
+            }},
+            {'title': '시나리오 기록', 'onTap': () {}},
+          ];
+
+          final List<Map<String, dynamic>> customerServiceItems = [
+            {'title': 'FAQ', 'onTap': () {}},
+            {'title': '공지사항', 'onTap': () {}},
+            {'title': '문의하기', 'onTap': () {}},
+          ];
+
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -87,6 +96,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 const SizedBox(height: 16),
+                const ListTile(
+                  title: Text(
+                    '잔고 내역',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -127,6 +142,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 16),
+                const ListTile(
+                  title: Text(
+                    '출석 현황',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
                 FutureBuilder<List<DateTime>>(
                   future: _attendanceFuture,
                   builder: (BuildContext context, AsyncSnapshot<List<DateTime>> snapshot) {
@@ -143,7 +164,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     List<DateTime> attendance = snapshot.data!;
                     return buildSectionCard(
                       context,
-                      title: '출석 현황',
                       children: buildAttendanceWeek(context, attendance),
                     );
                   },
