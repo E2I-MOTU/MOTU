@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 Widget buildTermCard(BuildContext context, String term, String definition, String example) {
   final size = MediaQuery.of(context).size;
-  final cardWidth = size.width * 0.7;
+  final cardWidth = size.width * 0.8;
   final cardHeight = size.height * 0.5;
 
   return Center(
@@ -17,7 +17,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
                 color: Colors.black26,
@@ -42,7 +42,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
                 color: Colors.black26,
@@ -67,7 +67,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
               Text(
                 definition,
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 16,
                   color: Colors.black,
                 ),
                 textAlign: TextAlign.center,

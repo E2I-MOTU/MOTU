@@ -129,6 +129,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       context,
                       title: '출석 현황',
                       children: _buildAttendanceWeek(attendance),
+                      trailing: IconButton(
+                        icon: Icon(Icons.arrow_forward_ios),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AttendanceScreen()),
+                          );
+                        },
+                      ),
                     );
                   },
                 ),
@@ -222,50 +231,40 @@ class _ProfilePageState extends State<ProfilePage> {
 
   List<Widget> _buildAttendanceWeek(List<DateTime> attendance) {
     List<Widget> weekWidgets = [];
-    List<String> weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    List<String> weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-    DateTime startDate = DateTime.now();
-    for (int i = 1; i < attendance.length; i++) {
-      if (attendance[i].difference(attendance[i - 1]).inDays > 1) {
-        startDate = attendance[i];
-      }
-    }
+    // 현재 주의 시작 날짜 (일요일)
+    DateTime now = DateTime.now();
+    DateTime startOfWeek = now.subtract(Duration(days: now.weekday % 7));
 
     for (int i = 0; i < 7; i++) {
-      DateTime day = startDate.add(Duration(days: i));
+      DateTime day = startOfWeek.add(Duration(days: i));
       bool isChecked = attendance.any((date) => date.year == day.year && date.month == day.month && date.day == day.day);
 
       weekWidgets.add(
         Expanded(
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AttendanceScreen()),
-              );
-            },
-            child: Column(
-              children: [
-                Text(weekdays[day.weekday - 1], style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isChecked ? ColorTheme.colorPrimary : ColorTheme.colorDisabled,
-                  ),
-                  child: Icon(
-                    isChecked ? Icons.check : Icons.close,
-                    color: Colors.white,
-                  ),
+          child: Column(
+            children: [
+              Text(weekdays[i], style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isChecked ? ColorTheme.colorPrimary : ColorTheme.colorDisabled,
                 ),
-              ],
-            ),
+                child: Icon(
+                  isChecked ? Icons.check : Icons.close,
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
         ),
       );
     }
+
     return [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -274,7 +273,7 @@ class _ProfilePageState extends State<ProfilePage> {
     ];
   }
 
-  Widget _buildSectionCard(BuildContext context, {required String title, required List<Widget> children}) {
+  Widget _buildSectionCard(BuildContext context, {required String title, required List<Widget> children, Widget? trailing}) {
     return Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
@@ -283,9 +282,15 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                if (trailing != null) trailing,
+              ],
             ),
             const Divider(),
             ...children,
