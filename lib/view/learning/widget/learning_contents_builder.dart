@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../theme/color_theme.dart';
 
 Widget buildCard(BuildContext context, String text, Color color, Widget? nextScreen) {
@@ -20,8 +19,10 @@ Widget buildCard(BuildContext context, String text, Color color, Widget? nextScr
     child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(
-          child: Center(
+        Padding(
+          padding: const EdgeInsets.only(left: 15, top: 15),
+          child: Align(
+            alignment: Alignment.topLeft,
             child: Text(
               text,
               style: const TextStyle(
