@@ -32,7 +32,8 @@ class BookmarkProvider extends ChangeNotifier {
 
   Future<void> deleteBookmark(String bookmarkId) async {
     try {
-      await _bookmarkService.deleteBookmark(bookmarkId);
+      var bookmark = _bookmarks.firstWhere((bookmark) => bookmark['id'] == bookmarkId);
+      await _bookmarkService.deleteBookmark(bookmark['term']);
       _bookmarks.removeWhere((bookmark) => bookmark['id'] == bookmarkId);
       notifyListeners();
     } catch (e) {
