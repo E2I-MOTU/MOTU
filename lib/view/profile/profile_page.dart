@@ -148,15 +148,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   },
                 ),
-                const SizedBox(height: 25),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0), // 동일한 시작 위치를 맞추기 위해 여백 추가
-                  child: const Text(
+                const SizedBox(height: 16),
+                const ListTile(
+                  title: Text(
                     '학습 현황',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
-                const SizedBox(height: 8),
                 ...learningStatusItems.map((item) {
                   return buildMenuTile(
                     title: item['title'],
@@ -164,14 +162,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   );
                 }).toList(),
                 const SizedBox(height: 16),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0), // 동일한 시작 위치를 맞추기 위해 여백 추가
-                  child: const Text(
+                const ListTile(
+                  title: Text(
                     '고객센터',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
-                const SizedBox(height: 8),
                 ...customerServiceItems.map((item) {
                   return buildMenuTile(
                     title: item['title'],
