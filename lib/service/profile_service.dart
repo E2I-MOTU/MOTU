@@ -11,7 +11,7 @@ class ProfileService {
     if (user != null) {
       DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
       if (doc.exists) {
-        return UserModel.fromMap(doc.data() as Map<String, dynamic>);
+        return UserModel.fromMap(user.uid, doc.data() as Map<String, dynamic>);
       }
     }
     return null;
