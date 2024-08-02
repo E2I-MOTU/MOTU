@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 Widget buildTermCard(BuildContext context, String term, String definition, String example, bool isBookmarked, VoidCallback onBookmarkToggle) {
   final size = MediaQuery.of(context).size;
-  final cardWidth = size.width * 0.8;
-  final cardHeight = size.height * 0.5;
+  final cardWidth = size.width * 0.9;
+  final cardHeight = size.height * 0.55;
 
   return Center(
     child: Container(

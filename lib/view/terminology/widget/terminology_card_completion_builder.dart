@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/color_theme.dart';
 import '../terminology_quiz.dart';
 
 Widget buildCompletionPage(BuildContext context, String title, String documentName, String uid) {
@@ -18,20 +19,35 @@ Widget buildCompletionPage(BuildContext context, String title, String documentNa
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TermQuizScreen(
-                  collectionName: 'terminology',
-                  documentName: documentName,
-                  uid: uid,
+        Container(
+          width: MediaQuery.of(context).size.width * 0.8, // 화면 너비의 80%로 설정
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TermQuizScreen(
+                    collectionName: 'terminology',
+                    documentName: documentName,
+                    uid: uid,
+                  ),
                 ),
+              );
+            },
+            child: Text(
+              '테스트 응시하기',
+              style: TextStyle(fontSize: 16,),
+            ),
+            style: ElevatedButton.styleFrom(
+              shadowColor: Colors.transparent, // 그림자 제거
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-            );
-          },
-          child: Text('테스트 응시'),
+              backgroundColor: ColorTheme.colorPrimary,
+              foregroundColor: ColorTheme.colorWhite,
+            ),
+          ),
         ),
       ],
     ),
