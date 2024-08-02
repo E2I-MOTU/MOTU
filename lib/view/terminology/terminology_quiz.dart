@@ -93,46 +93,49 @@ class TermQuizScreen extends StatelessWidget {
                       final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
                       final contentHeight = constraints.maxHeight;
 
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: contentHeight,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              question['situation'] ?? '상황 설명이 없습니다.',
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
+                      return SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: contentHeight,
+                          ),
+                          child: IntrinsicHeight(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(
+                                    question['situation'] ?? '상황 설명이 없습니다.',
+                                    style: const TextStyle(
+                                        fontSize: 16, fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                QuizQuestionWidget(
+                                  question: question['question'] ?? '질문이 없습니다.',
+                                  options: question['type'] == '객관식' ? question['options'] ?? [] : null,
+                                  selectedAnswer: quizState.selectedAnswer,
+                                  answered: quizState.answered,
+                                  onSelectAnswer: (String option) {
+                                    quizState.selectAnswer(option);
+                                  },
+                                  onSubmit: () {
+                                    quizState.submitAnswer(question['answer'] ?? '');
+                                    quizState.nextQuestion();
+                                  },
+                                  currentQuestionIndex: quizState.currentQuestionIndex + 1,
+                                  totalQuestions: quizState.questions.length,
+                                  isShortAnswer: question['type'] == '단답형',
+                                ),
+                              ],
                             ),
                           ),
-                          QuizQuestionWidget(
-                            question: question['question'] ?? '질문이 없습니다.',
-                            options: question['type'] == '객관식' ? question['options'] ?? [] : null,
-                            selectedAnswer: quizState.selectedAnswer,
-                            answered: quizState.answered,
-                            onSelectAnswer: (String option) {
-                              quizState.selectAnswer(option);
-                            },
-                            onSubmit: () {
-                              quizState.submitAnswer(question['answer'] ?? '');
-                              quizState.nextQuestion();
-                            },
-                            currentQuestionIndex: quizState.currentQuestionIndex + 1,
-                            totalQuestions: quizState.questions.length,
-                            isShortAnswer: question['type'] == '단답형',
-                          ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
+                ),
+              ],
             ),
           );
         },
