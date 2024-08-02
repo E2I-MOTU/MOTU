@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:motu/view/theme/color_theme.dart';
 import 'package:provider/provider.dart';
 import '../../provider/terminology_quiz_provider.dart';
 import '../../widget/quiz_question.dart';
+import '../../widget/linear_indicator.dart';
 import 'terminology_incorrect_answers_screen.dart';
 
 class TermQuizScreen extends StatelessWidget {
@@ -19,10 +21,11 @@ class TermQuizScreen extends StatelessWidget {
         builder: (context, quizState, child) {
           if (quizState.isLoading) {
             return Scaffold(
+              backgroundColor: ColorTheme.colorNeutral,
               appBar: AppBar(
-                backgroundColor: Colors.white,
+                backgroundColor: ColorTheme.colorWhite,
                 title: const Text(
-                  '퀴즈 앱',
+                  '용어 테스트',
                   style: TextStyle(color: Colors.black),
                 ),
                 iconTheme: const IconThemeData(color: Colors.black),
@@ -33,10 +36,11 @@ class TermQuizScreen extends StatelessWidget {
 
           if (quizState.currentQuestionIndex >= quizState.questions.length) {
             return Scaffold(
+              backgroundColor: ColorTheme.colorNeutral,
               appBar: AppBar(
-                backgroundColor: Colors.white,
+                backgroundColor: ColorTheme.colorWhite,
                 title: const Text(
-                  '퀴즈 앱',
+                  '용어 테스트',
                   style: TextStyle(color: Colors.black),
                 ),
                 iconTheme: const IconThemeData(color: Colors.black),
@@ -45,7 +49,7 @@ class TermQuizScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('퀴즈 완료! 점수: ${quizState.score}/${quizState.questions.length}'),
+                    Text('테스트 응시 완료! 점수: ${quizState.score}/${quizState.questions.length}'),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(
@@ -68,18 +72,26 @@ class TermQuizScreen extends StatelessWidget {
           final question = quizState.questions[quizState.currentQuestionIndex];
 
           return Scaffold(
+            backgroundColor: ColorTheme.colorNeutral,
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: ColorTheme.colorWhite,
               title: const Text(
-                '퀴즈 앱',
+                '용어 테스트',
                 style: TextStyle(color: Colors.black),
               ),
               iconTheme: const IconThemeData(color: Colors.black),
             ),
-            body: LayoutBuilder(
-              builder: (context, constraints) {
-                final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
-                final contentHeight = constraints.maxHeight;
+            body: Column(
+              children: [
+                LinearIndicator(
+                  current: quizState.currentQuestionIndex + 1,
+                  total: quizState.questions.length,
+                ),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+                      final contentHeight = constraints.maxHeight;
 
                 return SingleChildScrollView(
                   child: ConstrainedBox(
