@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motu/view/quiz/widget/linear_indicator.dart';
+import 'package:motu/widget/linear_indicator.dart';
 import 'package:motu/view/theme/color_theme.dart';
 import 'package:provider/provider.dart';
 import '../../provider/quiz_provider.dart';

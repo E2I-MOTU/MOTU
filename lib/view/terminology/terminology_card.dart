@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../provider/terminology_card_provider.dart';
+import '../../widget/linear_indicator.dart';
+import '../theme/color_theme.dart';
 import 'widget/terminology_card_builder.dart';
 import 'widget/terminology_card_completion_builder.dart';
 import '../terminology/bookmark.dart';
@@ -41,6 +43,10 @@ class TermCard extends StatelessWidget {
             }
             return Column(
               children: [
+                LinearIndicator(
+                  current: wordsProvider.current + 1,
+                  total: wordsProvider.words.length,
+                ),
                 Expanded(
                   child: PageView.builder(
                     controller: wordsProvider.pageController,
@@ -76,7 +82,7 @@ class TermCard extends StatelessWidget {
                       IconButton(
                         icon: Icon(Icons.arrow_back),
                         onPressed: wordsProvider.previousPage,
-                        color: wordsProvider.current > 0 ? Colors.blue : Colors.grey,
+                        color: wordsProvider.current > 0 ? ColorTheme.colorPrimary : ColorTheme.colorDisabled,
                       ),
                       if (wordsProvider.current < wordsProvider.words.length)
                         Text(
@@ -87,9 +93,9 @@ class TermCard extends StatelessWidget {
                           ),
                         ),
                       IconButton(
-                        icon: Icon(Icons.arrow_forward),
-                        onPressed: wordsProvider.nextPage,
-                        color: wordsProvider.current < wordsProvider.words.length ? Colors.blue : Colors.grey,
+                          icon: Icon(Icons.arrow_forward),
+                          onPressed: wordsProvider.nextPage,
+                          color: wordsProvider.current < wordsProvider.words.length ? ColorTheme.colorPrimary : ColorTheme.colorDisabled
                       ),
                     ],
                   ),
