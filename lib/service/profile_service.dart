@@ -17,13 +17,11 @@ class ProfileService {
     return null;
   }
 
-  Future<void> updateName(String newName) async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      await _firestore.collection('users').doc(user.uid).update({
-        'name': newName,
-      });
-    }
+  Future<void> updateUserInfo(String uid, String newName, String newEmail) async {
+    await _firestore.collection('users').doc(uid).update({
+      'name': newName,
+      'email': newEmail,
+    });
   }
 
   Future<void> checkAttendance() async {
