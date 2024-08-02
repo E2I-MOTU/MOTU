@@ -26,6 +26,7 @@ class RegisterPage extends StatelessWidget {
         'name': _nameController.text,
         'phone': _phoneController.text,
         'balance': 1000000,
+        'attendance': [], // Adding the attendance field as an empty array
       });
 
       Navigator.pushAndRemoveUntil(

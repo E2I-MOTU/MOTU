@@ -22,13 +22,12 @@ class TermCard extends StatelessWidget {
           automaticallyImplyLeading: true,
           actions: [
             IconButton(
-              icon: Icon(Icons.bookmark),
+              icon: Icon(Icons.bookmark_border),
               onPressed: () async {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => BookmarkPage()),
                 );
-                // Fetch bookmarked words again after returning from BookmarkPage
                 Provider.of<TerminologyCardProvider>(context, listen: false).fetchBookmarkedWords();
               },
             ),
