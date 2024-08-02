@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../service/bookmark_service.dart';
 import '../../provider/terminology_card_provider.dart';
 import 'widget/terminology_card_builder.dart';
 import 'widget/terminology_card_completion_builder.dart';
+import '../terminology/bookmark.dart';
 
 class TermCard extends StatelessWidget {
   final String title;
@@ -15,30 +15,21 @@ class TermCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => TerminologyCardProvider()..fetchWords(title),
+      create: (_) => TerminologyCardProvider()..fetchWords(title)..fetchBookmarkedWords(),
       child: Scaffold(
         appBar: AppBar(
           title: Text(title),
           automaticallyImplyLeading: true,
           actions: [
-            Consumer<TerminologyCardProvider>(
-              builder: (context, wordsProvider, child) {
-                return IconButton(
-                  icon: Icon(Icons.bookmark),
-                  onPressed: () {
-                    if (wordsProvider.words.isNotEmpty && wordsProvider.current < wordsProvider.words.length) {
-                      BookmarkService().addBookmark(
-                        wordsProvider.words[wordsProvider.current]['term'] ?? '',
-                        wordsProvider.words[wordsProvider.current]['definition'] ?? '',
-                        wordsProvider.words[wordsProvider.current]['example'] ?? '',
-                        wordsProvider.words[wordsProvider.current]['category'] ?? '',
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('책갈피에 저장되었습니다.')),
-                      );
-                    }
-                  },
+            IconButton(
+              icon: Icon(Icons.bookmark),
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BookmarkPage()),
                 );
+                // Fetch bookmarked words again after returning from BookmarkPage
+                Provider.of<TerminologyCardProvider>(context, listen: false).fetchBookmarkedWords();
               },
             ),
           ],
@@ -61,11 +52,17 @@ class TermCard extends StatelessWidget {
                       if (index == wordsProvider.words.length) {
                         return buildCompletionPage(context, title, documentName, uid);
                       } else {
+                        final word = wordsProvider.words[index];
+                        final isBookmarked = wordsProvider.bookmarkedWords.contains(word['term']);
                         return buildTermCard(
                           context,
-                          wordsProvider.words[index]['term'] ?? '',
-                          wordsProvider.words[index]['definition'] ?? '',
-                          wordsProvider.words[index]['example'] ?? '',
+                          word['term']!,
+                          word['definition']!,
+                          word['example']!,
+                          isBookmarked,
+                              () {
+                            wordsProvider.toggleBookmark(word['term']!);
+                          },
                         );
                       }
                     },

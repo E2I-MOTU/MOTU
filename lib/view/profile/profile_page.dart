@@ -8,6 +8,7 @@ import '../terminology/bookmark.dart';
 import '../theme/color_theme.dart';
 import 'balance_detail_page.dart';
 import 'completion_page.dart';
+import 'profile_detail_page.dart'; // Import the ProfileDetailPage
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({super.key});
@@ -20,12 +21,19 @@ class _ProfilePageState extends State<ProfilePage> {
   final ProfileService _service = ProfileService();
   late Future<UserModel?> _userInfoFuture;
   late Future<List<DateTime>> _attendanceFuture;
+  UserModel? userData;
 
   @override
   void initState() {
     super.initState();
     _userInfoFuture = _service.getUserInfo();
     _attendanceFuture = _service.getAttendance();
+  }
+
+  void _updateUserData(UserModel updatedData) {
+    setState(() {
+      userData = updatedData;
+    });
   }
 
   @override
@@ -50,12 +58,12 @@ class _ProfilePageState extends State<ProfilePage> {
             return const Center(child: Text('사용자 정보를 찾을 수 없습니다.'));
           }
 
-          var userData = snapshot.data!;
+          userData = userData ?? snapshot.data!;
           final List<Map<String, dynamic>> learningStatusItems = [
             {'title': '수료 완료', 'onTap': () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CompletionPage(uid: userData.uid!)),
+                MaterialPageRoute(builder: (context) => CompletionPage(uid: userData!.uid!)),
               );
             }},
             {'title': '학습 진도', 'onTap': () {}},
@@ -79,21 +87,24 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage('assets/images/person.png'),
-                    ),
-                    const SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(userData.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        Text(userData.email),
-                      ],
-                    ),
-                  ],
+                ListTile(
+                  leading: CircleAvatar(
+                    radius: 30,
+                    backgroundImage: AssetImage('assets/images/person.png'),
+                  ),
+                  title: Text(userData!.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  subtitle: Text(userData!.email),
+                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  onTap: () async {
+                    final updatedUserData = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProfileDetailPage(userData: userData!)),
+                    );
+                    if (updatedUserData != null) {
+                      _updateUserData(updatedUserData);
+                    }
+                  },
                 ),
                 const SizedBox(height: 16),
                 const ListTile(
@@ -101,45 +112,22 @@ class _ProfilePageState extends State<ProfilePage> {
                     '잔고 내역',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                 ),
-                GestureDetector(
+                ListTile(
+                  leading: Icon(Icons.account_balance_wallet, color: Colors.blueGrey),
+                  title: Text(
+                    '${userData!.balance}',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => BalanceDetailPage(balance: userData.balance)),
+                      MaterialPageRoute(builder: (context) => BalanceDetailPage(balance: userData!.balance)),
                     );
                   },
-                  child: Container(
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.account_balance_wallet, color: Colors.blueGrey),
-                            const SizedBox(width: 16),
-                            Text(
-                              '${userData.balance}',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                        Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                      ],
-                    ),
-                  ),
                 ),
                 const SizedBox(height: 16),
                 const ListTile(
@@ -147,6 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     '출석 현황',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                 ),
                 FutureBuilder<List<DateTime>>(
                   future: _attendanceFuture,
@@ -174,6 +163,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     '학습 현황',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                 ),
                 ...learningStatusItems.map((item) {
                   return buildMenuTile(
@@ -187,6 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     '고객센터',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                 ),
                 ...customerServiceItems.map((item) {
                   return buildMenuTile(

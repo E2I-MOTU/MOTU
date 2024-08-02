@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
-  final String? uid;
+  final String uid;
   final String email;
   final String name;
   final int balance;
@@ -15,7 +15,7 @@ class UserModel {
     required this.attendance,
   });
 
-  factory UserModel.fromMap(String? uid, Map<String, dynamic> data) {
+  factory UserModel.fromMap(String uid, Map<String, dynamic> data) {
     return UserModel(
       uid: uid,
       email: data['email'] ?? '',
