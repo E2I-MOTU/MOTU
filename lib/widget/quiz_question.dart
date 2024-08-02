@@ -46,9 +46,28 @@ class QuizQuestionWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: TextField(
                   onChanged: onSelectAnswer,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: '정답 입력',
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: ColorTheme.colorWhite,
+                    hintText: '정답 입력',
+                    hintStyle: TextStyle(
+                      color: ColorTheme.colorDisabled,
+                      fontSize: 16,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
                   ),
                 ),
               )
@@ -65,6 +84,7 @@ class QuizQuestionWidget extends StatelessWidget {
                         onSelectAnswer(option as String);
                       },
                       style: ElevatedButton.styleFrom(
+                        shadowColor: Colors.transparent,
                         backgroundColor: selectedAnswer == option
                             ? ColorTheme.colorPrimary
                             : ColorTheme.colorWhite,
@@ -74,7 +94,7 @@ class QuizQuestionWidget extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 20.0),
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(
-                            Radius.circular(10),
+                            Radius.circular(20),
                           ),
                         ),
                       ),
