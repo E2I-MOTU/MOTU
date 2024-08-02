@@ -8,6 +8,8 @@ class RegisterPage extends StatelessWidget {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -21,7 +23,10 @@ class RegisterPage extends StatelessWidget {
       User? user = userCredential.user;
       await _firestore.collection('users').doc(user?.uid).set({
         'email': _emailController.text,
+        'name': _nameController.text,
+        'phone': _phoneController.text,
         'balance': 1000000,
+        'attendance': [], // Adding the attendance field as an empty array
       });
 
       Navigator.pushAndRemoveUntil(
@@ -47,6 +52,22 @@ class RegisterPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const SizedBox(height: 50),
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: '이름을 입력하세요',
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _phoneController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: '전화번호를 입력하세요',
+                ),
+              ),
+              const SizedBox(height: 10),
               TextField(
                 controller: _emailController,
                 decoration: const InputDecoration(

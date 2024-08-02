@@ -3,6 +3,7 @@ import 'package:motu/widget/linear_indicator.dart';
 import 'package:motu/view/theme/color_theme.dart';
 import 'package:provider/provider.dart';
 import '../../provider/quiz_provider.dart';
+import '../../widget/quiz_question.dart';
 import 'incorrect_answers_screen.dart';
 
 class QuizScreen extends StatelessWidget {

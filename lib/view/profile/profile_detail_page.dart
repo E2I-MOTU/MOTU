@@ -21,7 +21,6 @@ class ProfileDetailPage extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => EditProfilePage(userData: userData)),
               );
               if (updatedUserData != null) {
-                // Replace the current user data with the updated data
                 Navigator.pop(context, updatedUserData);
               }
             },

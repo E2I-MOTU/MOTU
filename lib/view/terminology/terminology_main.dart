@@ -74,7 +74,7 @@ class TermMain extends StatelessWidget {
                           context,
                           data['title'],
                           data['catchphrase'],
-                          Colors.grey,
+                          Colors.white,
                           TermCard(title: data['title'], documentName: doc.id, uid: uid),
                           completionSnapshot.data ?? false,
                         );

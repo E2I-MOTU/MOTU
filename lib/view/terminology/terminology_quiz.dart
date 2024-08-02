@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:motu/view/theme/color_theme.dart';
 import 'package:provider/provider.dart';
 import '../../provider/terminology_quiz_provider.dart';
+import '../../widget/quiz_question.dart';
 import '../../widget/linear_indicator.dart';
 import 'terminology_incorrect_answers_screen.dart';
 
@@ -110,107 +111,21 @@ class TermQuizScreen extends StatelessWidget {
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Text(
-                                    question['question'] ?? '질문이 없습니다.',
-                                    style: const TextStyle(
-                                        fontSize: 20, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                if (question['type'] == '단답형') ...[
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width * 0.9,
-                                      child: TextField(
-                                        controller: quizState.answerController,
-                                        textAlign: TextAlign.center,
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: ColorTheme.colorWhite,
-                                          hintText: '정답 입력',
-                                          hintStyle: TextStyle(
-                                            color: ColorTheme.colorDisabled,
-                                            fontSize: 16,
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(20),
-                                            borderSide: BorderSide(color: Colors.transparent),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(20),
-                                            borderSide: BorderSide(color: Colors.transparent),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(20),
-                                            borderSide: BorderSide(color: Colors.transparent),
-                                          ),
-                                          contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
-                                        ),
-
-                                        onChanged: (value) {
-                                          quizState.selectAnswer(value);
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ] else if (question['type'] == '객관식') ...[
-                                  ...(question['options'] as List<dynamic>).map<Widget>((option) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0, horizontal: 16.0),
-                                      child: SizedBox(
-                                        width: double.infinity,
-                                        child: ElevatedButton(
-                                          onPressed: quizState.answered
-                                              ? null
-                                              : () {
-                                            quizState.selectAnswer(option as String);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            shadowColor: Colors.transparent,
-                                            backgroundColor: quizState.selectedAnswer == option
-                                                ? ColorTheme.colorPrimary
-                                                : ColorTheme.colorWhite,
-                                            foregroundColor: quizState.selectedAnswer == option
-                                                ? ColorTheme.colorWhite
-                                                : ColorTheme.colorFont,
-                                            padding: const EdgeInsets.symmetric(vertical: 20.0),
-                                            shape: const RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(20),
-                                              ),
-                                            ),
-                                          ),
-                                          child: Text(option as String),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ],
-                                const SizedBox(height: 20),
-                                ElevatedButton(
-                                  onPressed: quizState.selectedAnswer.isEmpty
-                                      ? null
-                                      : () {
+                                QuizQuestionWidget(
+                                  question: question['question'] ?? '질문이 없습니다.',
+                                  options: question['type'] == '객관식' ? question['options'] ?? [] : null,
+                                  selectedAnswer: quizState.selectedAnswer,
+                                  answered: quizState.answered,
+                                  onSelectAnswer: (String option) {
+                                    quizState.selectAnswer(option);
+                                  },
+                                  onSubmit: () {
                                     quizState.submitAnswer(question['answer'] ?? '');
                                     quizState.nextQuestion();
                                   },
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
-                                    ),
-                                  ),
-                                  child: const Text('제출'),
-                                ),
-                                const SizedBox(height: 20),
-                                Text(
-                                  '${quizState.currentQuestionIndex + 1} / ${quizState.questions.length}',
-                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  currentQuestionIndex: quizState.currentQuestionIndex + 1,
+                                  totalQuestions: quizState.questions.length,
+                                  isShortAnswer: question['type'] == '단답형',
                                 ),
                               ],
                             ),
