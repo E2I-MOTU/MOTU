@@ -25,6 +25,7 @@ class BookmarkService {
     }
   }
 
+  // 중복 XX, DB 관련 처리
   Future<void> deleteBookmark(String term) async {
     User? user = _auth.currentUser;
     if (user != null) {
