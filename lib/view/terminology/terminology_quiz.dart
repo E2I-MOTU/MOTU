@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motu/view/theme/color_theme.dart';
 import 'package:provider/provider.dart';
 import '../../provider/terminology_quiz_provider.dart';
 import '../../widget/linear_indicator.dart';
@@ -19,10 +20,11 @@ class TermQuizScreen extends StatelessWidget {
         builder: (context, quizState, child) {
           if (quizState.isLoading) {
             return Scaffold(
+              backgroundColor: ColorTheme.colorNeutral,
               appBar: AppBar(
-                backgroundColor: Colors.white,
+                backgroundColor: ColorTheme.colorWhite,
                 title: const Text(
-                  '퀴즈 앱',
+                  '용어 테스트',
                   style: TextStyle(color: Colors.black),
                 ),
                 iconTheme: const IconThemeData(color: Colors.black),
@@ -33,10 +35,11 @@ class TermQuizScreen extends StatelessWidget {
 
           if (quizState.currentQuestionIndex >= quizState.questions.length) {
             return Scaffold(
+              backgroundColor: ColorTheme.colorNeutral,
               appBar: AppBar(
-                backgroundColor: Colors.white,
+                backgroundColor: ColorTheme.colorWhite,
                 title: const Text(
-                  '퀴즈 앱',
+                  '용어 테스트',
                   style: TextStyle(color: Colors.black),
                 ),
                 iconTheme: const IconThemeData(color: Colors.black),
@@ -45,7 +48,7 @@ class TermQuizScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('퀴즈 완료! 점수: ${quizState.score}/${quizState.questions.length}'),
+                    Text('테스트 응시 완료! 점수: ${quizState.score}/${quizState.questions.length}'),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(
@@ -68,10 +71,11 @@ class TermQuizScreen extends StatelessWidget {
           final question = quizState.questions[quizState.currentQuestionIndex];
 
           return Scaffold(
+            backgroundColor: ColorTheme.colorNeutral,
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: ColorTheme.colorWhite,
               title: const Text(
-                '퀴즈 앱',
+                '용어 테스트',
                 style: TextStyle(color: Colors.black),
               ),
               iconTheme: const IconThemeData(color: Colors.black),
@@ -117,15 +121,38 @@ class TermQuizScreen extends StatelessWidget {
                                 if (question['type'] == '단답형') ...[
                                   Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                    child: TextField(
-                                      controller: quizState.answerController,
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        labelText: '정답 입력',
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width * 0.9,
+                                      child: TextField(
+                                        controller: quizState.answerController,
+                                        textAlign: TextAlign.center,
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor: ColorTheme.colorWhite,
+                                          hintText: '정답 입력',
+                                          hintStyle: TextStyle(
+                                            color: ColorTheme.colorDisabled,
+                                            fontSize: 16,
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(20),
+                                            borderSide: BorderSide(color: Colors.transparent),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(20),
+                                            borderSide: BorderSide(color: Colors.transparent),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(20),
+                                            borderSide: BorderSide(color: Colors.transparent),
+                                          ),
+                                          contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
+                                        ),
+
+                                        onChanged: (value) {
+                                          quizState.selectAnswer(value);
+                                        },
                                       ),
-                                      onChanged: (value) {
-                                        quizState.selectAnswer(value);
-                                      },
                                     ),
                                   ),
                                 ] else if (question['type'] == '객관식') ...[
@@ -142,13 +169,17 @@ class TermQuizScreen extends StatelessWidget {
                                             quizState.selectAnswer(option as String);
                                           },
                                           style: ElevatedButton.styleFrom(
+                                            shadowColor: Colors.transparent,
                                             backgroundColor: quizState.selectedAnswer == option
-                                                ? Colors.deepPurpleAccent
-                                                : null,
+                                                ? ColorTheme.colorPrimary
+                                                : ColorTheme.colorWhite,
+                                            foregroundColor: quizState.selectedAnswer == option
+                                                ? ColorTheme.colorWhite
+                                                : ColorTheme.colorFont,
                                             padding: const EdgeInsets.symmetric(vertical: 20.0),
                                             shape: const RoundedRectangleBorder(
                                               borderRadius: BorderRadius.all(
-                                                Radius.circular(10),
+                                                Radius.circular(20),
                                               ),
                                             ),
                                           ),

@@ -19,7 +19,9 @@ class TermCard extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => TerminologyCardProvider()..fetchWords(title)..fetchBookmarkedWords(),
       child: Scaffold(
+        backgroundColor: ColorTheme.colorNeutral,
         appBar: AppBar(
+          backgroundColor: ColorTheme.colorWhite,
           title: Text(title),
           automaticallyImplyLeading: true,
           actions: [
