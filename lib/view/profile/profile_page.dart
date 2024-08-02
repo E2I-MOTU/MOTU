@@ -8,7 +8,7 @@ import '../terminology/bookmark.dart';
 import '../theme/color_theme.dart';
 import 'balance_detail_page.dart';
 import 'completion_page.dart';
-import 'profile_detail_page.dart'; // Import the ProfileDetailPage
+import 'profile_detail_page.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({super.key});
@@ -146,11 +146,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     if (snapshot.hasError) {
                       return const Center(child: Text('출석 현황을 불러오는 중 오류가 발생했습니다.'));
                     }
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(child: Text('출석 기록이 없습니다.'));
-                    }
 
-                    List<DateTime> attendance = snapshot.data!;
+                    List<DateTime> attendance = snapshot.data ?? [];
+
                     return buildSectionCard(
                       context,
                       children: buildAttendanceWeek(context, attendance),
