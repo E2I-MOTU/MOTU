@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flip_card/flip_card.dart';
 import 'quiz_screen.dart';
 import '../../service/user_service.dart';
 import 'widget/circle_indicator.dart';
@@ -68,56 +69,121 @@ class QuizSelectionScreen extends StatelessWidget {
                     var totalQuestions = progress != null ? (progress['totalQuestions'] ?? 10) : 10;
                     var isCompleted = progress != null ? score >= totalQuestions * 0.9 : false;
 
-                    var quizCard = InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => QuizScreen(collectionName: quizId, uid: uid),
+                    var quizCard = isCompleted
+                        ? Stack(
+                      children: [
+                        Card(
+                          color: Colors.orange[100],
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        quizId,
+                                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        data['catchphrase'] ?? '설명 없음',
+                                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                      child: Stack(
-                        children: [
-                          Card(
-                            color: isCompleted ? Colors.orange[100] : Colors.primaries[i % Colors.primaries.length][100],
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          quizId,
-                                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Text(
-                                          data['catchphrase'] ?? '설명 없음',
-                                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
+                        ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: CircularScoreIndicator(
+                            score: score,
+                            totalQuestions: totalQuestions,
+                            isCompleted: isCompleted,
+                          ),
+                        ),
+                      ],
+                    )
+                        : FlipCard(
+                      direction: FlipDirection.HORIZONTAL,
+                      front: Card(
+                        color: Colors.primaries[i % Colors.primaries.length][100],
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      quizId,
+                                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      data['catchphrase'] ?? '설명 없음',
+                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      back: Card(
+                        color: Colors.primaries[i % Colors.primaries.length][100],
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircularScoreIndicator(
+                                    score: score,
+                                    totalQuestions: totalQuestions,
+                                    isCompleted: isCompleted,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => QuizScreen(collectionName: quizId, uid: uid),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    '다시 풀어보기',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Colors.grey,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                          if (progress != null)
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: CircularScoreIndicator(
-                                score: score,
-                                totalQuestions: totalQuestions,
-                                isCompleted: isCompleted,
                               ),
                             ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
 

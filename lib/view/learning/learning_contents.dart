@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:motu/view/learning/widget/learning_contents_builder.dart';
 import 'package:motu/view/quiz/quiz.dart';
 import 'package:motu/view/terminology/terminology_main.dart';
+import '../../widget/drawer_menu.dart';
 import '../article/article_list_screen.dart';
 import '../news/news_list_screen.dart';
 import '../theme/color_theme.dart';
@@ -17,6 +18,7 @@ class LearningContentscreen extends StatelessWidget {
     final double appBarHeight = AppBar().preferredSize.height;
 
     return Scaffold(
+      drawer: const DrawerMenu(),
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -37,7 +39,7 @@ class LearningContentscreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: appBarHeight + 20), // Adjust the height to account for the app bar
+                SizedBox(height: appBarHeight + 40),
                 const Text(
                   '오늘의 공부\n함께 시작해볼까요?',
                   style: TextStyle(
@@ -95,9 +97,9 @@ class LearningContentscreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => ChatbotScreen()),
           );
         },
-        child: Icon(Icons.chat),
-        backgroundColor: ColorTheme.colorPrimary, // 배경색 설정
-        foregroundColor: Colors.white, // 아이콘 색상 설정
+        child: const Icon(Icons.chat),
+        backgroundColor: ColorTheme.colorPrimary,
+        foregroundColor: Colors.white,
       ),
     );
   }

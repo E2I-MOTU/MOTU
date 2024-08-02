@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../theme/color_theme.dart';
 
 Widget buildCategoryCard(BuildContext context, String title, String catchphrase, Color color, Widget? nextScreen, bool isCompleted) {
@@ -10,30 +9,44 @@ Widget buildCategoryCard(BuildContext context, String title, String catchphrase,
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 4,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: Center(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.left,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Text(
+                        catchphrase,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            Text(
-              catchphrase,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.white70,
-              ),
-              textAlign: TextAlign.center,
             ),
             ElevatedButton(
               onPressed: () {
@@ -46,10 +59,10 @@ Widget buildCategoryCard(BuildContext context, String title, String catchphrase,
               },
               child: const Text('배워보자'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: ColorTheme.colorSecondary,
+                backgroundColor: ColorTheme.colorPrimary,
                 foregroundColor: ColorTheme.colorWhite,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
