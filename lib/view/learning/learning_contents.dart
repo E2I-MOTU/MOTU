@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/learning/widget/learning_contents_builder.dart';
-import 'package:motu/view/quiz/quiz.dart';
+import 'package:motu/view/quiz/quiz_main.dart';
 import 'package:motu/view/terminology/terminology_main.dart';
 import '../../widget/drawer_menu.dart';
 import '../article/article_list_screen.dart';
