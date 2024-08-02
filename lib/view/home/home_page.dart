@@ -15,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   int currentSlide = 0;
   late PageController _pageController;
   late Timer _timer;
-  final HomeController _controller = HomeController();
+  final HomeService _controller = HomeService();
 
   @override
   void initState() {

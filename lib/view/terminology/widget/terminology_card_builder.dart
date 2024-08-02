@@ -70,7 +70,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
             children: [
               const SizedBox(height: 20),
               Text(
-                '${term}이란?',
+                '${term}(이)란?',
                 style: const TextStyle(
                   fontSize: 20,
                   color: Colors.black,

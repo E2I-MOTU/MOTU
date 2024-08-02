@@ -31,32 +31,38 @@ class ProfileService {
       DocumentSnapshot doc = await userDoc.get();
       List<dynamic> attendance = doc['attendance'] ?? [];
       DateTime now = DateTime.now();
+      DateTime today = DateTime(now.year, now.month, now.day);
 
-      if (attendance.isEmpty || now.difference((attendance.last as Timestamp).toDate()).inDays > 1) {
-        attendance = [Timestamp.fromDate(now)];
-      } else {
-        attendance = attendance.where((date) {
-          DateTime dateTime = (date as Timestamp).toDate();
-          return now.difference(dateTime).inDays < 7;
+      bool alreadyCheckedIn = attendance.any((timestamp) {
+        DateTime date = (timestamp as Timestamp).toDate();
+        return date.year == today.year && date.month == today.month && date.day == today.day;
+      });
+
+      if (!alreadyCheckedIn) {
+        attendance = attendance.where((timestamp) {
+          DateTime date = (timestamp as Timestamp).toDate();
+          return now.difference(date).inDays < 7;
         }).toList();
 
-        attendance.add(Timestamp.fromDate(now));
-      }
+        attendance.add(Timestamp.now());
 
-      if (attendance.length >= 7) {
-        DateTime startDate = (attendance[attendance.length - 7] as Timestamp).toDate();
-        if (now.difference(startDate).inDays == 6) {
-          int balance = doc['balance'] ?? 0;
-          balance += 100000;
-          await userDoc.update({
-            'balance': balance,
-          });
+        if (attendance.length >= 7) {
+          DateTime startDate = (attendance[attendance.length - 7] as Timestamp).toDate();
+          if (now.difference(startDate).inDays <= 6) {
+            int balance = doc['balance'] ?? 0;
+            balance += 100000;
+            await userDoc.update({
+              'balance': balance,
+            });
+          }
         }
-      }
 
-      await userDoc.update({
-        'attendance': attendance,
-      });
+        await userDoc.update({
+          'attendance': attendance,
+        });
+      } else {
+        throw Exception("Already checked in today");
+      }
     }
   }
 
