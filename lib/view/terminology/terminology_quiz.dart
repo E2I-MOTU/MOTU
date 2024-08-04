@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../provider/terminology_quiz_provider.dart';
 import '../../widget/quiz_question.dart';
 import '../../widget/linear_indicator.dart';
+import '../quiz/widget/circle_indicator.dart'; // Ensure this import path is correct
 import 'terminology_incorrect_answers_screen.dart';
 
 class TermQuizScreen extends StatelessWidget {
@@ -11,12 +12,18 @@ class TermQuizScreen extends StatelessWidget {
   final String documentName;
   final String uid;
 
-  const TermQuizScreen({Key? key, required this.collectionName, required this.documentName, required this.uid}) : super(key: key);
+  const TermQuizScreen({
+    Key? key,
+    required this.collectionName,
+    required this.documentName,
+    required this.uid,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => TerminologyQuizService()..loadQuestions(collectionName, documentName, uid),
+      create: (context) => TerminologyQuizService()
+        ..loadQuestions(collectionName, documentName, uid),
       child: Consumer<TerminologyQuizService>(
         builder: (context, quizState, child) {
           if (quizState.isLoading) {
@@ -34,9 +41,11 @@ class TermQuizScreen extends StatelessWidget {
             );
           }
 
+          bool isCompleted = quizState.score >= quizState.questions.length * 0.9;
+
           if (quizState.currentQuestionIndex >= quizState.questions.length) {
             return Scaffold(
-              backgroundColor: ColorTheme.colorNeutral,
+              backgroundColor: ColorTheme.colorWhite,
               appBar: AppBar(
                 backgroundColor: ColorTheme.colorWhite,
                 title: const Text(
@@ -49,19 +58,78 @@ class TermQuizScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('테스트 응시 완료! 점수: ${quizState.score}/${quizState.questions.length}'),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TermIncorrectAnswersScreen(
-                              termIncorrectAnswers: quizState.incorrectAnswers,
-                            ),
+                    Text(
+                      '테스트 응시 완료!',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 40),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: ColorTheme.colorNeutral,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 10,
+                            offset: Offset(0, 4), // Shadow position
                           ),
-                        ).then((_) => Navigator.pop(context));
-                      },
-                      child: const Text('오답 확인'),
+                        ],
+                        borderRadius: BorderRadius.circular(20), // Rounded corners
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(height: 60),
+                            Transform.scale(
+                              scale: 3, // Scale factor for enlarging the indicator
+                              child: CircularScoreIndicator(
+                                score: quizState.score,
+                                totalQuestions: quizState.questions.length,
+                                isCompleted: isCompleted,
+                              ),
+                            ),
+                            SizedBox(height: 80), // Adjusted spacing between elements
+                            Image.asset(
+                              'assets/images/panda.png',
+                              width: 100,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 60),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: 60,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorTheme.colorPrimary,
+                          foregroundColor: ColorTheme.colorWhite,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          textStyle: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TermIncorrectAnswersScreen(
+                                termIncorrectAnswers: quizState.incorrectAnswers,
+                              ),
+                            ),
+                          ).then((_) => Navigator.pop(context));
+                        },
+                        child: Text('틀린 문제 보러가기'),
+                      ),
                     ),
                   ],
                 ),
