@@ -61,7 +61,7 @@ Widget buildQuizCard({
     children: [
       Card(
         color: Colors.orange[100],
-        child: buildCardContent('배워보자', () {
+        child: buildCardContent('복습하기', () {
           Navigator.push(
             context,
             MaterialPageRoute(
