@@ -18,21 +18,22 @@ class CircularScoreIndicator extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        SizedBox(
-          width: 50,
-          height: 50,
-          child: CircularProgressIndicator(
-            value: percentage,
-            backgroundColor: Colors.white,
-            valueColor: AlwaysStoppedAnimation<Color>(isCompleted ? Colors.orange : Colors.purple),
-            strokeWidth: 6,
+        if (!isCompleted)
+          SizedBox(
+            width: 50,
+            height: 50,
+            child: CircularProgressIndicator(
+              value: percentage,
+              backgroundColor: Colors.white,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
+              strokeWidth: 6,
+            ),
           ),
-        ),
         if (isCompleted)
           const Icon(
             Icons.emoji_events,
             color: Colors.orange,
-            size: 24,
+            size: 30,
           )
         else
           Text(

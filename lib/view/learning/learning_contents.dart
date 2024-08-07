@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:motu/view/learning/widget/learning_contents_builder.dart';
 import 'package:motu/view/quiz/quiz.dart';
-import 'package:motu/view/word/word_main.dart';
+import 'package:motu/view/terminology/terminology_main.dart';
+import '../../widget/drawer_menu.dart';
 import '../article/article_list_screen.dart';
 import '../news/news_list_screen.dart';
+import '../theme/color_theme.dart';
 import 'chat_screen.dart';
 
 class LearningContentscreen extends StatelessWidget {
@@ -12,24 +15,31 @@ class LearningContentscreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double appBarHeight = AppBar().preferredSize.height;
 
     return Scaffold(
+      drawer: const DrawerMenu(),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      backgroundColor: ColorTheme.colorNeutral,
       body: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
+                bottomLeft: Radius.circular(40),
+                bottomRight: Radius.circular(40),
               ),
-              color: Colors.green[200],
+              color: ColorTheme.colorSecondary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: screenHeight * 0.1),
+                SizedBox(height: appBarHeight + 40),
                 const Text(
                   '오늘의 공부\n함께 시작해볼까요?',
                   style: TextStyle(
@@ -42,8 +52,8 @@ class LearningContentscreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.green[200],
-                    borderRadius: BorderRadius.circular(10),
+                    color: ColorTheme.colorSecondary,
+                    borderRadius: BorderRadius.circular(50),
                   ),
                   child: Row(
                     children: [
@@ -52,6 +62,7 @@ class LearningContentscreen extends StatelessWidget {
                       const Text(
                         '일단 시작만 해도\n누구나 1% 포인트!',
                         style: TextStyle(
+                          color: ColorTheme.colorWhite,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -65,14 +76,15 @@ class LearningContentscreen extends StatelessWidget {
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
-              padding: const EdgeInsets.all(10),
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+              padding: const EdgeInsets.all(15),
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 20,
+              childAspectRatio: 5 / 6,
               children: [
-                _buildCard(context, '용어 공부하기', Colors.deepPurpleAccent, WordsMain()),
-                _buildCard(context, '퀴즈 풀며\n내 실력 확인해보기', Colors.pinkAccent, QuizSelectionScreen(uid: uid)),
-                _buildCard(context, '꼭 필요한 경제칼럼 읽으며\n경제지식 쌓기', Colors.orange, ArticleListScreen()),
-                _buildCard(context, '오늘의 시사 정보 확인하기', Colors.cyan, NewsListScreen()),
+                buildCard(context, '용어\n공부하기', ColorTheme.colorWhite, TermMain(uid: uid,)),
+                buildCard(context, '퀴즈 풀며\n내 실력\n확인해보기', ColorTheme.colorWhite, QuizSelectionScreen(uid: uid)),
+                buildCard(context, '꼭 필요한 경제칼럼\n읽으며\n경제지식 쌓기', ColorTheme.colorWhite, ArticleListScreen()),
+                buildCard(context, '오늘의\n시사 정보\n확인하기', ColorTheme.colorWhite, NewsListScreen()),
               ],
             ),
           ),
@@ -85,51 +97,9 @@ class LearningContentscreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => ChatbotScreen()),
           );
         },
-        child: Icon(Icons.chat),
-      ),
-    );
-  }
-
-  Widget _buildCard(BuildContext context, String text, Color color, Widget? nextScreen) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Center(
-              child: Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.left,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (nextScreen != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => nextScreen),
-                );
-              }
-            },
-            child: const Text('도전하기'),
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-          ),
-        ],
+        child: const Icon(Icons.chat),
+        backgroundColor: ColorTheme.colorPrimary,
+        foregroundColor: Colors.white,
       ),
     );
   }

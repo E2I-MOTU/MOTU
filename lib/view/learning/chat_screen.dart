@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../service/chat_service.dart';
+import '../../provider/chat_provider.dart';
 
 class ChatbotScreen extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();

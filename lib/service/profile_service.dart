@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../model/user_model.dart';
+import '../model/user_data.dart';
 
 class ProfileService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -11,19 +11,17 @@ class ProfileService {
     if (user != null) {
       DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
       if (doc.exists) {
-        return UserModel.fromMap(doc.data() as Map<String, dynamic>);
+        return UserModel.fromMap(user.uid, doc.data() as Map<String, dynamic>);
       }
     }
     return null;
   }
 
-  Future<void> updateName(String newName) async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      await _firestore.collection('users').doc(user.uid).update({
-        'name': newName,
-      });
-    }
+  Future<void> updateUserInfo(String uid, String newName, String newEmail) async {
+    await _firestore.collection('users').doc(uid).update({
+      'name': newName,
+      'email': newEmail,
+    });
   }
 
   Future<void> checkAttendance() async {
@@ -33,32 +31,38 @@ class ProfileService {
       DocumentSnapshot doc = await userDoc.get();
       List<dynamic> attendance = doc['attendance'] ?? [];
       DateTime now = DateTime.now();
+      DateTime today = DateTime(now.year, now.month, now.day);
 
-      if (attendance.isEmpty || now.difference((attendance.last as Timestamp).toDate()).inDays > 1) {
-        attendance = [Timestamp.fromDate(now)];
-      } else {
-        attendance = attendance.where((date) {
-          DateTime dateTime = (date as Timestamp).toDate();
-          return now.difference(dateTime).inDays < 7;
+      bool alreadyCheckedIn = attendance.any((timestamp) {
+        DateTime date = (timestamp as Timestamp).toDate();
+        return date.year == today.year && date.month == today.month && date.day == today.day;
+      });
+
+      if (!alreadyCheckedIn) {
+        attendance = attendance.where((timestamp) {
+          DateTime date = (timestamp as Timestamp).toDate();
+          return now.difference(date).inDays < 7;
         }).toList();
 
-        attendance.add(Timestamp.fromDate(now));
-      }
+        attendance.add(Timestamp.now());
 
-      if (attendance.length >= 7) {
-        DateTime startDate = (attendance[attendance.length - 7] as Timestamp).toDate();
-        if (now.difference(startDate).inDays == 6) {
-          int balance = doc['balance'] ?? 0;
-          balance += 100000;
-          await userDoc.update({
-            'balance': balance,
-          });
+        if (attendance.length >= 7) {
+          DateTime startDate = (attendance[attendance.length - 7] as Timestamp).toDate();
+          if (now.difference(startDate).inDays <= 6) {
+            int balance = doc['balance'] ?? 0;
+            balance += 100000;
+            await userDoc.update({
+              'balance': balance,
+            });
+          }
         }
-      }
 
-      await userDoc.update({
-        'attendance': attendance,
-      });
+        await userDoc.update({
+          'attendance': attendance,
+        });
+      } else {
+        throw Exception("Already checked in today");
+      }
     }
   }
 

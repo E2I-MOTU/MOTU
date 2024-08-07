@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../model/news_article.dart';
+import '../../model/news_data.dart';
 import '../../service/news_service.dart';
 import 'news_list_item.dart';
 
@@ -10,7 +10,7 @@ class NewsListScreen extends StatefulWidget {
 }
 
 class _NewsListScreenState extends State<NewsListScreen> {
-  final NewsController _controller = NewsController();
+  final NewsService _controller = NewsService();
   String _selectedTopic = 'All';
   Future<List<NewsArticle>>? _newsFuture;
 

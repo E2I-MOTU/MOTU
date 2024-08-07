@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:motu/service/scenario_service.dart';
-import 'package:motu/view/scenario/scenario_page.dart';
+import 'package:motu/provider/scenario_service.dart';
+
+import 'scenario_page.dart';
 
 class ScenarioList extends StatelessWidget {
   const ScenarioList({super.key});

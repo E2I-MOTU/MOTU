@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
-import 'user_service.dart';
+import '../service/user_service.dart';
 
 class QuizService with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -84,7 +84,7 @@ class QuizService with ChangeNotifier {
       if (_score / _questions.length >= 0.9) {
         await _userService.updateUserBalance(uid, 100000);
       }
-      await _userService.saveQuizCompletion(uid, collectionName, _score, _incorrectAnswers);
+      await _userService.saveQuizCompletion(uid, collectionName, _score);
     }
 
     notifyListeners();

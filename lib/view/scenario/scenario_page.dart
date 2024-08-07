@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:motu/service/scenario_service.dart';
 import 'package:motu/view/scenario/tabs/stock_balance.dart';
 import 'package:motu/view/scenario/tabs/stock_news.dart';
 import 'package:motu/view/scenario/tabs/stock_order.dart';
 import 'package:provider/provider.dart';
+
+import '../../provider/scenario_service.dart';
 
 class ScenarioPage extends StatelessWidget {
   const ScenarioPage({super.key});
@@ -47,10 +48,10 @@ class ScenarioPage extends StatelessWidget {
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
             ),
-            body: TabBarView(
+            body: const TabBarView(
               children: [
-                const StockOrderTab(),
-                const StockNewsTab(),
+                StockOrderTab(),
+                StockNewsTab(),
                 StockBalanceTab(),
               ],
             ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../widget/drawer_menu.dart';
 import '../../service/home_service.dart';
+import '../theme/color_theme.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   int currentSlide = 0;
   late PageController _pageController;
   late Timer _timer;
-  final HomeController _controller = HomeController();
+  final HomeService _controller = HomeService();
 
   @override
   void initState() {
@@ -42,15 +43,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorTheme.colorWhite,
       appBar: AppBar(
+        backgroundColor: ColorTheme.colorWhite,
         title: const Text('홈페이지'),
         automaticallyImplyLeading: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications),
-            onPressed: () {
-              // 알림 아이콘 클릭 시 동작 (필요한 경우 구현)
-            },
+            onPressed: () {},
           ),
         ],
       ),
@@ -81,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                             width: double.infinity,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
-                              color: Colors.grey,
+                              color: ColorTheme.colorDisabled,
                             ),
                           );
                         },
@@ -104,9 +105,8 @@ class _HomePageState extends State<HomePage> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   color: currentSlide == index
-                                      ? Colors.black
-                                      : Colors.transparent,
-                                  border: Border.all(color: Colors.black),
+                                      ? ColorTheme.colorPrimary
+                                      : ColorTheme.colorWhite,
                                 ),
                               ),
                             ),
@@ -130,6 +130,9 @@ class _HomePageState extends State<HomePage> {
                     TextButton(
                       onPressed: () {},
                       child: const Text("전체보기"),
+                      style: TextButton.styleFrom(
+                        foregroundColor: ColorTheme.colorFont, // 버튼 텍스트 색상 설정
+                      ),
                     ),
                   ],
                 ),
@@ -144,7 +147,7 @@ class _HomePageState extends State<HomePage> {
                         child: Container(
                           margin: const EdgeInsets.only(right: 15.0),
                           decoration: BoxDecoration(
-                            color: Colors.grey,
+                            color: ColorTheme.colorDisabled,
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
@@ -159,12 +162,12 @@ class _HomePageState extends State<HomePage> {
                     height: 100,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey,
+                      color: ColorTheme.colorDisabled,
                     ),
                     child: Center(
                       child: Text(
                         '출석체크',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: ColorTheme.colorWhite,),
                       ),
                     ),
                   ),

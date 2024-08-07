@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../service/profile_service.dart';
 
-class HomeController {
+class HomeService {
   final ProfileService _service = ProfileService();
 
   Future<void> checkAttendance(BuildContext context) async {
@@ -32,10 +32,16 @@ class HomeController {
     );
 
     if (confirmed) {
-      await _service.checkAttendance();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('출석 체크가 완료되었습니다.')),
-      );
+      try {
+        await _service.checkAttendance();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('출석 체크가 완료되었습니다.')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('오늘은 이미 출석 체크가 완료되었습니다.')),
+        );
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motu/widget/bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:motu/service/navigation_service.dart';
+import 'package:motu/provider/navigation_provider.dart';
 import '../widget/drawer_menu.dart';
 
 class MainPage extends StatelessWidget {
