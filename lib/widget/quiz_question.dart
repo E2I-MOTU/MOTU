@@ -11,6 +11,7 @@ class QuizQuestionWidget extends StatelessWidget {
   final int currentQuestionIndex;
   final int totalQuestions;
   final bool isShortAnswer;
+  final TextEditingController answerController; // Add this line
 
   const QuizQuestionWidget({
     Key? key,
@@ -23,6 +24,7 @@ class QuizQuestionWidget extends StatelessWidget {
     required this.currentQuestionIndex,
     required this.totalQuestions,
     this.isShortAnswer = false,
+    required this.answerController, // Add this line
   }) : super(key: key);
 
   @override
@@ -45,6 +47,7 @@ class QuizQuestionWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: TextField(
+                  controller: answerController, // Use the controller here
                   onChanged: onSelectAnswer,
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(

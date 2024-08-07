@@ -175,7 +175,9 @@ class TermQuizScreen extends StatelessWidget {
                                   child: Text(
                                     question['situation'] ?? '상황 설명이 없습니다.',
                                     style: const TextStyle(
-                                        fontSize: 16, fontWeight: FontWeight.bold),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -194,6 +196,7 @@ class TermQuizScreen extends StatelessWidget {
                                   currentQuestionIndex: quizState.currentQuestionIndex + 1,
                                   totalQuestions: quizState.questions.length,
                                   isShortAnswer: question['type'] == '단답형',
+                                  answerController: quizState.answerController, // Pass the controller here
                                 ),
                               ],
                             ),
