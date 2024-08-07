@@ -11,6 +11,22 @@ import 'package:intl/intl.dart';
 import '../model/stock_data.dart';
 
 class ScenarioService extends ChangeNotifier {
+  // 관련주 드롭다운
+  String selectedStock = '관련주 A';
+
+  final List<String> stockOptions = [
+    '관련주 A',
+    '관련주 B',
+    '관련주 C',
+    '관련주 D',
+    '관련주 E'
+  ];
+
+  void setSelectedStock(String value) {
+    selectedStock = value;
+    notifyListeners();
+  }
+
   // Data
   List<StockData> _stockDataList = [];
   List<StockData> get stockDataList => _stockDataList;

@@ -14,6 +14,7 @@ Widget BottomNavBar() {
       showUnselectedLabels: true,
       type: BottomNavigationBarType.fixed,
       onTap: (index) {
+        print(index);
         service.setSelectedIndex(index);
       },
       items: const [
