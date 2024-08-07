@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/color_theme.dart';
-import '../terminology_quiz.dart';
+import '../term_quiz.dart';
 
 Widget buildCompletionPage(BuildContext context, String title, String documentName, String uid) {
   final double buttonWidth = MediaQuery.of(context).size.width * 0.8; // Set button width to 80% of screen width
