@@ -1,5 +1,8 @@
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'package:speech_balloon/speech_balloon.dart'; // speech_balloon 패키지 import
+
+import '../../theme/color_theme.dart';
 
 Widget buildTermCard(BuildContext context, String term, String definition, String example, bool isBookmarked, VoidCallback onBookmarkToggle) {
   final size = MediaQuery.of(context).size;
@@ -50,6 +53,38 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
                 onPressed: onBookmarkToggle,
               ),
             ),
+            Positioned(
+              right: 20,
+              bottom: 20,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SpeechBalloon(
+                    nipLocation: NipLocation.right,
+                    color: ColorTheme.colorPrimary,
+                    width: 140,
+                    height: 40,
+                    borderRadius: 10,
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: const Text(
+                        '용어 뜻을 알고 싶다면\n클릭해서 뒤집어 보세요!',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: ColorTheme.colorWhite,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Image.asset(
+                    'assets/images/panda.png',
+                    height: 80,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
         back: Container(
@@ -88,7 +123,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
               ),
               const SizedBox(height: 20),
               Text(
-                '예시\n${example}',
+                '예시\n$example',
                 style: const TextStyle(
                   fontSize: 18,
                   color: Colors.black,
