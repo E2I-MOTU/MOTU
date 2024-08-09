@@ -3,6 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:speech_balloon/speech_balloon.dart';
 import '../../theme/color_theme.dart';
 
+final RegExp emoji = RegExp(
+    r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])');
+
+// 단어를 \u200D로 연결하는 함수
+String preventWordBreak(String text) {
+  List<String> words = text.split(' ');
+  String fullText = '';
+
+  for (var i = 0; i < words.length; i++) {
+    fullText += emoji.hasMatch(words[i])
+        ? words[i]
+        : words[i]
+        .replaceAllMapped(RegExp(r'(\S)(?=\S)'), (m) => '${m[1]}\u200D');
+    if (i < words.length - 1) fullText += ' ';
+  }
+
+  return fullText;
+}
+
 Widget buildTermCard(BuildContext context, String term, String definition, String example, bool isBookmarked, VoidCallback onBookmarkToggle) {
   final size = MediaQuery.of(context).size;
   final cardWidth = size.width * 0.9;
@@ -116,7 +135,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
               ),
               const SizedBox(height: 20),
               Text(
-                definition,
+                preventWordBreak(definition), // 단어가 끊기지 않도록 수정
                 style: const TextStyle(
                   fontSize: 15,
                   color: Colors.black,
@@ -144,7 +163,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
                           fontSize: 14,
                           color: Colors.black,
                         ),
-                        children: _buildExampleTextSpans(example, term),
+                        children: _buildExampleTextSpans(preventWordBreak(example), term),
                       ),
                     ),
                   ),
