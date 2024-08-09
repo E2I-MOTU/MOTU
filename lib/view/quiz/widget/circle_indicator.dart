@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/color_theme.dart';
+
 class CircularScoreIndicator extends StatelessWidget {
   final int score;
   final int totalQuestions;
@@ -31,7 +33,7 @@ class CircularScoreIndicator extends StatelessWidget {
             child: CircularProgressIndicator(
               value: percentage,
               backgroundColor: Colors.white,
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.purple),
+              valueColor: const AlwaysStoppedAnimation<Color>(ColorTheme.colorPrimary),
               strokeWidth: strokeWidth,
             ),
           ),
@@ -47,7 +49,7 @@ class CircularScoreIndicator extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: Colors.purple,
+              color: ColorTheme.colorPrimary,
             ),
           ),
       ],
