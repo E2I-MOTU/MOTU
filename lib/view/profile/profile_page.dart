@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motu/view/profile/profile_detail_page.dart';
 import 'package:motu/view/profile/widget/attendance_builder.dart';
 import 'package:motu/view/profile/widget/menu_tile_builder.dart';
 import 'package:motu/view/profile/widget/section_builder.dart';
@@ -8,7 +9,6 @@ import '../terminology/bookmark.dart';
 import '../theme/color_theme.dart';
 import 'balance_detail_page.dart';
 import 'completion_page.dart';
-import 'profile_detail_page.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({super.key});

@@ -58,7 +58,7 @@ class CompletionPage extends StatelessWidget {
                 context,
                 category['title'],
                 category['catchphrase'],
-                Colors.grey,
+                Colors.white,
                 null,
                 true,
               );
