@@ -1,7 +1,6 @@
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
-import 'package:speech_balloon/speech_balloon.dart'; // speech_balloon 패키지 import
-
+import 'package:speech_balloon/speech_balloon.dart';
 import '../../theme/color_theme.dart';
 
 Widget buildTermCard(BuildContext context, String term, String definition, String example, bool isBookmarked, VoidCallback onBookmarkToggle) {
@@ -16,6 +15,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
       child: FlipCard(
         direction: FlipDirection.HORIZONTAL,
+        // 카드 앞면
         front: Stack(
           children: [
             Container(
@@ -87,8 +87,10 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
             ),
           ],
         ),
+
+        // 카드 뒷면
         back: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(24),
@@ -116,19 +118,55 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
               Text(
                 definition,
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 15,
                   color: Colors.black,
                 ),
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
               ),
-              const SizedBox(height: 20),
-              Text(
-                '예시\n$example',
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.black,
-                ),
-                textAlign: TextAlign.center,
+              const SizedBox(height: 40),
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: ColorTheme.colorPrimary,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: RichText(
+                      textAlign: TextAlign.left,
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                        children: _buildExampleTextSpans(example, term),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: -14,
+                    left: -10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: ColorTheme.colorPrimary,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Text(
+                        '예시',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -136,4 +174,29 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
       ),
     ),
   );
+}
+
+List<TextSpan> _buildExampleTextSpans(String example, String term) {
+  List<TextSpan> spans = [];
+  int start = 0;
+  int termStartIndex;
+
+  while ((termStartIndex = example.indexOf(term, start)) != -1) {
+    if (termStartIndex > start) {
+      spans.add(TextSpan(text: example.substring(start, termStartIndex)));
+    }
+    spans.add(
+      TextSpan(
+        text: term,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+    start = termStartIndex + term.length;
+  }
+
+  if (start < example.length) {
+    spans.add(TextSpan(text: example.substring(start)));
+  }
+
+  return spans;
 }
