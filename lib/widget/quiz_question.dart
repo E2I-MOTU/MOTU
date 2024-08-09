@@ -11,7 +11,7 @@ class QuizQuestionWidget extends StatelessWidget {
   final int currentQuestionIndex;
   final int totalQuestions;
   final bool isShortAnswer;
-  final TextEditingController answerController; // Add this line
+  final TextEditingController answerController;
 
   const QuizQuestionWidget({
     Key? key,
@@ -24,11 +24,13 @@ class QuizQuestionWidget extends StatelessWidget {
     required this.currentQuestionIndex,
     required this.totalQuestions,
     this.isShortAnswer = false,
-    required this.answerController, // Add this line
+    required this.answerController,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Stack(
       children: [
         Column(
@@ -41,36 +43,42 @@ class QuizQuestionWidget extends StatelessWidget {
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.left, // Ensure left alignment of text
               ),
             ),
             if (isShortAnswer)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: TextField(
-                  controller: answerController, // Use the controller here
-                  onChanged: onSelectAnswer,
-                  textAlign: TextAlign.center,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: ColorTheme.colorWhite,
-                    hintText: '정답 입력',
-                    hintStyle: TextStyle(
-                      color: ColorTheme.colorDisabled,
-                      fontSize: 16,
+                child: Container(
+                  width: screenWidth * 0.9,
+                  child: TextField(
+                    controller: answerController,
+                    onChanged: (text) {
+                      onSelectAnswer(text);
+                    },
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: ColorTheme.colorWhite,
+                      hintText: '정답 입력',
+                      hintStyle: TextStyle(
+                        color: ColorTheme.colorDisabled,
+                        fontSize: 16,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.transparent),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.transparent),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.transparent),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
                   ),
                 ),
               )
@@ -79,7 +87,7 @@ class QuizQuestionWidget extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                   child: SizedBox(
-                    width: double.infinity,
+                    width: screenWidth * 0.9,
                     child: ElevatedButton(
                       onPressed: answered
                           ? null
@@ -97,11 +105,14 @@ class QuizQuestionWidget extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 20.0),
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(
-                            Radius.circular(20),
+                            Radius.circular(15),
                           ),
                         ),
                       ),
-                      child: Text(option as String),
+                      child: Text(
+                        option as String,
+                        style: const TextStyle(fontSize: 14),
+                      ),
                     ),
                   ),
                 );
