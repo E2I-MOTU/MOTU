@@ -1,5 +1,26 @@
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'package:speech_balloon/speech_balloon.dart';
+import '../../theme/color_theme.dart';
+
+final RegExp emoji = RegExp(
+    r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])');
+
+// 단어를 \u200D로 연결하는 함수
+String preventWordBreak(String text) {
+  List<String> words = text.split(' ');
+  String fullText = '';
+
+  for (var i = 0; i < words.length; i++) {
+    fullText += emoji.hasMatch(words[i])
+        ? words[i]
+        : words[i]
+        .replaceAllMapped(RegExp(r'(\S)(?=\S)'), (m) => '${m[1]}\u200D');
+    if (i < words.length - 1) fullText += ' ';
+  }
+
+  return fullText;
+}
 
 Widget buildTermCard(BuildContext context, String term, String definition, String example, bool isBookmarked, VoidCallback onBookmarkToggle) {
   final size = MediaQuery.of(context).size;
@@ -13,6 +34,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
       child: FlipCard(
         direction: FlipDirection.HORIZONTAL,
+        // 카드 앞면
         front: Stack(
           children: [
             Container(
@@ -50,10 +72,44 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
                 onPressed: onBookmarkToggle,
               ),
             ),
+            Positioned(
+              right: 20,
+              bottom: 20,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SpeechBalloon(
+                    nipLocation: NipLocation.right,
+                    color: ColorTheme.colorPrimary,
+                    width: 140,
+                    height: 40,
+                    borderRadius: 10,
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: const Text(
+                        '용어 뜻을 알고 싶다면\n클릭해서 뒤집어 보세요!',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: ColorTheme.colorWhite,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Image.asset(
+                    'assets/images/panda.png',
+                    height: 80,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
+
+        // 카드 뒷면
         back: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(24),
@@ -79,21 +135,57 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
               ),
               const SizedBox(height: 20),
               Text(
-                definition,
+                preventWordBreak(definition), // 단어가 끊기지 않도록 수정
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 15,
                   color: Colors.black,
                 ),
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
               ),
-              const SizedBox(height: 20),
-              Text(
-                '예시\n${example}',
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.black,
-                ),
-                textAlign: TextAlign.center,
+              const SizedBox(height: 40),
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: ColorTheme.colorPrimary,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: RichText(
+                      textAlign: TextAlign.left,
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                        children: _buildExampleTextSpans(preventWordBreak(example), term),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: -14,
+                    left: -10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: ColorTheme.colorPrimary,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Text(
+                        '예시',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -101,4 +193,29 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
       ),
     ),
   );
+}
+
+List<TextSpan> _buildExampleTextSpans(String example, String term) {
+  List<TextSpan> spans = [];
+  int start = 0;
+  int termStartIndex;
+
+  while ((termStartIndex = example.indexOf(term, start)) != -1) {
+    if (termStartIndex > start) {
+      spans.add(TextSpan(text: example.substring(start, termStartIndex)));
+    }
+    spans.add(
+      TextSpan(
+        text: term,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+    start = termStartIndex + term.length;
+  }
+
+  if (start < example.length) {
+    spans.add(TextSpan(text: example.substring(start)));
+  }
+
+  return spans;
 }

@@ -4,19 +4,25 @@ import 'package:provider/provider.dart';
 import '../../provider/terminology_quiz_provider.dart';
 import '../../widget/quiz_question.dart';
 import '../../widget/linear_indicator.dart';
-import 'terminology_incorrect_answers_screen.dart';
+import 'term_quiz_completed_screen.dart';
 
 class TermQuizScreen extends StatelessWidget {
   final String collectionName;
   final String documentName;
   final String uid;
 
-  const TermQuizScreen({Key? key, required this.collectionName, required this.documentName, required this.uid}) : super(key: key);
+  const TermQuizScreen({
+    Key? key,
+    required this.collectionName,
+    required this.documentName,
+    required this.uid,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => TerminologyQuizService()..loadQuestions(collectionName, documentName, uid),
+      create: (context) => TerminologyQuizService()
+        ..loadQuestions(collectionName, documentName, uid),
       child: Consumer<TerminologyQuizService>(
         builder: (context, quizState, child) {
           if (quizState.isLoading) {
@@ -35,37 +41,10 @@ class TermQuizScreen extends StatelessWidget {
           }
 
           if (quizState.currentQuestionIndex >= quizState.questions.length) {
-            return Scaffold(
-              backgroundColor: ColorTheme.colorNeutral,
-              appBar: AppBar(
-                backgroundColor: ColorTheme.colorWhite,
-                title: const Text(
-                  '용어 테스트',
-                  style: TextStyle(color: Colors.black),
-                ),
-                iconTheme: const IconThemeData(color: Colors.black),
-              ),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('테스트 응시 완료! 점수: ${quizState.score}/${quizState.questions.length}'),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TermIncorrectAnswersScreen(
-                              termIncorrectAnswers: quizState.incorrectAnswers,
-                            ),
-                          ),
-                        ).then((_) => Navigator.pop(context));
-                      },
-                      child: const Text('오답 확인'),
-                    ),
-                  ],
-                ),
-              ),
+            return TermQuizCompletedScreen( // Use the new screen
+              score: quizState.score,
+              totalQuestions: quizState.questions.length,
+              incorrectAnswers: quizState.incorrectAnswers,
             );
           }
 
@@ -107,7 +86,9 @@ class TermQuizScreen extends StatelessWidget {
                                   child: Text(
                                     question['situation'] ?? '상황 설명이 없습니다.',
                                     style: const TextStyle(
-                                        fontSize: 16, fontWeight: FontWeight.bold),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -126,6 +107,7 @@ class TermQuizScreen extends StatelessWidget {
                                   currentQuestionIndex: quizState.currentQuestionIndex + 1,
                                   totalQuestions: quizState.questions.length,
                                   isShortAnswer: question['type'] == '단답형',
+                                  answerController: quizState.answerController, // Pass the controller here
                                 ),
                               ],
                             ),
