@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:motu/text_utils.dart';
 import 'package:motu/view/terminology/widget/terminology_category_card_builder.dart';
 import 'terminology_card.dart';
 import 'bookmark.dart';
@@ -73,7 +74,7 @@ class TermMain extends StatelessWidget {
                         return buildCategoryCard(
                           context,
                           data['title'],
-                          data['catchphrase'],
+                          preventWordBreak(data['catchphrase']),
                           Colors.white,
                           TermCard(title: data['title'], documentName: doc.id, uid: uid),
                           completionSnapshot.data ?? false,

@@ -3,6 +3,7 @@ import 'package:motu/widget/linear_indicator.dart';
 import 'package:motu/view/theme/color_theme.dart';
 import 'package:provider/provider.dart';
 import '../../provider/quiz_provider.dart';
+import '../../text_utils.dart';
 import '../../widget/quiz_question.dart';
 import 'incorrect_answers_screen.dart';
 
@@ -92,7 +93,7 @@ class QuizScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Text(
-                                question['question'] ?? '질문이 없습니다.',
+                                preventWordBreak(question['question'] ?? '질문이 없습니다.'),
                                 style: const TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold,
                                 ),
@@ -124,7 +125,7 @@ class QuizScreen extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    child: Text(option as String),
+                                    child: Text(preventWordBreak(option as String)),
                                   ),
                                 ),
                               );

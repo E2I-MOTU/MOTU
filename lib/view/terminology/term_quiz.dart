@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:motu/view/theme/color_theme.dart';
 import 'package:provider/provider.dart';
 import '../../provider/terminology_quiz_provider.dart';
+import '../../text_utils.dart';
 import '../../widget/quiz_question.dart';
 import '../../widget/linear_indicator.dart';
 import 'term_quiz_completed_screen.dart';
@@ -41,7 +42,7 @@ class TermQuizScreen extends StatelessWidget {
           }
 
           if (quizState.currentQuestionIndex >= quizState.questions.length) {
-            return TermQuizCompletedScreen( // Use the new screen
+            return TermQuizCompletedScreen(
               score: quizState.score,
               totalQuestions: quizState.questions.length,
               incorrectAnswers: quizState.incorrectAnswers,
@@ -84,7 +85,7 @@ class TermQuizScreen extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.all(16.0),
                                   child: Text(
-                                    question['situation'] ?? '상황 설명이 없습니다.',
+                                    preventWordBreak(question['situation'] ?? '상황 설명이 없습니다.'),
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -93,7 +94,7 @@ class TermQuizScreen extends StatelessWidget {
                                   ),
                                 ),
                                 QuizQuestionWidget(
-                                  question: question['question'] ?? '질문이 없습니다.',
+                                  question: preventWordBreak(question['question'] ?? '질문이 없습니다.'),
                                   options: question['type'] == '객관식' ? question['options'] ?? [] : null,
                                   selectedAnswer: quizState.selectedAnswer,
                                   answered: quizState.answered,
@@ -107,7 +108,7 @@ class TermQuizScreen extends StatelessWidget {
                                   currentQuestionIndex: quizState.currentQuestionIndex + 1,
                                   totalQuestions: quizState.questions.length,
                                   isShortAnswer: question['type'] == '단답형',
-                                  answerController: quizState.answerController, // Pass the controller here
+                                  answerController: quizState.answerController,
                                 ),
                               ],
                             ),

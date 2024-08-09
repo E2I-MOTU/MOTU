@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:motu/text_utils.dart';
 import '../../model/article_data.dart';
 
 class ArticleDetailScreen extends StatelessWidget {
@@ -99,7 +100,7 @@ class ArticleDetailScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    article.content,
+                    preventWordBreak(article.content),
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.black87,
