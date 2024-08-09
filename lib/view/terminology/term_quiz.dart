@@ -83,14 +83,52 @@ class TermQuizScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Text(
-                                    preventWordBreak(question['situation'] ?? '상황 설명이 없습니다.'),
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(24.0),
+                                        decoration: BoxDecoration(
+                                          color: ColorTheme.colorWhite,
+                                          border: Border.all(
+                                            color: ColorTheme.colorPrimary,
+                                            width: 1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: Text(
+                                          preventWordBreak(question['situation'] ?? '상황 설명이 없습니다.'),
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: -15,
+                                        left: -10,
+                                        child: ClipPath(
+                                          clipper: ArrowClipper(),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
+                                            color: ColorTheme.colorPrimary,
+                                            child: Transform.translate(
+                                              offset: Offset(-4, 0),
+                                              child: const Text(
+                                                '상황',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                    ],
                                   ),
                                 ),
                                 QuizQuestionWidget(
@@ -124,5 +162,24 @@ class TermQuizScreen extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+class ArrowClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(size.width - 20, 0); // Top-right corner minus triangle width
+    path.lineTo(size.width, size.height / 2); // Midpoint of right edge
+    path.lineTo(size.width - 20, size.height); // Bottom-right corner minus triangle width
+    path.lineTo(0, size.height); // Bottom-left corner
+    path.lineTo(0, 0); // Top-left corner
+    path.close(); // Close the path
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
+    return false;
   }
 }
