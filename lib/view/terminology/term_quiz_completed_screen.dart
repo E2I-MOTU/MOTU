@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/theme/color_theme.dart';
-import 'package:motu/view/quiz/widget/circle_indicator.dart'; // Ensure this import path is correct
+import 'package:motu/view/quiz/widget/circle_indicator.dart';
 import 'terminology_incorrect_answers_screen.dart';
+import 'package:speech_balloon/speech_balloon.dart';
 
 class TermQuizCompletedScreen extends StatelessWidget {
   final int score;
@@ -14,6 +15,20 @@ class TermQuizCompletedScreen extends StatelessWidget {
     required this.totalQuestions,
     required this.incorrectAnswers,
   }) : super(key: key);
+
+  String getFeedbackMessage() {
+    double percentage = (score / totalQuestions) * 100;
+
+    if (percentage < 50) {
+      return '공부를 다시 해봐야겠어요';
+    } else if (percentage >= 50 && percentage < 90) {
+      return '잘했어요! 조금만 더 공부하면 되겠는걸요?';
+    } else if (percentage >= 90 && percentage < 100) {
+      return '정말 잘했어요!';
+    } else {
+      return '완벽해요!';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +48,6 @@ class TermQuizCompletedScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              '테스트 응시 완료!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 40),
             Container(
               width: MediaQuery.of(context).size.width * 0.9,
               height: MediaQuery.of(context).size.height * 0.5,
@@ -68,16 +77,40 @@ class TermQuizCompletedScreen extends StatelessWidget {
                         isCompleted: isCompleted,
                       ),
                     ),
-                    SizedBox(height: 80), // Adjusted spacing between elements
-                    Image.asset(
-                      'assets/images/panda.png',
-                      width: 100,
+                    SizedBox(height: 100),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/panda.png',
+                          width: 100,
+                        ),
+                        SizedBox(width: 20),
+                        SpeechBalloon(
+                          nipLocation: NipLocation.left,
+                          color: ColorTheme.colorPrimary,
+                          width: 160,
+                          height: 50,
+                          borderRadius: 10,
+                          child: Center( // Center widget 추가
+                            child: Text(
+                              getFeedbackMessage(),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: ColorTheme.colorWhite,
+                              ),
+                              textAlign: TextAlign.center, // 텍스트 중앙 정렬
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 60),
+            SizedBox(height: 40),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.8,
               height: 60,
@@ -104,6 +137,36 @@ class TermQuizCompletedScreen extends StatelessWidget {
                   ).then((_) => Navigator.pop(context));
                 },
                 child: Text('틀린 문제 보러가기'),
+              ),
+            ),
+            SizedBox(height: 20),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              height: 60,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorTheme.colorDisabled,
+                  foregroundColor: ColorTheme.colorWhite,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  textStyle: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onPressed: () {
+                  /*
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TermMain(), // TermMain 페이지로 이동
+                    ),
+                    (route) => false, // 모든 기존 경로를 제거
+                  );
+                  */
+                },
+                child: Text('종료하기'),
               ),
             ),
           ],

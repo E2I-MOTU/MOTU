@@ -28,7 +28,7 @@ class TermMain extends StatelessWidget {
       backgroundColor: ColorTheme.colorNeutral,
       appBar: AppBar(
         backgroundColor: ColorTheme.colorWhite,
-        title: const Text('용어카드'),
+        title: const Text('용어학습'),
         automaticallyImplyLeading: true,
         actions: [
           IconButton(
@@ -63,6 +63,7 @@ class TermMain extends StatelessWidget {
                 var documents = snapshot.data!.docs;
                 return GridView.count(
                   crossAxisCount: 2,
+                  childAspectRatio: 3 / 3.5,
                   padding: const EdgeInsets.all(10),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,

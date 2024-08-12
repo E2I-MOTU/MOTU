@@ -4,7 +4,6 @@ import 'package:speech_balloon/speech_balloon.dart';
 import '../../../text_utils.dart';
 import '../../theme/color_theme.dart';
 
-
 Widget buildTermCard(BuildContext context, String term, String definition, String example, bool isBookmarked, VoidCallback onBookmarkToggle) {
   final size = MediaQuery.of(context).size;
   final cardWidth = size.width * 0.9;
@@ -33,16 +32,25 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
                   ),
                 ],
               ),
-              child: Center(
-                child: Text(
-                  term,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: cardHeight / 4,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Text(
+                        term,
+                        style: const TextStyle(
+                          fontSize: 28,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
+                ],
               ),
             ),
             Positioned(
@@ -51,6 +59,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
               child: IconButton(
                 icon: Icon(
                   isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                  color: isBookmarked ? ColorTheme.colorPrimary : Colors.black,
                 ),
                 onPressed: onBookmarkToggle,
               ),
@@ -58,31 +67,34 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
             Positioned(
               right: 20,
               bottom: 20,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Stack(
+                clipBehavior: Clip.none,
                 children: [
-                  SpeechBalloon(
-                    nipLocation: NipLocation.right,
-                    color: ColorTheme.colorPrimary,
-                    width: 140,
-                    height: 40,
-                    borderRadius: 10,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: const Text(
-                        '용어 뜻을 알고 싶다면\n클릭해서 뒤집어 보세요!',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: ColorTheme.colorWhite,
+                  Positioned(
+                    right: 100,
+                    bottom: 130,
+                    child: SpeechBalloon(
+                      nipLocation: NipLocation.bottomRight,
+                      color: ColorTheme.colorPrimary,
+                      width: 160,
+                      height: 50,
+                      borderRadius: 10,
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: const Text(
+                          '용어 뜻을 알고 싶다면\n클릭해서 뒤집어 보세요!',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: ColorTheme.colorWhite,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 20),
                   Image.asset(
                     'assets/images/panda.png',
-                    height: 80,
+                    height: 110,
                   ),
                 ],
               ),
