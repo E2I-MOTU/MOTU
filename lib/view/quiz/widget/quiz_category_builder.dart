@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flip_card/flip_card_controller.dart';
+import 'package:motu/text_utils.dart';
 import '../quiz_screen.dart';
 import 'circle_indicator.dart';
 
@@ -32,7 +33,7 @@ Widget buildQuizCard({
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  catchphrase,
+                  preventWordBreak(catchphrase),
                   style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
                   textAlign: TextAlign.center,
                 ),

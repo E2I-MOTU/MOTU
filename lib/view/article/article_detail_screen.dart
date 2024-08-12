@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:motu/text_utils.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../model/article_data.dart';
 import '../theme/markdown.dart';
@@ -100,6 +101,13 @@ class ArticleDetailScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10),
+                  Text(
+                    preventWordBreak(article.content),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                  ),
                   MarkdownBody(
                     data: article.content.replaceAll('\\n', '\n'),
                     styleSheet: CustomMarkdownStyle.fromTheme(context),
