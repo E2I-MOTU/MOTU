@@ -46,6 +46,7 @@ class TermQuizScreen extends StatelessWidget {
               score: quizState.score,
               totalQuestions: quizState.questions.length,
               incorrectAnswers: quizState.incorrectAnswers,
+              uid: uid,
             );
           }
 
