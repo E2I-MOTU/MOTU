@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:motu/text_utils.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../model/article_data.dart';
+import '../theme/markdown.dart';
 
 class ArticleDetailScreen extends StatelessWidget {
   final Article article;
@@ -23,7 +25,7 @@ class ArticleDetailScreen extends StatelessWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        elevation: 0, // 그림자 X
+        elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
@@ -73,8 +75,8 @@ class ArticleDetailScreen extends StatelessWidget {
                 children: <Widget>[
                   SizedBox(height: 10),
                   Wrap(
-                    spacing: 8.0, // 각 컨테이너 사이의 간격
-                    runSpacing: 4.0, // 행 사이의 간격
+                    spacing: 8.0,
+                    runSpacing: 4.0,
                     children: article.topics.map((topic) {
                       return Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -105,6 +107,10 @@ class ArticleDetailScreen extends StatelessWidget {
                       fontSize: 16,
                       color: Colors.black87,
                     ),
+                  ),
+                  MarkdownBody(
+                    data: article.content.replaceAll('\\n', '\n'),
+                    styleSheet: CustomMarkdownStyle.fromTheme(context),
                   ),
                 ],
               ),

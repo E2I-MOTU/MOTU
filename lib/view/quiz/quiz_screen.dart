@@ -4,7 +4,6 @@ import 'package:motu/view/theme/color_theme.dart';
 import 'package:provider/provider.dart';
 import '../../provider/quiz_provider.dart';
 import '../../text_utils.dart';
-import '../../widget/quiz_question.dart';
 import 'incorrect_answers_screen.dart';
 
 class QuizScreen extends StatelessWidget {

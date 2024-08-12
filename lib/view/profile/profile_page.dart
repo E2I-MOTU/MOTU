@@ -63,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
             {'title': '수료 완료', 'onTap': () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CompletionPage(uid: userData!.uid!)),
+                MaterialPageRoute(builder: (context) => CompletionPage(uid: userData!.uid)),
               );
             }},
             {'title': '학습 진도', 'onTap': () {}},
