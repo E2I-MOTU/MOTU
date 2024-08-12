@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/terminology/terminology_main.dart';
 import 'package:motu/view/theme/color_theme.dart';
-import 'package:motu/view/quiz/widget/circle_indicator.dart'; // Ensure this import path is correct
-import 'terminology_incorrect_answers_screen.dart';
 import 'package:speech_balloon/speech_balloon.dart';
+import '../quiz/widget/circle_indicator.dart';
+import 'terminology_incorrect_answers_screen.dart';
 
 class TermQuizCompletedScreen extends StatelessWidget {
   final int score;
@@ -73,10 +73,10 @@ class TermQuizCompletedScreen extends StatelessWidget {
                   BoxShadow(
                     color: Colors.black.withOpacity(0.3),
                     blurRadius: 10,
-                    offset: Offset(0, 4), // Shadow position
+                    offset: Offset(0, 4),
                   ),
                 ],
-                borderRadius: BorderRadius.circular(20), // Rounded corners
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Center(
                 child: Column(
@@ -85,7 +85,7 @@ class TermQuizCompletedScreen extends StatelessWidget {
                   children: [
                     SizedBox(height: 60),
                     Transform.scale(
-                      scale: 3, // Scale factor for enlarging the indicator
+                      scale: 3,
                       child: CircularScoreIndicator(
                         score: score,
                         totalQuestions: totalQuestions,
@@ -98,7 +98,7 @@ class TermQuizCompletedScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Image.asset(
-                          getFeedbackImage(), // 점수에 따라 이미지 변경
+                          getFeedbackImage(),
                           width: 100,
                         ),
                         SizedBox(width: 20),
@@ -108,14 +108,14 @@ class TermQuizCompletedScreen extends StatelessWidget {
                           width: 160,
                           height: 50,
                           borderRadius: 10,
-                          child: Center( // Center widget 추가
+                          child: Center(
                             child: Text(
                               getFeedbackMessage(),
                               style: TextStyle(
                                 fontSize: 12,
                                 color: ColorTheme.colorWhite,
                               ),
-                              textAlign: TextAlign.center, // 텍스트 중앙 정렬
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),
@@ -143,12 +143,12 @@ class TermQuizCompletedScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   if (incorrectAnswers.isEmpty) {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) => TermMain(uid: uid),
                       ),
-                    ).then((_) => Navigator.pop(context));
+                    );
                   } else {
                     Navigator.push(
                       context,
@@ -160,39 +160,38 @@ class TermQuizCompletedScreen extends StatelessWidget {
                     ).then((_) => Navigator.pop(context));
                   }
                 },
-                child: Text(
-                  incorrectAnswers.isEmpty ? '다른 용어 배우러 가기' : '틀린 문제 보러가기',
-                ),
+                child: Text(incorrectAnswers.isEmpty ? '다른 용어 배우러 가기' : '틀린 문제 보러가기'),
               ),
             ),
             SizedBox(height: 20),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              height: 60,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorTheme.colorDisabled,
-                  foregroundColor: ColorTheme.colorWhite,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  textStyle: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TermMain(uid: uid),
+            if (incorrectAnswers.isNotEmpty)
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: 60,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorTheme.colorDisabled,
+                    foregroundColor: ColorTheme.colorWhite,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                        (route) => false,
-                  );
-                },
-                child: Text('종료하기'),
+                    textStyle: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TermMain(uid: uid),
+                      ),
+                          (route) => false, // 모든 기존 경로를 제거
+                    );
+                  },
+                  child: Text('종료하기'),
+                ),
               ),
-            ),
           ],
         ),
       ),

@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:motu/provider/navigation_provider.dart';
 import 'package:motu/text_utils.dart';
+import 'package:motu/view/main_page.dart';
 import 'package:motu/view/terminology/widget/terminology_category_card_builder.dart';
 import 'package:motu/view/theme/color_theme.dart';
 import 'terminology_card.dart';
@@ -29,6 +32,19 @@ class TermMain extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: ColorTheme.colorWhite,
         title: const Text('용어학습'),
+        leading: IconButton(
+          icon: Icon(CupertinoIcons.left_chevron),
+          onPressed: () {
+            NavigationService().setSelectedIndex(1);
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MainPage(),
+              ),
+                  (route) => false, // 모든 기존 경로를 제거
+            );
+          },
+        ),
         automaticallyImplyLeading: true,
         actions: [
           IconButton(

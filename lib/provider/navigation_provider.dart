@@ -7,12 +7,6 @@ import '../view/learning/learning_contents.dart';
 class NavigationService with ChangeNotifier {
   String? uid;
 
-  void initialize(String uid) {
-    this.uid = uid;
-    _screens[1] = LearningContentscreen(uid: uid);
-    notifyListeners();
-  }
-
   int _selectedIndex = 0;
   int get selectedIndex => _selectedIndex;
 
@@ -23,7 +17,7 @@ class NavigationService with ChangeNotifier {
 
   final List<Widget> _screens = [
     const HomePage(),
-    Container(),
+    const LearningContentscreen(),
     const ScenarioList(),
     ProfilePage(),
   ];
