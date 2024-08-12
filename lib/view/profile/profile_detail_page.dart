@@ -30,7 +30,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
 
   Future<void> _saveProfile() async {
     await _service.updateUserInfo(
-      widget.userData.uid,
+      widget.userData.uid!,
       _nameController.text,
       _emailController.text,
     );
