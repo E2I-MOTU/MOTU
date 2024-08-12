@@ -69,7 +69,6 @@ class TermQuizScreen extends StatelessWidget {
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
                       final contentHeight = constraints.maxHeight;
 
                       return SingleChildScrollView(
