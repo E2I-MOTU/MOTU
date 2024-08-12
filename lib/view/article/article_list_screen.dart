@@ -32,8 +32,10 @@ class ArticleListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('뉴스 목록'),
+        backgroundColor: Colors.white,
       ),
       body: FutureBuilder<List<Article>>(
         future: fetchArticles(),
