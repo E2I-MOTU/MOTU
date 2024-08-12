@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:motu/view/quiz/widget/quiz_category_builder.dart';
 import '../../service/user_service.dart';
+import '../theme/color_theme.dart';
 
 class QuizSelectionScreen extends StatelessWidget {
   final String uid;
@@ -22,7 +23,9 @@ class QuizSelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorTheme.colorWhite,
       appBar: AppBar(
+        backgroundColor: ColorTheme.colorWhite,
         title: const Text(
           '퀴즈 선택',
           style: TextStyle(color: Colors.black),
@@ -93,7 +96,7 @@ class QuizSelectionScreen extends StatelessWidget {
                     crossAxisCount: 2,
                     mainAxisSpacing: 10.0,
                     crossAxisSpacing: 10.0,
-                    childAspectRatio: 2 / 3,
+                    childAspectRatio: 3 / 4,
                     children: newQuizzes + incompleteQuizzes + completedQuizzes,
                   );
                 },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:motu/text_utils.dart';
 import 'package:motu/view/terminology/widget/terminology_category_card_builder.dart';
+import 'package:motu/view/theme/color_theme.dart';
 import 'terminology_card.dart';
 import 'bookmark.dart';
 import 'terminology_search.dart';
@@ -24,7 +25,9 @@ class TermMain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorTheme.colorNeutral,
       appBar: AppBar(
+        backgroundColor: ColorTheme.colorWhite,
         title: const Text('용어카드'),
         automaticallyImplyLeading: true,
         actions: [

@@ -14,6 +14,7 @@ class QuizService with ChangeNotifier {
   List<Map<String, dynamic>> _questions = [];
   bool _isLoading = true;
   List<Map<String, dynamic>> _incorrectAnswers = [];
+  bool _isHintVisible = false;  // 힌트 표시 여부
 
   int get currentQuestionIndex => _currentQuestionIndex;
   int get score => _score;
@@ -23,6 +24,7 @@ class QuizService with ChangeNotifier {
   List<Map<String, dynamic>> get questions => _questions;
   bool get isLoading => _isLoading;
   List<Map<String, dynamic>> get incorrectAnswers => _incorrectAnswers;
+  bool get isHintVisible => _isHintVisible;  // 힌트 표시 여부
 
   Future<void> loadQuestions(String collectionName) async {
     try {
@@ -79,6 +81,7 @@ class QuizService with ChangeNotifier {
     _answered = false;
     _correct = false;
     _selectedAnswer = '';
+    _isHintVisible = false; // 다음 질문으로 넘어갈 때 힌트 초기화
 
     if (_currentQuestionIndex >= _questions.length) {
       if (_score / _questions.length >= 0.9) {
@@ -92,6 +95,11 @@ class QuizService with ChangeNotifier {
 
   void selectAnswer(String answer) {
     _selectedAnswer = answer;
+    notifyListeners();
+  }
+
+  void toggleHintVisibility() {
+    _isHintVisible = !_isHintVisible;
     notifyListeners();
   }
 }

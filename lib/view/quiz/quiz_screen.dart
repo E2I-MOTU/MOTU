@@ -21,10 +21,11 @@ class QuizScreen extends StatelessWidget {
         builder: (context, quizState, child) {
           if (quizState.isLoading) {
             return Scaffold(
+              backgroundColor: ColorTheme.colorNeutral,
               appBar: AppBar(
                 backgroundColor: Colors.white,
                 title: const Text(
-                  '퀴즈 앱',
+                  '용어 퀴즈',
                   style: TextStyle(color: Colors.black),
                 ),
                 iconTheme: const IconThemeData(color: Colors.black),
@@ -35,10 +36,11 @@ class QuizScreen extends StatelessWidget {
 
           if (quizState.currentQuestionIndex >= quizState.questions.length) {
             return Scaffold(
+              backgroundColor: ColorTheme.colorNeutral,
               appBar: AppBar(
                 backgroundColor: Colors.white,
                 title: const Text(
-                  '퀴즈 앱',
+                  '용어 퀴즈',
                   style: TextStyle(color: Colors.black),
                 ),
                 iconTheme: const IconThemeData(color: Colors.black),
@@ -66,12 +68,14 @@ class QuizScreen extends StatelessWidget {
           }
 
           final question = quizState.questions[quizState.currentQuestionIndex];
+          bool isHintVisible = quizState.isHintVisible;
 
           return Scaffold(
+            backgroundColor: ColorTheme.colorNeutral,
             appBar: AppBar(
               backgroundColor: Colors.white,
               title: const Text(
-                '퀴즈 앱',
+                '용어 퀴즈',
                 style: TextStyle(color: Colors.black),
               ),
               iconTheme: const IconThemeData(color: Colors.black),
@@ -83,6 +87,63 @@ class QuizScreen extends StatelessWidget {
                     LinearIndicator(
                       current: quizState.currentQuestionIndex + 1,
                       total: quizState.questions.length,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            if (isHintVisible)
+                              Positioned(
+                                top: 30,
+                                right: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Text(
+                                    question['hint'] ?? '힌트가 없습니다.',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            TextButton(
+                              onPressed: () {
+                                quizState.toggleHintVisibility();
+                              },
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size(80, 30),
+                                backgroundColor: isHintVisible ? ColorTheme.colorPrimary : Colors.transparent,
+                                side: isHintVisible
+                                    ? BorderSide.none
+                                    : BorderSide(color: ColorTheme.colorDisabled),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                foregroundColor: isHintVisible ? Colors.white : ColorTheme.colorDisabled,
+                              ),
+                              child: Container(
+                                alignment: Alignment.center,
+                                width: 80,
+                                height: 30,
+                                child: const Text(
+                                  'Hint 보기',
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     Expanded(
                       child: Center(
@@ -104,7 +165,7 @@ class QuizScreen extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 8.0, horizontal: 16.0),
                                 child: SizedBox(
-                                  width: double.infinity,
+                                  width: MediaQuery.of(context).size.width * 0.9,
                                   child: ElevatedButton(
                                     onPressed: quizState.answered
                                         ? null
@@ -112,6 +173,7 @@ class QuizScreen extends StatelessWidget {
                                       quizState.selectAnswer(option as String);
                                     },
                                     style: ElevatedButton.styleFrom(
+                                      shadowColor: Colors.transparent,
                                       backgroundColor: quizState.selectedAnswer == option
                                           ? ColorTheme.colorPrimary
                                           : ColorTheme.colorWhite,
@@ -121,11 +183,14 @@ class QuizScreen extends StatelessWidget {
                                       padding: const EdgeInsets.symmetric(vertical: 20.0),
                                       shape: const RoundedRectangleBorder(
                                         borderRadius: BorderRadius.all(
-                                          Radius.circular(10),
+                                          Radius.circular(15),
                                         ),
                                       ),
                                     ),
-                                    child: Text(preventWordBreak(option as String)),
+                                    child: Text(
+                                      preventWordBreak(option as String),
+                                      style: const TextStyle(fontSize: 15),
+                                    ),
                                   ),
                                 ),
                               );
@@ -145,7 +210,9 @@ class QuizScreen extends StatelessWidget {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: Text(quizState.correct ? '정답입니다!' : '오답입니다.'),
+                                            title: Text(quizState.correct
+                                                ? '정답입니다!'
+                                                : '오답입니다.'),
                                             content: SizedBox(
                                               width: MediaQuery.of(context).size.width * 0.7,
                                               child: Text(quizState.correct
@@ -157,7 +224,8 @@ class QuizScreen extends StatelessWidget {
                                                 child: const Text('다음 질문'),
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
-                                                  quizState.nextQuestion(uid, collectionName);
+                                                  quizState.nextQuestion(
+                                                      uid, collectionName);
                                                 },
                                               ),
                                             ],
