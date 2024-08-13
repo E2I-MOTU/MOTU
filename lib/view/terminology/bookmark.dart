@@ -1,4 +1,3 @@
-import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:motu/view/terminology/widget/bookmark_terminology_card_builder.dart';
 import 'package:provider/provider.dart';

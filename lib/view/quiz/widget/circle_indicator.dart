@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/color_theme.dart';
+
 class CircularScoreIndicator extends StatelessWidget {
   final int score;
   final int totalQuestions;
   final bool isCompleted;
+  final double width;
+  final double height;
+  final double strokeWidth;
 
   const CircularScoreIndicator({
     Key? key,
     required this.score,
     required this.totalQuestions,
     required this.isCompleted,
+    this.width = 50.0,
+    this.height = 50.0,
+    this.strokeWidth = 6.0,
   }) : super(key: key);
 
   @override
@@ -20,13 +28,13 @@ class CircularScoreIndicator extends StatelessWidget {
       children: [
         if (!isCompleted)
           SizedBox(
-            width: 50,
-            height: 50,
+            width: width,
+            height: height,
             child: CircularProgressIndicator(
               value: percentage,
               backgroundColor: Colors.white,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
-              strokeWidth: 6,
+              valueColor: const AlwaysStoppedAnimation<Color>(ColorTheme.colorPrimary),
+              strokeWidth: strokeWidth,
             ),
           ),
         if (isCompleted)
@@ -41,7 +49,7 @@ class CircularScoreIndicator extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: Colors.purple,
+              color: ColorTheme.colorPrimary,
             ),
           ),
       ],

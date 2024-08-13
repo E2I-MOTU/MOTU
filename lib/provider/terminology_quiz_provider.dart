@@ -79,7 +79,7 @@ class TerminologyQuizService with ChangeNotifier {
     _answered = false;
     _correct = false;
     _selectedAnswer = '';
-    _answerController.clear();
+    _answerController.clear(); // Clear the controller
 
     if (_currentQuestionIndex >= _questions.length) {
       await saveQuizCompletion();
