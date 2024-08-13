@@ -4,10 +4,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:motu/provider/scenario_service.dart';
 import 'package:motu/firebase_options.dart';
 import 'package:motu/provider/terminology_quiz_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:motu/view/login/login.dart';
+import 'package:motu/view/scenario/scenario_list.dart';
+import 'package:provider/provider.dart';
 import 'package:motu/provider/navigation_provider.dart';
 import 'package:motu/provider/chat_provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'service/scenario_news_service.dart';
 import 'service/scenario_stock_service.dart';
@@ -16,6 +18,8 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
 
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('ko_KR', null);
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -43,7 +47,9 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
+        primaryColor: const Color(0xFF701FFF),
       ),
       home: const LoginPage(),
     );

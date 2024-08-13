@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:motu/view/scenario/news_detail_page.dart';
-import '../../model/scenario_news.dart';
+import 'package:motu/view/scenario/news/news_detail_page.dart';
+import '../../../../model/scenario_news.dart';
 
 Widget NewsListTile(BuildContext context, ScenarioNews news) {
   return IntrinsicHeight(
@@ -67,12 +67,20 @@ Widget NewsListTile(BuildContext context, ScenarioNews news) {
                 );
               },
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 visualDensity: VisualDensity.compact,
                 side: const BorderSide(color: Colors.purple, width: 1),
                 minimumSize: const Size(48, 28),
               ),
-              child: const Text("뉴스 보기"),
+              child: const Text(
+                "뉴스 보기",
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),

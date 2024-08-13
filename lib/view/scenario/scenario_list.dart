@@ -9,15 +9,14 @@ class ScenarioList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("주제", style: TextStyle(fontSize: 20)),
-            ElevatedButton(
+      body: Stack(
+        children: [
+          // 여기에 다른 위젯들을 추가할 수 있습니다.
+          Positioned(
+            left: 20,
+            right: 20,
+            bottom: 24, // 버튼과 화면 하단 사이의 간격
+            child: ElevatedButton(
               onPressed: () {
                 ScenarioService();
                 Navigator.push(
@@ -25,10 +24,10 @@ class ScenarioList extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const ScenarioPage()),
                 );
               },
-              child: const Text("시작"),
+              child: const Text("시뮬레이션 시작하기"),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
