@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../model/scenario_news.dart';
+import '../../../model/scenario_news.dart';
 
 class NewsDetailPage extends StatelessWidget {
   final ScenarioNews news;

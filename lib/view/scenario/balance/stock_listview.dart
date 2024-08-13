@@ -8,12 +8,15 @@ class StockListView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          '보유 주식',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
         const Padding(
           padding: EdgeInsets.all(16.0),
+          child: Text(
+            '보유 주식',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

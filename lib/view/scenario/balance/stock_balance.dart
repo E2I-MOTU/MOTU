@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:motu/widget/custom_divider.dart';
-import 'package:motu/widget/scenario/investment_status_toggle.dart';
-import 'package:motu/widget/scenario/sales_record.dart';
-import 'package:motu/widget/scenario/stock_listview.dart';
+import 'package:motu/view/scenario/balance/investment_status_toggle.dart';
+import 'package:motu/view/scenario/balance/sales_record.dart';
+import 'package:motu/view/scenario/balance/stock_listview.dart';
 
 class StockBalanceTab extends StatelessWidget {
   const StockBalanceTab({super.key});
@@ -18,6 +18,7 @@ class StockBalanceTab extends StatelessWidget {
           const StockListView(),
           CustomDivider(),
           const SalesRecord(),
+          CustomDivider(),
         ],
       ),
     );
