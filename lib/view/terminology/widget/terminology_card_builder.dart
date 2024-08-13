@@ -26,7 +26,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black26,
+                    color: Colors.black12,
                     blurRadius: 10,
                     offset: Offset(0, 4),
                   ),
@@ -65,17 +65,22 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
               ),
             ),
             Positioned(
-              right: 20,
+              right: cardWidth / 9,
               bottom: 20,
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
                   Positioned(
-                    right: 100,
+                    right: 130,
                     bottom: 130,
+                    child: Image.asset(
+                      'assets/images/speech_balloon.png',
+                      height: 50,
+                    ),
+                    /*
                     child: SpeechBalloon(
                       nipLocation: NipLocation.bottomRight,
-                      color: ColorTheme.colorPrimary,
+                      color: ColorTheme.colorSecondary,
                       width: 160,
                       height: 50,
                       borderRadius: 10,
@@ -91,9 +96,10 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
                         ),
                       ),
                     ),
+                     */
                   ),
                   Image.asset(
-                    'assets/images/panda.png',
+                    'assets/images/teaching_panda.png',
                     height: 110,
                   ),
                 ],
@@ -110,7 +116,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black26,
+                color: Colors.black12,
                 blurRadius: 10,
                 offset: Offset(0, 4),
               ),
