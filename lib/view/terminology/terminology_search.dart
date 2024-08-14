@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:motu/view/terminology/widget/terminology_category_card_builder.dart';
+import 'package:motu/view/theme/color_theme.dart';
 import 'terminology_card.dart';
 
 class TermSearchDelegate extends SearchDelegate {
@@ -42,91 +43,63 @@ class TermSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('terminology').snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-        var documents = snapshot.data!.docs;
-        var filteredDocs = documents.where((doc) {
-          var data = doc.data() as Map<String, dynamic>?;
-          if (data == null || data['word'] == null) return false;
-          var words = data['word'] as Map<String, dynamic>;
-          return words.keys.any((word) => word.contains(query));
-        }).toList();
-
-        return GridView.count(
-          crossAxisCount: 2,
-          padding: const EdgeInsets.all(10),
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          children: filteredDocs.map((doc) {
-            var data = doc.data() as Map<String, dynamic>;
-            return FutureBuilder<bool>(
-              future: checkCompletionStatus(uid, doc.id),
-              builder: (context, completionSnapshot) {
-                if (completionSnapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                }
-                return buildCategoryCard(
-                  context,
-                  data['title'],
-                  data['catchphrase'],
-                  Colors.grey,
-                  TermCard(title: data['title'], documentName: doc.id, uid: uid),
-                  completionSnapshot.data ?? false,
-                );
-              },
-            );
-          }).toList(),
-        );
-      },
-    );
+    return _buildSearchResultsOrSuggestions();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('terminology').snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-        var documents = snapshot.data!.docs;
-        var filteredDocs = documents.where((doc) {
-          var data = doc.data() as Map<String, dynamic>?;
-          if (data == null || data['word'] == null) return false;
-          var words = data['word'] as Map<String, dynamic>;
-          return words.keys.any((word) => word.contains(query));
-        }).toList();
+    return _buildSearchResultsOrSuggestions();
+  }
 
-        return GridView.count(
-          crossAxisCount: 2,
-          padding: const EdgeInsets.all(10),
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          children: filteredDocs.map((doc) {
-            var data = doc.data() as Map<String, dynamic>;
-            return FutureBuilder<bool>(
-              future: checkCompletionStatus(uid, doc.id),
-              builder: (context, completionSnapshot) {
-                if (completionSnapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                }
-                return buildCategoryCard(
-                  context,
-                  data['title'],
-                  data['catchphrase'],
-                  Colors.grey,
-                  TermCard(title: data['title'], documentName: doc.id, uid: uid),
-                  completionSnapshot.data ?? false,
-                );
-              },
-            );
-          }).toList(),
-        );
-      },
+  Widget _buildSearchResultsOrSuggestions() {
+    return Container(
+      color: ColorTheme.colorNeutral,
+      child: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('terminology').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          var documents = snapshot.data!.docs;
+          var filteredDocs = documents.where((doc) {
+            var data = doc.data() as Map<String, dynamic>?;
+            if (data == null || data['word'] == null) return false;
+            var words = data['word'] as Map<String, dynamic>;
+            return words.keys.any((word) => word.contains(query));
+          }).toList();
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(20),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20,
+              childAspectRatio: 0.8, // 카드 비율
+            ),
+            itemCount: filteredDocs.length,
+            itemBuilder: (context, index) {
+              var doc = filteredDocs[index];
+              var data = doc.data() as Map<String, dynamic>;
+              return FutureBuilder<bool>(
+                future: checkCompletionStatus(uid, doc.id),
+                builder: (context, completionSnapshot) {
+                  if (completionSnapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  return buildCategoryCard(
+                    context,
+                    data['title'],
+                    data['catchphrase'],
+                    Colors.grey,
+                    TermCard(title: data['title'], documentName: doc.id, uid: uid),
+                    completionSnapshot.data ?? false,
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

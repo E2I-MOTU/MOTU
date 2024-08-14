@@ -80,8 +80,9 @@ class TermQuizScreen extends StatelessWidget {
                           ),
                           child: IntrinsicHeight(
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
+                                SizedBox(height: contentHeight * 0.10),
                                 Padding(
                                   padding: const EdgeInsets.all(24.0),
                                   child: Stack(
