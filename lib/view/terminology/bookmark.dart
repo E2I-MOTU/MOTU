@@ -10,6 +10,7 @@ class BookmarkPage extends StatelessWidget {
       create: (_) => BookmarkProvider(),
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.white,
           title: const Text('용어 목록'),
         ),
         body: Consumer<BookmarkProvider>(
@@ -29,7 +30,7 @@ class BookmarkPage extends StatelessWidget {
               itemCount: provider.bookmarks.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
                   child: buildBookmarkTermCard(
                     context,
                     provider.bookmarks[index]['id'],
