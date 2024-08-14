@@ -17,11 +17,24 @@ class ProfileService {
     return null;
   }
 
-  Future<void> updateUserInfo(String uid, String newName, String newEmail) async {
-    await _firestore.collection('users').doc(uid).update({
-      'name': newName,
-      'email': newEmail,
-    });
+  Future<void> updateName(String newName) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      await _firestore.collection('users').doc(user.uid).update({
+        'name': newName,
+      });
+    }
+  }
+
+  Future<void> updateUserInfo(String uid, String name, String email) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentReference userDoc = _firestore.collection('users').doc(uid);
+      await userDoc.update({
+        'name': name,
+        'email': email,
+      });
+    }
   }
 
   Future<void> checkAttendance() async {
@@ -29,40 +42,39 @@ class ProfileService {
     if (user != null) {
       DocumentReference userDoc = _firestore.collection('users').doc(user.uid);
       DocumentSnapshot doc = await userDoc.get();
-      List<dynamic> attendance = doc['attendance'] ?? [];
-      DateTime now = DateTime.now();
-      DateTime today = DateTime(now.year, now.month, now.day);
 
-      bool alreadyCheckedIn = attendance.any((timestamp) {
-        DateTime date = (timestamp as Timestamp).toDate();
-        return date.year == today.year && date.month == today.month && date.day == today.day;
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+      List<dynamic> attendance = data['attendance'] ?? [];
+      DateTime now = DateTime.now();
+
+      bool hasAttendedToday = attendance.any((date) {
+        DateTime dateTime = (date as Timestamp).toDate();
+        return dateTime.year == now.year && dateTime.month == now.month && dateTime.day == now.day;
       });
 
-      if (!alreadyCheckedIn) {
-        attendance = attendance.where((timestamp) {
-          DateTime date = (timestamp as Timestamp).toDate();
-          return now.difference(date).inDays < 7;
-        }).toList();
-
-        attendance.add(Timestamp.now());
-
-        if (attendance.length >= 7) {
-          DateTime startDate = (attendance[attendance.length - 7] as Timestamp).toDate();
-          if (now.difference(startDate).inDays <= 6) {
-            int balance = doc['balance'] ?? 0;
-            balance += 100000;
-            await userDoc.update({
-              'balance': balance,
-            });
-          }
-        }
-
-        await userDoc.update({
-          'attendance': attendance,
-        });
-      } else {
-        throw Exception("Already checked in today");
+      if (!hasAttendedToday) {
+        attendance.add(Timestamp.fromDate(now));
       }
+
+      if (attendance.length > 7) {
+        attendance = attendance.sublist(attendance.length - 7);
+      }
+
+      if (attendance.length == 7) {
+        DateTime startDate = (attendance.first as Timestamp).toDate();
+        if (now.difference(startDate).inDays == 6) {
+          int balance = data['balance'] ?? 0;
+          balance += 100000;
+          await userDoc.update({
+            'balance': balance,
+          });
+        }
+      }
+
+      await userDoc.update({
+        'attendance': attendance,
+      });
     }
   }
 
@@ -70,7 +82,10 @@ class ProfileService {
     User? user = _auth.currentUser;
     if (user != null) {
       DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
-      List<dynamic> attendance = doc['attendance'] ?? [];
+
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+      List<dynamic> attendance = data['attendance'] ?? [];
       return attendance.map((date) => (date as Timestamp).toDate()).toList();
     }
     return [];

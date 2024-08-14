@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:motu/view/quiz/widget/quiz_category_builder.dart';
+import '../../provider/navigation_provider.dart';
 import '../../service/user_service.dart';
+import '../main_page.dart';
 import '../theme/color_theme.dart';
 
 class QuizSelectionScreen extends StatelessWidget {
@@ -27,8 +30,21 @@ class QuizSelectionScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: ColorTheme.colorWhite,
         title: const Text(
-          '퀴즈 선택',
+          '경제/금융 퀴즈',
           style: TextStyle(color: Colors.black),
+        ),
+        leading: IconButton(
+          icon: Icon(CupertinoIcons.left_chevron),
+          onPressed: () {
+            NavigationService().setSelectedIndex(1);
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MainPage(),
+              ),
+                  (route) => false, // 모든 기존 경로를 제거
+            );
+          },
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
@@ -96,7 +112,7 @@ class QuizSelectionScreen extends StatelessWidget {
                     crossAxisCount: 2,
                     mainAxisSpacing: 10.0,
                     crossAxisSpacing: 10.0,
-                    childAspectRatio: 3 / 4,
+                    childAspectRatio: 4 / 5,
                     children: newQuizzes + incompleteQuizzes + completedQuizzes,
                   );
                 },

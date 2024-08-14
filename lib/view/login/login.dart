@@ -27,8 +27,6 @@ class LoginPageState extends State<LoginPage> {
       );
 
       if (userCredential.user != null) {
-        // 로그인 성공 시 uid로 NavigationService를 초기화
-        Provider.of<NavigationService>(context, listen: false).initialize(userCredential.user!.uid);
 
         Navigator.pushReplacement(
           context,

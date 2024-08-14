@@ -52,6 +52,26 @@ class TermCard extends StatelessWidget {
                   current: wordsProvider.current + 1,
                   total: wordsProvider.words.length,
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0, right: 10.0),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Visibility(
+                      visible: wordsProvider.current < wordsProvider.words.length,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 20.0),
+                        child: Text(
+                          "${wordsProvider.current + 1} / ${wordsProvider.words.length}",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: ColorTheme.colorDisabled,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: PageView.builder(
                     controller: wordsProvider.pageController,
@@ -87,14 +107,6 @@ class TermCard extends StatelessWidget {
                         onPressed: wordsProvider.previousPage,
                         color: wordsProvider.current > 0 ? ColorTheme.colorPrimary : ColorTheme.colorDisabled,
                       ),
-                      if (wordsProvider.current < wordsProvider.words.length)
-                        Text(
-                          "${wordsProvider.current + 1} / ${wordsProvider.words.length}",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
                       IconButton(
                         icon: Icon(Icons.arrow_forward),
                         onPressed: wordsProvider.nextPage,
