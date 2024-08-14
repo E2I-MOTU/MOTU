@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motu/model/scenario_news.dart';
 import 'package:motu/service/scenario_news_service.dart';
-import 'package:motu/widget/scenario/news_tile.dart';
+import 'package:motu/view/scenario/widget/news/news_tile.dart';
 import 'package:provider/provider.dart';
 
 class StockNewsTab extends StatelessWidget {
