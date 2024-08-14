@@ -22,10 +22,6 @@ class LearningContentscreen extends StatelessWidget {
     return Scaffold(
       drawer: const DrawerMenu(),
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       backgroundColor: ColorTheme.colorNeutral,
       body: Stack(
         children: [
@@ -46,11 +42,10 @@ class LearningContentscreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: appBarHeight + 40),
-                    // 오른쪽으로 이동
                     Container(
-                      alignment: Alignment.centerLeft, // 왼쪽으로 정렬
+                      alignment: Alignment.centerLeft,
                       child: Transform.translate(
-                        offset: Offset(20, 0), // 오른쪽으로 이동
+                        offset: Offset(20, 0),
                         child: const Text(
                           '오늘의 공부\n함께 시작해볼까요?',
                           style: TextStyle(
@@ -113,10 +108,11 @@ class LearningContentscreen extends StatelessWidget {
                     child: Transform.translate(
                       offset: Offset(-10, 0),
                       child: const Text(
-                        '즐겁게 공부도 하고,\n모의투자 머니도 벌어봐요!',
+                        '즐겁게 공부하고,\n모의투자 머니도 벌어봐요!',
                         style: TextStyle(
                           color: ColorTheme.colorWhite,
                           fontSize: 18,
+                          height: 1.3,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
