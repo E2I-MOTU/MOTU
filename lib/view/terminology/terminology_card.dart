@@ -25,14 +25,18 @@ class TermCard extends StatelessWidget {
           title: Text(title),
           automaticallyImplyLeading: true,
           actions: [
-            IconButton(
-              icon: Icon(Icons.bookmark_border),
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BookmarkPage()),
+            Consumer<TerminologyCardProvider>(
+              builder: (context, provider, child) {
+                return IconButton(
+                  icon: Icon(Icons.bookmark_border),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => BookmarkPage()),
+                    );
+                    provider.fetchBookmarkedWords();
+                  },
                 );
-                Provider.of<TerminologyCardProvider>(context, listen: false).fetchBookmarkedWords();
               },
             ),
           ],
@@ -72,9 +76,7 @@ class TermCard extends StatelessWidget {
                   child: PageView.builder(
                     controller: wordsProvider.pageController,
                     itemCount: wordsProvider.words.length + 1,
-                    onPageChanged: (index) {
-                      wordsProvider.setCurrentPage(index);
-                    },
+                    onPageChanged: wordsProvider.setCurrentPage,
                     itemBuilder: (context, index) {
                       if (index == wordsProvider.words.length) {
                         return buildCompletionPage(context, title, documentName, uid);
