@@ -79,10 +79,10 @@ class TermMain extends StatelessWidget {
                 var documents = snapshot.data!.docs;
                 return GridView.count(
                   crossAxisCount: 2,
-                  childAspectRatio: 3 / 3.5,
-                  padding: const EdgeInsets.all(10),
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
+                  childAspectRatio: 1.6 / 2,
+                  padding: const EdgeInsets.all(20),
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
                   children: documents.map((doc) {
                     var data = doc.data() as Map<String, dynamic>;
                     return FutureBuilder<bool>(
