@@ -5,6 +5,7 @@ import '../../provider/terminology_quiz_provider.dart';
 import '../../text_utils.dart';
 import '../../widget/quiz_question.dart';
 import '../../widget/linear_indicator.dart';
+import '../quiz/quiz_screen.dart';
 import 'term_quiz_completed_screen.dart';
 
 class TermQuizScreen extends StatelessWidget {
@@ -157,6 +158,9 @@ class TermQuizScreen extends StatelessWidget {
                                     quizState.submitAnswer(question['answer'] ?? '');
                                     quizState.nextQuestion();
                                   },
+                                  onPrevious: () {
+                                    quizState.previousQuestion();
+                                  },
                                   currentQuestionIndex: quizState.currentQuestionIndex + 1,
                                   totalQuestions: quizState.questions.length,
                                   isShortAnswer: question['type'] == '단답형',
@@ -176,24 +180,5 @@ class TermQuizScreen extends StatelessWidget {
         },
       ),
     );
-  }
-}
-
-class ArrowClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.lineTo(size.width - 20, 0); // Top-right corner minus triangle width
-    path.lineTo(size.width, size.height / 2); // Midpoint of right edge
-    path.lineTo(size.width - 20, size.height); // Bottom-right corner minus triangle width
-    path.lineTo(0, size.height); // Bottom-left corner
-    path.lineTo(0, 0); // Top-left corner
-    path.close(); // Close the path
-    return path;
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
-    return false;
   }
 }
