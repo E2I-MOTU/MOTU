@@ -3,6 +3,7 @@ import 'package:motu/view/profile/profile_detail_page.dart';
 import 'package:motu/view/profile/widget/attendance_builder.dart';
 import 'package:motu/view/profile/widget/menu_tile_builder.dart';
 import 'package:motu/view/profile/widget/section_builder.dart';
+import 'package:intl/intl.dart';
 import '../../model/user_data.dart';
 import '../../service/profile_service.dart';
 import '../terminology/bookmark.dart';
@@ -82,6 +83,8 @@ class _ProfilePageState extends State<ProfilePage> {
             {'title': '문의하기', 'onTap': () {}},
           ];
 
+          final NumberFormat currencyFormat = NumberFormat('#,##0');
+
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -94,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   title: Text(userData!.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   subtitle: Text(userData!.email),
-                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                  trailing: Icon(Icons.arrow_forward_ios, size: 16.0, color: Colors.grey),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                   onTap: () async {
                     final updatedUserData = await Navigator.push(
@@ -114,20 +117,62 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                 ),
-                ListTile(
-                  leading: Icon(Icons.account_balance_wallet, color: Colors.blueGrey),
-                  title: Text(
-                    '${userData!.balance}',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                Container(
+                  padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
+                  margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.25),
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => BalanceDetailPage(balance: userData!.balance)),
-                    );
-                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.monetization_on, size: 16.0, color: ColorTheme.colorPrimary),
+                          const SizedBox(width: 8.0),
+                          Text(
+                            '보유 자산',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            currencyFormat.format(userData!.balance),
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w500,
+                              color: ColorTheme.colorPrimary,
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.arrow_forward_ios, size: 16.0, color: Colors.grey),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => BalanceDetailPage(balance: userData!.balance)),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
                 const ListTile(
@@ -152,6 +197,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     return buildSectionCard(
                       context,
                       children: buildAttendanceWeek(context, attendance),
+                      backgroundColor: ColorTheme.colorNeutral,
                     );
                   },
                 ),
@@ -161,7 +207,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     '학습 현황',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                 ),
                 ...learningStatusItems.map((item) {
                   return buildMenuTile(
@@ -175,7 +220,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     '고객센터',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                 ),
                 ...customerServiceItems.map((item) {
                   return buildMenuTile(
