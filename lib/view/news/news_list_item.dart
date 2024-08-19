@@ -18,9 +18,6 @@ class NewsListItem extends StatelessWidget {
         height: 120,
         child: Card(
           color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
           elevation: 0,
           child: InkWell(
             onTap: onTap,

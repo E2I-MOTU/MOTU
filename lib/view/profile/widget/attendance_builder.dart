@@ -24,14 +24,14 @@ List<Widget> buildAttendanceWeek(BuildContext context, List<DateTime> attendance
           },
           child: Column(
             children: [
-              Text(weekdays[i], style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(weekdays[i]),
               const SizedBox(height: 8),
               Container(
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isChecked ? ColorTheme.colorPrimary : ColorTheme.colorDisabled,
+                  color: isChecked ? ColorTheme.colorPrimary : ColorTheme.colorTertiary,
                 ),
                 child: Icon(
                   isChecked ? Icons.check : Icons.close,

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:motu/view/theme/color_theme.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -19,6 +20,32 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     _attendanceFuture = _service.getAttendance();
   }
 
+  void _selectDate(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext builder) {
+        return Container(
+          height: MediaQuery.of(context).size.height / 3,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+          ),
+          child: CupertinoDatePicker(
+            mode: CupertinoDatePickerMode.date,
+            initialDateTime: _focusedDay,
+            minimumYear: 2020,
+            maximumYear: 2030,
+            onDateTimeChanged: (DateTime newDate) {
+              setState(() {
+                _focusedDay = newDate;
+              });
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,6 +53,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       appBar: AppBar(
         backgroundColor: ColorTheme.colorWhite,
         title: const Text('출석체크'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.calendar_today, color: ColorTheme.colorPrimary),
+            onPressed: () {
+              _selectDate(context);
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<List<DateTime>>(
         future: _attendanceFuture,
@@ -48,10 +83,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               lastDay: DateTime.utc(2030, 12, 31),
               focusedDay: _focusedDay,
               calendarFormat: CalendarFormat.month,
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _focusedDay = focusedDay;
-                });
+              locale: 'ko_KR',
+              availableCalendarFormats: const {
+                CalendarFormat.month: 'Month',
               },
               calendarBuilders: CalendarBuilders(
                 defaultBuilder: (context, day, focusedDay) {
@@ -62,7 +96,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                   if (isChecked) {
                     return Container(
-                      margin: const EdgeInsets.all(4.0),
+                      margin: const EdgeInsets.all(10.0),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: ColorTheme.colorPrimary,
@@ -70,12 +104,32 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       ),
                       child: Text(
                         '${day.day}',
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     );
-                  } else {
-                    return null;
                   }
+                  return null;
+                },
+                todayBuilder: (context, day, focusedDay) {
+                  return Column(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(5.0),
+                        width: 5.0,
+                        height: 5.0,
+                        decoration: BoxDecoration(
+                          color: ColorTheme.colorPrimary,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      Text(
+                        '${day.day}',
+                        style: const TextStyle(
+                          color: ColorTheme.colorPrimary,
+                        ),
+                      ),
+                    ],
+                  );
                 },
               ),
             ),

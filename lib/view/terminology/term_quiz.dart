@@ -68,6 +68,19 @@ class TermQuizScreen extends StatelessWidget {
                   current: quizState.currentQuestionIndex + 1,
                   total: quizState.questions.length,
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0, right: 10.0),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "${quizState.currentQuestionIndex + 1} / ${quizState.questions.length}",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: ColorTheme.colorDisabled,
+                      ),
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
@@ -82,7 +95,7 @@ class TermQuizScreen extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                SizedBox(height: contentHeight * 0.10),
+                                SizedBox(height: contentHeight * 0.04),
                                 Padding(
                                   padding: const EdgeInsets.all(24.0),
                                   child: Stack(
