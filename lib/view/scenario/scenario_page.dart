@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:motu/view/scenario/balance/stock_balance.dart';
 import 'package:motu/view/scenario/news/stock_news_tab.dart';
 import 'package:motu/view/scenario/order/stock_order.dart';
+import 'package:motu/widget/common_dialog.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/scenario_service.dart';
@@ -19,7 +20,12 @@ class ScenarioPage extends StatelessWidget {
           title: const Text("COVID", style: TextStyle(fontSize: 18)),
           leading: GestureDetector(
             onTap: () {
-              Navigator.pop(context);
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return CommonDialog(context);
+                },
+              );
             },
             child: Container(
               padding: const EdgeInsets.all(18), // 패딩 조절
