@@ -119,7 +119,7 @@ class FirstPageView extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "\$${service.visibleStockData.last.close.toStringAsFixed(2)}",
+                            "${service.visibleStockData.last.close.toInt()}원",
                             style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -134,22 +134,25 @@ class FirstPageView extends StatelessWidget {
                         key: globalKey,
                         // 주요 X축, Y축 설정
                         primaryXAxis: DateTimeAxis(
-                          dateFormat: DateFormat.MMMd(),
+                          dateFormat: DateFormat.Md("ko_KR"),
                           intervalType: DateTimeIntervalType.days,
                           interval: 1,
                           majorGridLines: const MajorGridLines(width: 0),
                           edgeLabelPlacement: EdgeLabelPlacement.shift,
                           initialVisibleMinimum: service.visibleStockData.last.x
                               .subtract(const Duration(days: 20)),
-                          initialVisibleMaximum:
-                              service.visibleStockData.last.x,
+                          // initialVisibleMaximum:
+                          //     service.visibleStockData.last.x,
                         ),
                         primaryYAxis: NumericAxis(
                           minimum: service.yMinimum,
                           maximum: service.yMaximum,
                           interval: service.yInterval,
-                          numberFormat:
-                              NumberFormat.simpleCurrency(decimalDigits: 0),
+                          numberFormat: NumberFormat.currency(
+                            locale: 'ko_KR',
+                            symbol: '₩',
+                            decimalDigits: 0,
+                          ),
                           opposedPosition: true,
                         ),
                         // 축 범위 설정
@@ -204,6 +207,7 @@ class FirstPageView extends StatelessWidget {
                         ),
                         onActualRangeChanged: (ActualRangeChangedArgs args) {
                           SchedulerBinding.instance.addPostFrameCallback((_) {
+                            service.setActualArgs(args);
                             service.updateYAxisRange(args);
                           });
                         },
@@ -216,7 +220,7 @@ class FirstPageView extends StatelessWidget {
                         children: [
                           Expanded(
                             child: MotuNormalButton(
-                              context: context,
+                              context,
                               text: '매수',
                               color: Colors.red,
                               onPressed: () {
@@ -235,7 +239,7 @@ class FirstPageView extends StatelessWidget {
                           const SizedBox(width: 24),
                           Expanded(
                             child: MotuNormalButton(
-                              context: context,
+                              context,
                               text: '매도',
                               color: Colors.blue,
                               onPressed: () {
@@ -276,10 +280,10 @@ class FirstPageView extends StatelessWidget {
       activationMode: ActivationMode.longPress,
       builder: (context, trackballDetails) {
         String date = formatDate(trackballDetails.point?.x);
-        String? open = trackballDetails.point?.open?.toStringAsFixed(2);
-        String? close = trackballDetails.point?.close?.toStringAsFixed(2);
-        String? high = trackballDetails.point?.high?.toStringAsFixed(2);
-        String? low = trackballDetails.point?.low?.toStringAsFixed(2);
+        String? open = trackballDetails.point?.open?.toInt().toString();
+        String? close = trackballDetails.point?.close?.toInt().toString();
+        String? high = trackballDetails.point?.high?.toInt().toString();
+        String? low = trackballDetails.point?.low?.toInt().toString();
 
         if (trackballDetails.seriesIndex == 0) {
           return Container(
@@ -307,28 +311,28 @@ class FirstPageView extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '시작 \t\t\t\t\t\$$open',
+                  '시작 \t\t\t\t\t$open원',
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  '마지막\t\t\t\$$close',
+                  '마지막\t\t\t$close원',
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  '최고 \t\t\t\t\t\$$high',
+                  '최고 \t\t\t\t\t$high원',
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  '최저 \t\t\t\t\t\$$low',
+                  '최저 \t\t\t\t\t$low원',
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,

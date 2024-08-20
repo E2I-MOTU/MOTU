@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/scenario/news/news_detail_page.dart';
-import '../../../../model/scenario_news.dart';
+import '../../../../model/stock_news.dart';
 
-Widget NewsListTile(BuildContext context, ScenarioNews news) {
+Widget NewsListTile(BuildContext context, StockNews news) {
   return IntrinsicHeight(
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,

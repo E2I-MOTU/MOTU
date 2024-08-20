@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-Widget MotuNormalButton({
-  required BuildContext context,
+Widget MotuNormalButton(
+  context, {
   required String text,
   required Color color,
   required Function() onPressed,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../model/scenario_news.dart';
+import '../../../model/stock_news.dart';
 
 class NewsDetailPage extends StatelessWidget {
-  final ScenarioNews news;
+  final StockNews news;
 
   const NewsDetailPage({super.key, required this.news});
 

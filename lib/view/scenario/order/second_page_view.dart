@@ -1,99 +1,185 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:motu/provider/scenario_service.dart';
+import 'package:motu/util/util.dart';
+import 'package:motu/view/scenario/widget/order/keyword_popup.dart';
+import 'package:provider/provider.dart';
 
 class SecondPageView extends StatelessWidget {
   const SecondPageView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "종목 정보",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+    double height = MediaQuery.of(context).size.height;
+    return Consumer<ScenarioService>(builder: (context, service, child) {
+      return SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: 24.0, vertical: height > 700 ? 16.0 : 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "${service.selectedStock} 종목 정보",
+                    style: TextStyle(
+                      fontSize: height > 700 ? 20 : 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 10),
+                  Text(
+                    "${DateFormat('yyyy년 MM월 dd일').format(service.currentStockTime)} 기준",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: height > 700 ? 12 : 10,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            flex: 3,
-            child: GridView.count(
-              crossAxisCount: 3,
-              childAspectRatio: 1.2,
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              mainAxisSpacing: 10.0,
-              crossAxisSpacing: 10.0,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _buildInfoCard(
-                  context,
-                  title: "시가총액",
-                  value: "1,000억원",
-                  onTap: () {
-                    print("시가총액 클릭");
-                  },
-                ),
-                _buildInfoCard(
-                  context,
-                  title: "배당수익률",
-                  value: "2.5%",
-                  onTap: () {
-                    print("배당수익률 클릭");
-                  },
-                ),
-                _buildInfoCard(
-                  context,
-                  title: "PBR",
-                  value: "1.2",
-                  onTap: () {
-                    print("PBR 클릭");
-                  },
-                ),
-                _buildInfoCard(
-                  context,
-                  title: "PER",
-                  value: "15.3",
-                  onTap: () {
-                    print("PER 클릭");
-                  },
-                ),
-                _buildInfoCard(
-                  context,
-                  title: "ROE",
-                  value: "12.5%",
-                  onTap: () {
-                    print("ROE 클릭");
-                  },
-                ),
-                _buildInfoCard(
-                  context,
-                  title: "PSR",
-                  value: "1.8",
-                  onTap: () {
-                    print("PSR 클릭");
-                  },
-                ),
-              ],
+            Expanded(
+              flex: 3,
+              child: GridView.count(
+                crossAxisCount: 3,
+                childAspectRatio: 1.2,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                mainAxisSpacing: 10.0,
+                crossAxisSpacing: 10.0,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _buildInfoCard(
+                    context,
+                    title: "시가총액",
+                    value: convertToKoreanNumber(
+                        service.currentStockInfo.marketCap.toInt()),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            content: KeywordPopupWidget(
+                              title: "시가총액이란?\n(Mareket Capitalization)",
+                              content: "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다.",
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  _buildInfoCard(
+                    context,
+                    title: "배당수익률",
+                    value: "${service.currentStockInfo.dividendYield}%",
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            content: KeywordPopupWidget(
+                              title: "시가총액이란?\n(Mareket Capitalization)",
+                              content: "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다.",
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  _buildInfoCard(
+                    context,
+                    title: "PBR",
+                    value: "${service.currentStockInfo.pbr}배",
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            content: KeywordPopupWidget(
+                              title: "시가총액이란?\n(Mareket Capitalization)",
+                              content: "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다.",
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  _buildInfoCard(
+                    context,
+                    title: "PER",
+                    value: "${service.currentStockInfo.per}배",
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            content: KeywordPopupWidget(
+                              title: "시가총액이란?\n(Mareket Capitalization)",
+                              content: "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다.",
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  _buildInfoCard(
+                    context,
+                    title: "ROE",
+                    value: "???",
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            content: KeywordPopupWidget(
+                              title: "시가총액이란?\n(Mareket Capitalization)",
+                              content: "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다.",
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  _buildInfoCard(
+                    context,
+                    title: "PSR",
+                    value: "???",
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            content: KeywordPopupWidget(
+                              title: "시가총액이란?\n(Mareket Capitalization)",
+                              content: "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다.",
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            flex: 4,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: _buildFinancialTable(),
+            Expanded(
+              flex: 4,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: _buildFinancialTable(context, service),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildInfoCard(
@@ -147,8 +233,8 @@ class SecondPageView extends StatelessWidget {
               right: 8,
               child: Image.asset(
                 'assets/images/scenario/info_icon.png',
-                width: 13,
-                height: 13,
+                width: 10,
+                height: 10,
               ),
             ),
           ],
@@ -157,8 +243,14 @@ class SecondPageView extends StatelessWidget {
     );
   }
 
-  Widget _buildFinancialTable() {
-    final List<String> years = ["", "22년 3월", "22년 6월", "22년 9월", "22년 12월"];
+  Widget _buildFinancialTable(BuildContext context, ScenarioService service) {
+    final List<String> years = [
+      "",
+      "${service.q01Financial.year.toString().substring(2)}년 Q1",
+      "${service.q02Financial.year.toString().substring(2)}년 Q2",
+      "${service.q03Financial.year.toString().substring(2)}년 Q3",
+      "${service.q04Financial.year.toString().substring(2)}년 Q4",
+    ];
     final List<String> items = ["매출액", "영업이익", "당기순이익", "자산총계", "부채총계"];
 
     return Table(
@@ -170,25 +262,34 @@ class SecondPageView extends StatelessWidget {
         4: FlexColumnWidth(1),
       },
       children: [
-        _buildTableRow(years, isHeader: true),
+        _buildTableRow(context, years, isHeader: true),
         ...items.asMap().entries.map((entry) {
           int index = entry.key;
           String item = entry.value;
-          return _buildTableRow([
-            item,
-            _getItemData(item, 0),
-            _getItemData(item, 1),
-            _getItemData(item, 2),
-            _getItemData(item, 3),
-          ], isItemRow: true, itemIndex: index);
+          return _buildTableRow(
+              context,
+              [
+                item,
+                _getItemData(service, item, 0),
+                _getItemData(service, item, 1),
+                _getItemData(service, item, 2),
+                _getItemData(service, item, 3),
+              ],
+              isItemRow: true,
+              itemIndex: index);
         }),
       ],
     );
   }
 
-  TableRow _buildTableRow(List<String> cells,
+  TableRow _buildTableRow(BuildContext context, List<String> cells,
       {bool isHeader = false, bool isItemRow = false, int itemIndex = -1}) {
+    double height = MediaQuery.of(context).size.height;
     return TableRow(
+      decoration: BoxDecoration(
+        color: isHeader ? const Color(0xffF4F4F4) : null,
+        borderRadius: BorderRadius.circular(20.0),
+      ),
       children: cells.asMap().entries.map((entry) {
         int index = entry.key;
         String cell = entry.value;
@@ -196,33 +297,74 @@ class SecondPageView extends StatelessWidget {
 
         return TableCell(
           child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-            alignment: Alignment.centerRight,
+            padding: EdgeInsets.symmetric(vertical: height > 700 ? 10.0 : 6.0),
+            alignment: Alignment.center,
             child: isItemCell
-                ? Row(
-                    children: [
-                      Image.asset(
-                        'assets/images/scenario/info_icon.png',
-                        width: 12,
-                        height: 12,
+                ? GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            content: KeywordPopupWidget(
+                              title: "$cell 상세정보",
+                              content: "상세정보를 확인할 수 있는 팝업입니다.",
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xffF4F4F4),
+                        borderRadius: BorderRadius.circular(20.0),
                       ),
-                      const SizedBox(width: 5),
-                      Text(
-                        cell,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 3.5,
+                        vertical: 8.0,
                       ),
-                    ],
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(width: 2),
+                          Text(
+                            cell,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                            ),
+                          ),
+                          const SizedBox(width: 2),
+                          Image.asset(
+                            'assets/images/scenario/info_icon.png',
+                            width: 10,
+                            height: 10,
+                          ),
+                          const SizedBox(width: 2),
+                        ],
+                      ),
+                    ),
                   )
-                : Text(
-                    cell,
-                    style: TextStyle(
-                      fontWeight:
-                          isHeader ? FontWeight.bold : FontWeight.normal,
-                      fontSize: isHeader ? 13 : 12,
+                : Padding(
+                    padding: isHeader
+                        ? EdgeInsets.zero
+                        : const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      cell,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight:
+                            isHeader ? FontWeight.bold : FontWeight.normal,
+                        fontSize: height > 700
+                            ? isHeader
+                                ? 15
+                                : 13
+                            : isHeader
+                                ? 13
+                                : 11,
+                      ),
                     ),
                   ),
           ),
@@ -231,13 +373,66 @@ class SecondPageView extends StatelessWidget {
     );
   }
 
-  String _getItemData(String item, int yearIndex) {
+  // 1분기: 1-3월, 2분기: 4-6월, 3분기: 7-9월, 4분기: 10-12월
+  String _getItemData(ScenarioService service, String item, int yearIndex) {
     final Map<String, List<String>> data = {
-      "매출액": ["120억", "150억", "180억", "200억"],
-      "영업이익": ["15억", "20억", "25억", "30억"],
-      "당기순이익": ["12억", "16억", "20억", "24억"],
-      "자산총계": ["550억", "600억", "650억", "700억"],
-      "부채총계": ["220억", "240억", "260억", "11280억"],
+      "매출액": [
+        service.q01Financial.revenue != -1
+            ? "${service.q01Financial.revenue.toInt()}억"
+            : "???",
+        service.q02Financial.revenue != -1
+            ? "${service.q02Financial.revenue.toInt()}억"
+            : "???",
+        service.q03Financial.revenue != -1
+            ? "${service.q03Financial.revenue.toInt()}억"
+            : "???",
+        service.q04Financial.revenue != -1
+            ? "${service.q04Financial.revenue.toInt()}억"
+            : "???",
+      ],
+      "영업이익": ["???", "???", "???", "???"],
+      "당기순이익": [
+        service.q01Financial.netIncome != -1
+            ? "${service.q01Financial.netIncome.toInt()}억"
+            : "???",
+        service.q02Financial.netIncome != -1
+            ? "${service.q02Financial.netIncome.toInt()}억"
+            : "???",
+        service.q03Financial.netIncome != -1
+            ? "${service.q03Financial.netIncome.toInt()}억"
+            : "???",
+        service.q04Financial.netIncome != -1
+            ? "${service.q04Financial.netIncome.toInt()}억"
+            : "???",
+      ],
+      "자산총계": [
+        service.q01Financial.totalAssets != -1
+            ? "${service.q01Financial.totalAssets.toInt()}억"
+            : "???",
+        service.q02Financial.totalAssets != -1
+            ? "${service.q02Financial.totalAssets.toInt()}억"
+            : "???",
+        service.q03Financial.totalAssets != -1
+            ? "${service.q03Financial.totalAssets.toInt()}억"
+            : "???",
+        service.q04Financial.totalAssets != -1
+            ? "${service.q04Financial.totalAssets.toInt()}억"
+            : "???",
+      ],
+      "부채총계": [
+        service.q01Financial.totalLiabilities != -1
+            ? "${service.q01Financial.totalLiabilities.toInt()}억"
+            : "???",
+        service.q02Financial.totalLiabilities != -1
+            ? "${service.q02Financial.totalLiabilities.toInt()}억"
+            : "???",
+        service.q03Financial.totalLiabilities != -1
+            ? "${service.q03Financial.totalLiabilities.toInt()}억"
+            : "???",
+        service.q04Financial.totalLiabilities != -1
+            ? "${service.q04Financial.totalLiabilities.toInt()}억"
+            : "???",
+      ],
     };
     return data[item]![yearIndex];
   }

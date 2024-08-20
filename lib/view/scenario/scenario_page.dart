@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:motu/view/scenario/balance/stock_balance.dart';
 import 'package:motu/view/scenario/news/stock_news.dart';
 import 'package:motu/view/scenario/order/stock_order.dart';
@@ -18,13 +16,13 @@ class ScenarioPage extends StatelessWidget {
     return Consumer<ScenarioService>(builder: (context, service, child) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("주제", style: TextStyle(fontSize: 18)),
+          title: Text("주제${size.height}", style: const TextStyle(fontSize: 18)),
           leading: GestureDetector(
             onTap: () {
               Navigator.pop(context);
             },
             child: Container(
-              padding: const EdgeInsets.all(16), // 패딩 조절
+              padding: const EdgeInsets.all(18), // 패딩 조절
               child: Image.asset(
                 "assets/images/scenario/exit.png",
                 fit: BoxFit.contain, // 이미지가 컨테이너에 맞게 조절됨

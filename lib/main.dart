@@ -4,7 +4,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:motu/provider/scenario_service.dart';
 import 'package:motu/firebase_options.dart';
 import 'package:motu/provider/terminology_quiz_provider.dart';
-import 'package:motu/view/login/login.dart';
 import 'package:motu/view/scenario/scenario_list.dart';
 import 'package:provider/provider.dart';
 import 'package:motu/provider/navigation_provider.dart';
@@ -51,7 +50,7 @@ class App extends StatelessWidget {
         useMaterial3: true,
         primaryColor: const Color(0xFF701FFF),
       ),
-      home: const LoginPage(),
+      home: const ScenarioList(),
     );
   }
 }

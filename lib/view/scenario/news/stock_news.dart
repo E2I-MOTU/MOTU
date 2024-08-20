@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motu/model/scenario_news.dart';
+import 'package:motu/model/stock_news.dart';
 import 'package:motu/service/scenario_news_service.dart';
 import 'package:motu/view/scenario/widget/news/news_tile.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +11,7 @@ class StockNewsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Consumer<ScenarioNewsService>(builder: (context, service, child) {
-        final sortedNews = List<ScenarioNews>.from(service.news)
+        final sortedNews = List<StockNews>.from(service.news)
           ..sort((a, b) {
             if (a.isRead == b.isRead) return 0;
             return a.isRead ? 1 : -1;
@@ -22,7 +22,7 @@ class StockNewsTab extends StatelessWidget {
           child: Column(
             children: [
               const Divider(),
-              for (ScenarioNews news in sortedNews)
+              for (StockNews news in sortedNews)
                 Column(
                   children: [
                     NewsListTile(context, news),

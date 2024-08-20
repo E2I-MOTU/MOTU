@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:motu/model/scenario_news.dart';
+import 'package:motu/model/stock_news.dart';
 
 class ScenarioNewsService with ChangeNotifier {
-  final List<ScenarioNews> _news = ScenarioNewsData;
+  final List<StockNews> _news = ScenarioNewsData;
 
-  List<ScenarioNews> get news => _news;
+  List<StockNews> get news => _news;
 }
