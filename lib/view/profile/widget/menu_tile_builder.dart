@@ -7,6 +7,6 @@ Widget buildMenuTile({
   return ListTile(
     title: Text(title),
     onTap: onTap,
-    trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+    trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16,),
   );
 }

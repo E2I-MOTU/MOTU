@@ -4,7 +4,6 @@ import 'package:speech_balloon/speech_balloon.dart';
 import '../../../text_utils.dart';
 import '../../theme/color_theme.dart';
 
-
 Widget buildTermCard(BuildContext context, String term, String definition, String example, bool isBookmarked, VoidCallback onBookmarkToggle) {
   final size = MediaQuery.of(context).size;
   final cardWidth = size.width * 0.9;
@@ -27,22 +26,31 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black26,
+                    color: Colors.black12,
                     blurRadius: 10,
                     offset: Offset(0, 4),
                   ),
                 ],
               ),
-              child: Center(
-                child: Text(
-                  term,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: cardHeight / 4,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Text(
+                        term,
+                        style: const TextStyle(
+                          fontSize: 28,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
+                ],
               ),
             ),
             Positioned(
@@ -51,38 +59,48 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
               child: IconButton(
                 icon: Icon(
                   isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                  color: isBookmarked ? ColorTheme.colorPrimary : Colors.black,
                 ),
                 onPressed: onBookmarkToggle,
               ),
             ),
             Positioned(
-              right: 20,
+              right: cardWidth / 9,
               bottom: 20,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Stack(
+                clipBehavior: Clip.none,
                 children: [
-                  SpeechBalloon(
-                    nipLocation: NipLocation.right,
-                    color: ColorTheme.colorPrimary,
-                    width: 140,
-                    height: 40,
-                    borderRadius: 10,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: const Text(
-                        '용어 뜻을 알고 싶다면\n클릭해서 뒤집어 보세요!',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: ColorTheme.colorWhite,
+                  Positioned(
+                    right: 130,
+                    bottom: 130,
+                    child: Image.asset(
+                      'assets/images/speech_balloon.png',
+                      height: 50,
+                    ),
+                    /*
+                    child: SpeechBalloon(
+                      nipLocation: NipLocation.bottomRight,
+                      color: ColorTheme.colorSecondary,
+                      width: 160,
+                      height: 50,
+                      borderRadius: 10,
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: const Text(
+                          '용어 뜻을 알고 싶다면\n클릭해서 뒤집어 보세요!',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: ColorTheme.colorWhite,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ),
+                     */
                   ),
-                  const SizedBox(width: 20),
                   Image.asset(
-                    'assets/images/panda.png',
-                    height: 80,
+                    'assets/images/teaching_panda.png',
+                    height: 110,
                   ),
                 ],
               ),
@@ -98,7 +116,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black26,
+                color: Colors.black12,
                 blurRadius: 10,
                 offset: Offset(0, 4),
               ),

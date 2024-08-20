@@ -5,10 +5,10 @@ Widget buildCategoryCard(BuildContext context, String title, String catchphrase,
   return Stack(
     children: [
       Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
@@ -19,50 +19,60 @@ Widget buildCategoryCard(BuildContext context, String title, String catchphrase,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 15,
+                        fontSize: 10,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 5),
+                    child: Text(
+                      catchphrase,
+                      style: const TextStyle(
+                        fontSize: 12,
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
+                      textAlign: TextAlign.left,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 15),
-                      child: Text(
-                        catchphrase,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.black,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (nextScreen != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => nextScreen),
-                  );
-                }
-              },
-              child: const Text('배워보자'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorTheme.colorPrimary,
-                foregroundColor: ColorTheme.colorWhite,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: double.infinity,
+                height: 30,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (nextScreen != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => nextScreen),
+                      );
+                    }
+                  },
+                  child: const Text('배워보자'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorTheme.colorSecondary,
+                    foregroundColor: ColorTheme.colorWhite,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
               ),
             ),

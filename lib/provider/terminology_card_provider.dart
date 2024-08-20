@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../service/bookmark_service.dart';
@@ -8,9 +10,13 @@ class TerminologyCardProvider with ChangeNotifier {
   PageController pageController = PageController(initialPage: 0);
   int current = 0;
   Set<String> bookmarkedWords = {};
+  StreamSubscription<BookmarkEvent>? _subscription;
+  bool _disposed = false;
 
   TerminologyCardProvider() {
-    eventBus.on<BookmarkEvent>().listen((event) {
+    _subscription = eventBus.on<BookmarkEvent>().listen((event) {
+      if (_disposed) return;
+
       if (event.isBookmarked) {
         bookmarkedWords.add(event.term);
       } else {
@@ -20,7 +26,11 @@ class TerminologyCardProvider with ChangeNotifier {
     });
   }
 
+  bool get isDisposed => _disposed;
+
   Future<void> fetchWords(String title) async {
+    if (isDisposed) return;
+
     CollectionReference collection = FirebaseFirestore.instance.collection('terminology');
     DocumentSnapshot snapshot = await collection.doc(title).get();
     if (snapshot.exists) {
@@ -39,14 +49,20 @@ class TerminologyCardProvider with ChangeNotifier {
       }
 
       words = fetchedWords;
-      notifyListeners();
+      if (!isDisposed) {
+        notifyListeners();
+      }
     } else {
       words = [];
-      notifyListeners();
+      if (!isDisposed) {
+        notifyListeners();
+      }
     }
   }
 
   void nextPage() {
+    if (isDisposed) return;
+
     if (current < words.length) {
       pageController.animateToPage(
         current + 1,
@@ -59,6 +75,8 @@ class TerminologyCardProvider with ChangeNotifier {
   }
 
   void previousPage() {
+    if (isDisposed) return;
+
     if (current > 0) {
       pageController.animateToPage(
         current - 1,
@@ -71,6 +89,8 @@ class TerminologyCardProvider with ChangeNotifier {
   }
 
   void setCurrentPage(int index) {
+    if (isDisposed) return;
+
     current = index;
     notifyListeners();
   }
@@ -80,6 +100,8 @@ class TerminologyCardProvider with ChangeNotifier {
   }
 
   Future<void> toggleBookmark(String term) async {
+    if (isDisposed) return;
+
     if (bookmarkedWords.contains(term)) {
       await BookmarkService().deleteBookmark(term);
       bookmarkedWords.remove(term);
@@ -95,12 +117,26 @@ class TerminologyCardProvider with ChangeNotifier {
       bookmarkedWords.add(term);
       eventBus.fire(BookmarkEvent(term, true));
     }
-    notifyListeners();
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   Future<void> fetchBookmarkedWords() async {
+    if (isDisposed) return;
+
     final bookmarks = await BookmarkService().getBookmarks();
     bookmarkedWords = bookmarks.map((bookmark) => bookmark['term'] as String).toSet();
-    notifyListeners();
+    if (!isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _subscription?.cancel();
+    pageController.dispose();
+    super.dispose();
   }
 }

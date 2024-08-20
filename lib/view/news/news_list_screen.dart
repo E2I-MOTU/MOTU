@@ -42,22 +42,19 @@ class _NewsListScreenState extends State<NewsListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100.0),
-        child: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          title: Text(
-            'News',
-            style: TextStyle(color: Colors.black),
-          ),
-          backgroundColor: Colors.white,
-          elevation: 0,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
+        title: Text(
+          '오늘의 시사',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
       body: Column(
         children: [
@@ -106,8 +103,14 @@ class _NewsListScreenState extends State<NewsListScreen> {
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(child: Text('No news available'));
                 } else {
-                  return ListView.builder(
+                  return ListView.separated(
                     itemCount: snapshot.data!.length,
+                    separatorBuilder: (context, index) => Divider(
+                      color: Colors.grey,
+                      thickness: 1.0,
+                      indent: 16.0,
+                      endIndent: 16.0,
+                    ),
                     itemBuilder: (context, index) {
                       final article = snapshot.data![index];
                       return Padding(

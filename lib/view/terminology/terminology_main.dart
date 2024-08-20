@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:motu/provider/navigation_provider.dart';
 import 'package:motu/text_utils.dart';
+import 'package:motu/view/main_page.dart';
 import 'package:motu/view/terminology/widget/terminology_category_card_builder.dart';
 import 'package:motu/view/theme/color_theme.dart';
 import 'terminology_card.dart';
@@ -28,7 +31,20 @@ class TermMain extends StatelessWidget {
       backgroundColor: ColorTheme.colorNeutral,
       appBar: AppBar(
         backgroundColor: ColorTheme.colorWhite,
-        title: const Text('용어카드'),
+        title: const Text('용어학습'),
+        leading: IconButton(
+          icon: Icon(CupertinoIcons.left_chevron),
+          onPressed: () {
+            NavigationService().setSelectedIndex(1);
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MainPage(),
+              ),
+                  (route) => false, // 모든 기존 경로를 제거
+            );
+          },
+        ),
         automaticallyImplyLeading: true,
         actions: [
           IconButton(
@@ -63,9 +79,10 @@ class TermMain extends StatelessWidget {
                 var documents = snapshot.data!.docs;
                 return GridView.count(
                   crossAxisCount: 2,
-                  padding: const EdgeInsets.all(10),
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
+                  childAspectRatio: 1.6 / 2,
+                  padding: const EdgeInsets.all(20),
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
                   children: documents.map((doc) {
                     var data = doc.data() as Map<String, dynamic>;
                     return FutureBuilder<bool>(

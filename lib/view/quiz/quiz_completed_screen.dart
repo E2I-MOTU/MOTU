@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:motu/view/terminology/terminology_main.dart';
+import 'package:motu/view/quiz/quiz_main.dart';
 import 'package:motu/view/theme/color_theme.dart';
 import 'package:speech_balloon/speech_balloon.dart';
 import '../quiz/widget/circle_indicator.dart';
-import 'terminology_incorrect_answers_screen.dart';
+import 'incorrect_answers_screen.dart';
 
-class TermQuizCompletedScreen extends StatelessWidget {
+class QuizCompletedScreen extends StatelessWidget {
   final int score;
   final int totalQuestions;
   final List<Map<String, dynamic>> incorrectAnswers;
   final String uid;
 
-  const TermQuizCompletedScreen({
+  const QuizCompletedScreen({
     Key? key,
     required this.score,
     required this.totalQuestions,
@@ -23,7 +23,7 @@ class TermQuizCompletedScreen extends StatelessWidget {
     double percentage = (score / totalQuestions) * 100;
 
     if (percentage < 50) {
-      return '공부를 다시 해봐야겠어요';
+      return '더 공부가 필요해요!';
     } else if (percentage >= 50 && percentage < 90) {
       return '잘했어요!\n조금만 더 공부하면 되겠는걸요?';
     } else if (percentage >= 90 && percentage < 100) {
@@ -54,7 +54,7 @@ class TermQuizCompletedScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: ColorTheme.colorWhite,
         title: const Text(
-          '용어 테스트',
+          '퀴즈 완료',
           style: TextStyle(color: Colors.black),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
@@ -146,21 +146,21 @@ class TermQuizCompletedScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TermMain(uid: uid),
+                        builder: (context) => QuizSelectionScreen(uid: uid),
                       ),
                     );
                   } else {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TermIncorrectAnswersScreen(
-                          termIncorrectAnswers: incorrectAnswers,
+                        builder: (context) => IncorrectAnswersScreen(
+                          incorrectAnswers: incorrectAnswers,
                         ),
                       ),
                     ).then((_) => Navigator.pop(context));
                   }
                 },
-                child: Text(incorrectAnswers.isEmpty ? '다른 용어 배우러 가기' : '틀린 문제 보러가기'),
+                child: Text(incorrectAnswers.isEmpty ? '새로운 퀴즈 시작하기' : '틀린 문제 보러가기'),
               ),
             ),
             SizedBox(height: 20),
@@ -181,12 +181,11 @@ class TermQuizCompletedScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.pushAndRemoveUntil(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TermMain(uid: uid),
+                        builder: (context) => QuizSelectionScreen(uid: uid),
                       ),
-                          (route) => false, // 모든 기존 경로를 제거
                     );
                   },
                   child: Text('종료하기'),

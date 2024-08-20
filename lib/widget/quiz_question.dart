@@ -117,7 +117,6 @@ class QuizQuestionWidget extends StatelessWidget {
                   ),
                 );
               }).toList(),
-            const SizedBox(height: 20),
             TextButton(
               onPressed: () {
                 onSubmit();

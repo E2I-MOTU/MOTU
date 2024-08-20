@@ -25,14 +25,18 @@ class TermCard extends StatelessWidget {
           title: Text(title),
           automaticallyImplyLeading: true,
           actions: [
-            IconButton(
-              icon: Icon(Icons.bookmark_border),
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BookmarkPage()),
+            Consumer<TerminologyCardProvider>(
+              builder: (context, provider, child) {
+                return IconButton(
+                  icon: Icon(Icons.bookmark_border),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => BookmarkPage()),
+                    );
+                    provider.fetchBookmarkedWords();
+                  },
                 );
-                Provider.of<TerminologyCardProvider>(context, listen: false).fetchBookmarkedWords();
               },
             ),
           ],
@@ -48,13 +52,34 @@ class TermCard extends StatelessWidget {
                   current: wordsProvider.current + 1,
                   total: wordsProvider.words.length,
                 ),
-                Expanded(
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0, right: 10.0),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Visibility(
+                      visible: wordsProvider.current < wordsProvider.words.length,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 20.0),
+                        child: Text(
+                          "${wordsProvider.current + 1} / ${wordsProvider.words.length}",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: ColorTheme.colorDisabled,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                // PageView를 감싸는 Container의 여백을 조정
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.7, // 적절한 높이 설정
+                  margin: const EdgeInsets.only(bottom: 10.0), // 카드와 버튼 사이의 여백 조정
                   child: PageView.builder(
                     controller: wordsProvider.pageController,
                     itemCount: wordsProvider.words.length + 1,
-                    onPageChanged: (index) {
-                      wordsProvider.setCurrentPage(index);
-                    },
+                    onPageChanged: wordsProvider.setCurrentPage,
                     itemBuilder: (context, index) {
                       if (index == wordsProvider.words.length) {
                         return buildCompletionPage(context, title, documentName, uid);
@@ -76,27 +101,31 @@ class TermCard extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // 버튼 여백 조정
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_back),
-                        onPressed: wordsProvider.previousPage,
-                        color: wordsProvider.current > 0 ? ColorTheme.colorPrimary : ColorTheme.colorDisabled,
-                      ),
-                      if (wordsProvider.current < wordsProvider.words.length)
-                        Text(
-                          "${wordsProvider.current + 1} / ${wordsProvider.words.length}",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        icon: Image.asset(
+                          wordsProvider.current > 0
+                              ? 'assets/images/arrow_back_active.png'
+                              : 'assets/images/arrow_back_inactive.png',
+                          width: 40.0,
+                          height: 40.0,
+                          fit: BoxFit.contain,
                         ),
+                        onPressed: wordsProvider.current > 0 ? wordsProvider.previousPage : null,
+                      ),
                       IconButton(
-                          icon: Icon(Icons.arrow_forward),
-                          onPressed: wordsProvider.nextPage,
-                          color: wordsProvider.current < wordsProvider.words.length ? ColorTheme.colorPrimary : ColorTheme.colorDisabled
+                        icon: Image.asset(
+                          wordsProvider.current < wordsProvider.words.length
+                              ? 'assets/images/arrow_forward_active.png'
+                              : 'assets/images/arrow_forward_inactive.png',
+                          width: 40.0,
+                          height: 40.0,
+                          fit: BoxFit.contain,
+                        ),
+                        onPressed: wordsProvider.current < wordsProvider.words.length ? wordsProvider.nextPage : null,
                       ),
                     ],
                   ),

@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
 
-Widget buildSectionCard(BuildContext context, {required List<Widget> children}) {
-  return Card(
-    elevation: 4.0,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          ...children,
-        ],
-      ),
+Widget buildSectionCard(BuildContext context, {
+  required List<Widget> children,
+  Color backgroundColor = Colors.white,
+}) {
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 8.0),
+    padding: const EdgeInsets.all(16.0),
+    decoration: BoxDecoration(
+      color: backgroundColor,
+      borderRadius: BorderRadius.circular(10.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.25),
+          blurRadius: 4.0,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: children,
     ),
   );
 }
