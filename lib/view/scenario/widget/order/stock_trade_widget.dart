@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motu/provider/scenario_service.dart';
+import 'package:motu/util/util.dart';
 import 'package:motu/widget/motu_button.dart';
 import 'package:provider/provider.dart';
 
@@ -135,7 +136,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
                               ),
                             ),
                       Text(
-                        '${service.visibleStockData.last.close.toInt()}원',
+                        '${Formatter.format(service.visibleStockData.last.close.toInt())}원',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -158,7 +159,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
                               ),
                             ),
                       Text(
-                        '${(_quantity * service.visibleStockData.last.close).toInt()}원',
+                        '${Formatter.format((_quantity * service.visibleStockData.last.close).toInt())}원',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],

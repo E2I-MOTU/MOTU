@@ -10,9 +10,6 @@ import 'package:motu/provider/navigation_provider.dart';
 import 'package:motu/provider/chat_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
-import 'service/scenario_news_service.dart';
-import 'service/scenario_stock_service.dart';
-
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
 
@@ -27,8 +24,6 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ScenarioService()),
-        ChangeNotifierProvider(create: (context) => ScenarioNewsService()),
-        ChangeNotifierProvider(create: (context) => ScenarioStockService()),
         ChangeNotifierProvider(create: (context) => ChatService()),
         ChangeNotifierProvider(create: (context) => NavigationService()),
         ChangeNotifierProvider(create: (_) => TerminologyQuizService()),

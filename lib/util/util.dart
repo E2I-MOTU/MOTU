@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 String convertToKoreanNumber(int number) {
   if (number < 0) return '음수는 지원하지 않습니다';
 
@@ -14,7 +16,7 @@ String convertToKoreanNumber(int number) {
 
   // 억 단위가 있는 경우 추가
   if (billion > 0) {
-    parts.add('$billion억');
+    parts.add('${Formatter.format(billion)}억');
   }
 
   // 조와 억이 모두 없을 경우
@@ -24,3 +26,6 @@ String convertToKoreanNumber(int number) {
 
   return parts.join(' ');
 }
+
+var Formatter =
+    NumberFormat.currency(locale: 'ko_KR', symbol: '', decimalDigits: 0);

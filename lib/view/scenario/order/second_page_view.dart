@@ -23,7 +23,7 @@ class SecondPageView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "${service.selectedStock} 종목 정보",
+                    "${service.selectedStock} 정보",
                     style: TextStyle(
                       fontSize: height > 700 ? 20 : 16,
                       fontWeight: FontWeight.bold,
@@ -63,8 +63,9 @@ class SecondPageView extends StatelessWidget {
                           return AlertDialog(
                             backgroundColor: Colors.white,
                             content: KeywordPopupWidget(
-                              title: "시가총액이란?\n(Mareket Capitalization)",
-                              content: "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다.",
+                              title: "시가총액이란?\n(Market Capitalization)",
+                              content:
+                                  "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다. \n시가총액이 높을수록 회사의 규모가 크다고 볼 수 있습니다.",
                             ),
                           );
                         },
@@ -82,8 +83,9 @@ class SecondPageView extends StatelessWidget {
                           return AlertDialog(
                             backgroundColor: Colors.white,
                             content: KeywordPopupWidget(
-                              title: "시가총액이란?\n(Mareket Capitalization)",
-                              content: "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다.",
+                              title: "배당수익률이란?\n(Dividend Yield)",
+                              content:
+                                  "배당수익률은 주당 배당금을 주가로 나눈 값입니다. \n배당수익률이 높을수록 투자자에게 높은 수익을 제공합니다.",
                             ),
                           );
                         },
@@ -101,8 +103,9 @@ class SecondPageView extends StatelessWidget {
                           return AlertDialog(
                             backgroundColor: Colors.white,
                             content: KeywordPopupWidget(
-                              title: "시가총액이란?\n(Mareket Capitalization)",
-                              content: "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다.",
+                              title: "PBR이란?\n(Price to Book Value Ratio)",
+                              content:
+                                  "PBR은 주가를 주당순자산가치로 나눈 값입니다. \nPBR이 낮을수록 주식이 저평가되었다고 볼 수 있습니다.",
                             ),
                           );
                         },
@@ -120,8 +123,9 @@ class SecondPageView extends StatelessWidget {
                           return AlertDialog(
                             backgroundColor: Colors.white,
                             content: KeywordPopupWidget(
-                              title: "시가총액이란?\n(Mareket Capitalization)",
-                              content: "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다.",
+                              title: "PER이란?\n(Price to Earnings Ratio)",
+                              content:
+                                  "PER은 주가를 주당순이익으로 나눈 값입니다. \nPER이 낮을수록 주식이 저평가되었다고 볼 수 있습니다.",
                             ),
                           );
                         },
@@ -130,8 +134,9 @@ class SecondPageView extends StatelessWidget {
                   ),
                   _buildInfoCard(
                     context,
-                    title: "ROE",
-                    value: "???",
+                    title: "EPS",
+                    value:
+                        "${Formatter.format(service.currentStockInfo.eps.toInt())}원",
                     onTap: () {
                       showDialog(
                         context: context,
@@ -139,8 +144,9 @@ class SecondPageView extends StatelessWidget {
                           return AlertDialog(
                             backgroundColor: Colors.white,
                             content: KeywordPopupWidget(
-                              title: "시가총액이란?\n(Mareket Capitalization)",
-                              content: "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다.",
+                              title: "EPS란?\n(Earnings Per Share)",
+                              content:
+                                  "EPS는 주당순이익을 의미합니다. \nEPS가 높을수록 회사의 수익성이 좋다고 볼 수 있습니다.",
                             ),
                           );
                         },
@@ -149,8 +155,9 @@ class SecondPageView extends StatelessWidget {
                   ),
                   _buildInfoCard(
                     context,
-                    title: "PSR",
-                    value: "???",
+                    title: "BPS",
+                    value:
+                        "${Formatter.format(service.currentStockInfo.bps.toInt())}원",
                     onTap: () {
                       showDialog(
                         context: context,
@@ -158,8 +165,9 @@ class SecondPageView extends StatelessWidget {
                           return AlertDialog(
                             backgroundColor: Colors.white,
                             content: KeywordPopupWidget(
-                              title: "시가총액이란?\n(Mareket Capitalization)",
-                              content: "시가총액은 주식시장에서 상장된 회사의 시장가치를 의미합니다.",
+                              title: "BPS란?\n(Book Value Per Share)",
+                              content:
+                                  "BPS는 주당 순자산가치를 의미합니다. 회사의 순자산을 발행주식수로 나눈 값입니다. \nBPS가 높을수록 회사의 가치가 높다고 볼 수 있습니다.",
                             ),
                           );
                         },
@@ -191,13 +199,9 @@ class SecondPageView extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        elevation: 3.0,
-        color: Colors.white,
+        elevation: 0,
+        color: const Color(0xffF4F4F4),
         shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: Theme.of(context).primaryColor,
-            width: 2.0,
-          ),
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Stack(
@@ -212,7 +216,6 @@ class SecondPageView extends StatelessWidget {
                       title,
                       style: const TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -221,6 +224,7 @@ class SecondPageView extends StatelessWidget {
                       value,
                       style: const TextStyle(
                         fontSize: 14,
+                        fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -262,12 +266,13 @@ class SecondPageView extends StatelessWidget {
         4: FlexColumnWidth(1),
       },
       children: [
-        _buildTableRow(context, years, isHeader: true),
+        _buildTableRow(context, service, years, isHeader: true),
         ...items.asMap().entries.map((entry) {
           int index = entry.key;
           String item = entry.value;
           return _buildTableRow(
               context,
+              service,
               [
                 item,
                 _getItemData(service, item, 0),
@@ -282,7 +287,8 @@ class SecondPageView extends StatelessWidget {
     );
   }
 
-  TableRow _buildTableRow(BuildContext context, List<String> cells,
+  TableRow _buildTableRow(
+      BuildContext context, ScenarioService service, List<String> cells,
       {bool isHeader = false, bool isItemRow = false, int itemIndex = -1}) {
     double height = MediaQuery.of(context).size.height;
     return TableRow(
@@ -308,8 +314,8 @@ class SecondPageView extends StatelessWidget {
                           return AlertDialog(
                             backgroundColor: Colors.white,
                             content: KeywordPopupWidget(
-                              title: "$cell 상세정보",
-                              content: "상세정보를 확인할 수 있는 팝업입니다.",
+                              title: "$cell이란?",
+                              content: service.explainTextbyCell(cell),
                             ),
                           );
                         },
@@ -378,59 +384,59 @@ class SecondPageView extends StatelessWidget {
     final Map<String, List<String>> data = {
       "매출액": [
         service.q01Financial.revenue != -1
-            ? "${service.q01Financial.revenue.toInt()}억"
+            ? "${Formatter.format(service.q01Financial.revenue.toInt())}억"
             : "???",
         service.q02Financial.revenue != -1
-            ? "${service.q02Financial.revenue.toInt()}억"
+            ? "${Formatter.format(service.q02Financial.revenue.toInt())}억"
             : "???",
         service.q03Financial.revenue != -1
-            ? "${service.q03Financial.revenue.toInt()}억"
+            ? "${Formatter.format(service.q03Financial.revenue.toInt())}억"
             : "???",
         service.q04Financial.revenue != -1
-            ? "${service.q04Financial.revenue.toInt()}억"
+            ? "${Formatter.format(service.q04Financial.revenue.toInt())}억"
             : "???",
       ],
       "영업이익": ["???", "???", "???", "???"],
       "당기순이익": [
         service.q01Financial.netIncome != -1
-            ? "${service.q01Financial.netIncome.toInt()}억"
+            ? "${Formatter.format(service.q01Financial.netIncome.toInt())}억"
             : "???",
         service.q02Financial.netIncome != -1
-            ? "${service.q02Financial.netIncome.toInt()}억"
+            ? "${Formatter.format(service.q02Financial.netIncome.toInt())}억"
             : "???",
         service.q03Financial.netIncome != -1
-            ? "${service.q03Financial.netIncome.toInt()}억"
+            ? "${Formatter.format(service.q03Financial.netIncome.toInt())}억"
             : "???",
         service.q04Financial.netIncome != -1
-            ? "${service.q04Financial.netIncome.toInt()}억"
+            ? "${Formatter.format(service.q04Financial.netIncome.toInt())}억"
             : "???",
       ],
       "자산총계": [
         service.q01Financial.totalAssets != -1
-            ? "${service.q01Financial.totalAssets.toInt()}억"
+            ? "${Formatter.format(service.q01Financial.totalAssets.toInt())}억"
             : "???",
         service.q02Financial.totalAssets != -1
-            ? "${service.q02Financial.totalAssets.toInt()}억"
+            ? "${Formatter.format(service.q02Financial.totalAssets.toInt())}억"
             : "???",
         service.q03Financial.totalAssets != -1
-            ? "${service.q03Financial.totalAssets.toInt()}억"
+            ? "${Formatter.format(service.q03Financial.totalAssets.toInt())}억"
             : "???",
         service.q04Financial.totalAssets != -1
-            ? "${service.q04Financial.totalAssets.toInt()}억"
+            ? "${Formatter.format(service.q04Financial.totalAssets.toInt())}억"
             : "???",
       ],
       "부채총계": [
         service.q01Financial.totalLiabilities != -1
-            ? "${service.q01Financial.totalLiabilities.toInt()}억"
+            ? "${Formatter.format(service.q01Financial.totalLiabilities.toInt())}억"
             : "???",
         service.q02Financial.totalLiabilities != -1
-            ? "${service.q02Financial.totalLiabilities.toInt()}억"
+            ? "${Formatter.format(service.q02Financial.totalLiabilities.toInt())}억"
             : "???",
         service.q03Financial.totalLiabilities != -1
-            ? "${service.q03Financial.totalLiabilities.toInt()}억"
+            ? "${Formatter.format(service.q03Financial.totalLiabilities.toInt())}억"
             : "???",
         service.q04Financial.totalLiabilities != -1
-            ? "${service.q04Financial.totalLiabilities.toInt()}억"
+            ? "${Formatter.format(service.q04Financial.totalLiabilities.toInt())}억"
             : "???",
       ],
     };

@@ -5,50 +5,60 @@ class StockListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text(
-            '보유 주식',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(left: 8.0),
+            child: Text(
+              '보유 주식',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('관련주',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Text(
-                '+9.5%\n+285,000',
-                style: TextStyle(fontSize: 18, color: Colors.red),
-                textAlign: TextAlign.right,
-              ),
-            ],
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('관련주',
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                Text(
+                  '+9.5%\n+285,000',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.right,
+                ),
+              ],
+            ),
           ),
-        ),
-        StockItem(
-          logo: Icons.apple,
-          name: '관련주 A',
-          amount: 100,
-          value: '4,545',
-        ),
-        StockItem(
-          logo: Icons.adobe,
-          name: '관련주 B',
-          amount: 100,
-          value: '78,500',
-        ),
-        StockItem(
-          logo: Icons.web,
-          name: '관련주 C',
-          amount: 100,
-          value: '4,545',
-        ),
-      ],
+          const SizedBox(height: 16),
+          // TODO: For문으로 파이어베이스 정보 불러와서 넣기
+          StockItem(
+            logo: Icons.apple,
+            name: '관련주 A',
+            amount: 100,
+            value: '4,545',
+          ),
+          StockItem(
+            logo: Icons.adobe,
+            name: '관련주 B',
+            amount: 100,
+            value: '78,500',
+          ),
+          StockItem(
+            logo: Icons.web,
+            name: '관련주 C',
+            amount: 100,
+            value: '4,545',
+          ),
+        ],
+      ),
     );
   }
 

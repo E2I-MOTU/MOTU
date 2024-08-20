@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class StockNews {
   final String title;
   final String content;
@@ -20,6 +22,18 @@ class StockNews {
       imageURL: json['image'],
       date: DateTime.parse(json['date']),
       isRead: json['isRead'],
+    );
+  }
+
+  factory StockNews.fromList(List<dynamic> data) {
+    return StockNews(
+      date: data[0] is DateTime
+          ? data[0]
+          : DateFormat('yyyy.M.d').parse(data[0].toString()),
+      title: data[1].toString(),
+      content: data[2].toString(),
+      imageURL: data[3].toString(),
+      isRead: false,
     );
   }
 }

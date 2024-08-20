@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:motu/view/scenario/news/news_detail_page.dart';
 import '../../../../model/stock_news.dart';
@@ -55,8 +57,9 @@ Widget NewsListTile(BuildContext context, StockNews news) {
           children: [
             TextButton(
               onPressed: () {
+                log("뉴스 보기 클릭");
                 // TODO: isRead 상태 변경
-                print("Read News");
+                news.isRead = true;
                 Navigator.push(
                   context,
                   MaterialPageRoute(

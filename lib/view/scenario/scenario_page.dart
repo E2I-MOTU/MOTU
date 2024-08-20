@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/scenario/balance/stock_balance.dart';
-import 'package:motu/view/scenario/news/stock_news.dart';
+import 'package:motu/view/scenario/news/stock_news_tab.dart';
 import 'package:motu/view/scenario/order/stock_order.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +16,7 @@ class ScenarioPage extends StatelessWidget {
     return Consumer<ScenarioService>(builder: (context, service, child) {
       return Scaffold(
         appBar: AppBar(
-          title: Text("주제${size.height}", style: const TextStyle(fontSize: 18)),
+          title: const Text("COVID", style: TextStyle(fontSize: 18)),
           leading: GestureDetector(
             onTap: () {
               Navigator.pop(context);
@@ -55,19 +55,19 @@ class ScenarioPage extends StatelessWidget {
                       children: [
                         const Text("뉴스",
                             style: TextStyle(fontWeight: FontWeight.bold)),
-                        service.unreadNewsCount != 0
-                            ? const SizedBox(width: 7)
+                        service.checkUnreadNews() != 0
+                            ? const SizedBox(width: 6)
                             : const SizedBox(),
                         // 동그란 원 안에 Text로 숫자를 표시할 수 있는 원을 만들어줘
-                        service.unreadNewsCount != 0
+                        service.checkUnreadNews() != 0
                             ? Container(
-                                padding: const EdgeInsets.all(4),
+                                padding: const EdgeInsets.all(3),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).primaryColor,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Text(
-                                  service.unreadNewsCount.toString(),
+                                  service.checkUnreadNews().toString(),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 8,

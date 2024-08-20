@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class InvestmentStatusToggle extends StatefulWidget {
   const InvestmentStatusToggle({super.key});
@@ -13,83 +14,116 @@ class InvestmentStatusToggleState extends State<InvestmentStatusToggle> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text(
-            "투자 현황",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(left: 8.0),
+            child: Text(
+              "투자 현황",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
-          child: GestureDetector(
+          const SizedBox(height: 16),
+          GestureDetector(
             onTap: () {
               setState(() {
                 _isExpanded = !_isExpanded;
               });
             },
             child: Container(
-              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: _isExpanded
-                    ? const BorderRadius.vertical(top: Radius.circular(20))
-                    : BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Column(
-                    children: [
-                      Text(
-                        '3,285,000',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      Text(
-                        '+ 285,000 (+9.5%)',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
                   ),
-                  const SizedBox(width: 10),
-                  AnimatedRotation(
-                    turns: _isExpanded ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 300),
-                    child: IconButton(
-                      icon: const Icon(CupertinoIcons.chevron_down),
-                      color: Colors.white,
-                      onPressed: () {
-                        setState(() {
-                          _isExpanded = !_isExpanded;
-                        });
-                      },
+                ],
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: 0,
+                    bottom: -5,
+                    child: AnimatedRotation(
+                      turns: _isExpanded ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 300),
+                      child: IconButton(
+                        icon: const Icon(
+                          CupertinoIcons.chevron_down,
+                          size: 18,
+                        ),
+                        color: Colors.grey[350],
+                        onPressed: () {
+                          setState(() {
+                            _isExpanded = !_isExpanded;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 24.0, vertical: 16.0),
+                          child: Text(
+                            '3,285,000',
+                            style: TextStyle(
+                                fontSize: 32, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(24.0, 0, 24.0, 16.0),
+                          child: Text(
+                            '+ 285,000 (+9.5%)',
+                            style: TextStyle(fontSize: 16, color: Colors.red),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: AnimatedSize(
+          SizedBox(
+            height: _isExpanded ? 16 : 0,
+          ),
+          AnimatedSize(
             duration: const Duration(milliseconds: 300),
             child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.grey,
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(20)),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: _isExpanded
+                    ? [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ]
+                    : null,
               ),
               height: _isExpanded ? null : 0,
               width: double.infinity,
               child: Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -105,8 +139,8 @@ class InvestmentStatusToggleState extends State<InvestmentStatusToggle> {
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

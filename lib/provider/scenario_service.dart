@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer' as dev;
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -11,15 +12,13 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/stock_data.dart';
+import '../model/stock_news.dart';
 
 enum NoticeStatus { timer, news }
 
 enum ScenarioType {
   covid,
-  inflation,
-  interestRate,
-  unemployment,
-  gdp,
+  war,
 }
 
 enum Quarter {
@@ -30,7 +29,7 @@ enum Quarter {
 }
 
 class ScenarioService extends ChangeNotifier {
-  // 시나리오 남은 시간 타이머
+  // MARK: - 시나리오 남은 시간 타이머
   Timer? _remainingTimeTimer;
   Duration _remainingTime = Duration.zero;
   Duration get remainingTime => _remainingTime;
@@ -66,10 +65,6 @@ class ScenarioService extends ChangeNotifier {
   // 메인 공지 상태 변수
   final NoticeStatus _status = NoticeStatus.timer;
   NoticeStatus get status => _status;
-
-  // 안 본 뉴스 개수 상태 변수
-  final int _unreadNewsCount = 1;
-  int get unreadNewsCount => _unreadNewsCount;
 
   // 선택한 시나리오 타입
   ScenarioType? _selectedScenario;
@@ -129,7 +124,7 @@ class ScenarioService extends ChangeNotifier {
   List<StockData> _visibleStockData = [];
   List<StockData> get visibleStockData => _visibleStockData;
 
-// 글로벌 타이머 및 인덱스
+// MARK: - 글로벌 타이머 및 인덱스
   Timer? _globalTimer;
   int _globalIndex = 20;
 
@@ -172,7 +167,7 @@ class ScenarioService extends ChangeNotifier {
     notifyListeners();
   }
 
-// Initialize
+// MARK: - Initialize
   ScenarioService() {
     _initializeData();
   }
@@ -235,6 +230,7 @@ class ScenarioService extends ChangeNotifier {
         await _loadDataForStock(stock);
         await _loadInfoForStock(stock);
         await _loadFinancialForStock(stock);
+        await _loadNewsForStock();
       }).toList();
 
       await Future.wait(futures); // 모든 작업이 완료될 때까지 기다립니다.
@@ -252,21 +248,9 @@ class ScenarioService extends ChangeNotifier {
           pathRef =
               storageRef.child("scenario/covid/chart/${stockCSVPaths[stock]!}");
           break;
-        case ScenarioType.inflation:
-          pathRef = storageRef
-              .child("scenario/inflation/chart/${stockCSVPaths[stock]!}");
-          break;
-        case ScenarioType.interestRate:
-          pathRef = storageRef
-              .child("scenario/interestRate/chart/${stockCSVPaths[stock]!}");
-          break;
-        case ScenarioType.unemployment:
-          pathRef = storageRef
-              .child("scenario/unemployment/chart/${stockCSVPaths[stock]!}");
-          break;
-        case ScenarioType.gdp:
+        case ScenarioType.war:
           pathRef =
-              storageRef.child("scenario/gdp/chart/${stockCSVPaths[stock]!}");
+              storageRef.child("scenario/war/chart/${stockCSVPaths[stock]!}");
           break;
         default:
           throw Exception('Invalid scenario type');
@@ -313,6 +297,7 @@ class ScenarioService extends ChangeNotifier {
     }
   }
 
+  // MARK: - 시간 관리하는 부분
   void _updateVisibleStockData() {
     if (_visibleAllStockData.containsKey(_selectedStock)) {
       _visibleStockData = List.from(_visibleAllStockData[_selectedStock]!);
@@ -323,17 +308,41 @@ class ScenarioService extends ChangeNotifier {
         q03Financial.year = currentStockTime.year;
         q04Financial.year = currentStockTime.year;
       }
+
+      List<String> toRemove = [];
+      for (String newsDate in _allNewsKeys) {
+        DateTime newsDateTime = DateTime.parse(newsDate);
+        String formattedNewsDate =
+            '${newsDateTime.year.toString().padLeft(4, '0')}-${newsDateTime.month.toString().padLeft(2, '0')}-${newsDateTime.day.toString().padLeft(2, '0')}';
+
+        if (newsDateTime.isBefore(currentStockTime)) {
+          toRemove.add(newsDate);
+
+          Timestamp timestamp = _allNews[formattedNewsDate]["date"];
+          DateTime date = timestamp.toDate();
+
+          StockNews news = StockNews(
+            title: _allNews[formattedNewsDate]["title"],
+            content: _allNews[formattedNewsDate]["content"],
+            imageURL: _allNews[formattedNewsDate]["imageUrl"],
+            date: DateTime(date.year, date.month, date.day),
+          );
+
+          _news.add(news);
+
+          notifyListeners();
+        }
+      }
+
+      for (String key in toRemove) {
+        _allNewsKeys.remove(key);
+      }
+
       updateCurrentStockInfo();
 
       // 분기 별 정보 업데이트
       int month = currentStockTime.month;
       if (month >= 1 && month <= 3) {
-        // if (currentQuarter == Quarter.fourth) {
-        //   q01Financial = resetQuarterFinancialData();
-        //   q02Financial = resetQuarterFinancialData();
-        //   q03Financial = resetQuarterFinancialData();
-        //   q04Financial = resetQuarterFinancialData();
-        // }
         currentQuarter = Quarter.first;
       } else if (month >= 4 && month <= 6) {
         currentQuarter = Quarter.second;
@@ -442,6 +451,28 @@ class ScenarioService extends ChangeNotifier {
     super.dispose();
   }
 
+  String explainTextbyCell(String cell) {
+    String explainText = "";
+    if (cell == "매출액") {
+      explainText =
+          "매출액은 기업이 판매한 상품이나 용역에 대한 대가로 받은 금액입니다. \n\n매출액 = 판매량 x 판매가격";
+    }
+    if (cell == "영업이익") {
+      explainText =
+          "영업이익은 기업이 영업활동을 통해 얻은 이익입니다. \n\n영업이익 = 매출액 - 매출원가 - 판매비와 관리비";
+    }
+    if (cell == "당기순이익") {
+      explainText = "당기순이익은 기업이 당기에 얻은 순이익입니다. \n\n당기순이익 = 영업이익 - 이자비용 - 세금";
+    }
+    if (cell == "자산총계") {
+      explainText = "자산총계는 기업이 보유한 자산의 총액입니다. \n\n자산총계 = 유동자산 + 비유동자산";
+    }
+    if (cell == "부채총계") {
+      explainText = "부채총계는 기업이 부담해야 하는 총부채의 총액입니다. \n\n부채총계 = 유동부채 + 비유동부채";
+    }
+    return explainText;
+  }
+
   //*---------------------------------------------------------------------------
   //* MARK: - 관련주 당 주식 종목 정보
 
@@ -520,20 +551,8 @@ class ScenarioService extends ChangeNotifier {
         case ScenarioType.covid:
           pathRef = storageRef.child("scenario/covid/info/${stockID}_info.csv");
           break;
-        case ScenarioType.inflation:
-          pathRef =
-              storageRef.child("scenario/inflation/info/${stockID}_info.csv");
-          break;
-        case ScenarioType.interestRate:
-          pathRef = storageRef
-              .child("scenario/interestRate/info/${stockID}_info.csv");
-          break;
-        case ScenarioType.unemployment:
-          pathRef = storageRef
-              .child("scenario/unemployment/info/${stockID}_info.csv");
-          break;
-        case ScenarioType.gdp:
-          pathRef = storageRef.child("scenario/gdp/info/${stockID}_info.csv");
+        case ScenarioType.war:
+          pathRef = storageRef.child("scenario/war/info/${stockID}_info.csv");
           break;
         default:
           throw Exception('Invalid scenario type');
@@ -623,21 +642,9 @@ class ScenarioService extends ChangeNotifier {
           pathRef = storageRef
               .child("scenario/covid/financial/${stockID}_financial.csv");
           break;
-        case ScenarioType.inflation:
+        case ScenarioType.war:
           pathRef = storageRef
-              .child("scenario/inflation/financial/${stockID}_financial.csv");
-          break;
-        case ScenarioType.interestRate:
-          pathRef = storageRef.child(
-              "scenario/interestRate/financial/${stockID}_financial.csv");
-          break;
-        case ScenarioType.unemployment:
-          pathRef = storageRef.child(
-              "scenario/unemployment/financial/${stockID}_financial.csv");
-          break;
-        case ScenarioType.gdp:
-          pathRef = storageRef
-              .child("scenario/gdp/financial/${stockID}_financial.csv");
+              .child("scenario/war/financial/${stockID}_financial.csv");
           break;
         default:
           throw Exception('Invalid scenario type');
@@ -749,5 +756,58 @@ class ScenarioService extends ChangeNotifier {
 
         break;
     }
+  }
+
+  //*---------------------------------------------------------------------------
+  //* MARK: - 뉴스탭 관련
+  Map<String, dynamic> _allNews = {};
+  List<String> _allNewsKeys = [];
+  final List<StockNews> _news = [];
+  List<StockNews> get news => _news;
+
+  List<StockNews> sortNewsList() {
+    return List<StockNews>.from(news)
+      ..sort((a, b) {
+        if (a.isRead == b.isRead) return 0;
+        return a.isRead ? 1 : -1;
+      });
+  }
+
+  Future<void> _loadNewsForStock() async {
+    try {
+      final instance = FirebaseFirestore.instance;
+      final collection = instance.collection('scenario');
+      late DocumentSnapshot doc;
+
+      switch (_selectedScenario) {
+        case ScenarioType.covid:
+          doc = await collection.doc('covid').get();
+          break;
+        case ScenarioType.war:
+          doc = await collection.doc('war').get();
+          break;
+        default:
+      }
+
+      if (doc.exists) {
+        _allNews = doc.data() as Map<String, dynamic>;
+        _allNewsKeys = _allNews.keys.toList();
+
+        dev.log('Loaded firestore news data');
+        notifyListeners();
+      }
+    } catch (e) {
+      dev.log('Error loading news : $e');
+    }
+  }
+
+  int checkUnreadNews() {
+    int unreadCount = 0;
+    for (StockNews news in _news) {
+      if (!news.isRead) {
+        unreadCount++;
+      }
+    }
+    return unreadCount;
   }
 }

@@ -9,6 +9,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../model/stock_data.dart';
+import '../../../util/util.dart';
 
 class FirstPageView extends StatelessWidget {
   const FirstPageView({super.key});
@@ -53,9 +54,18 @@ class FirstPageView extends StatelessWidget {
                         ),
                       ),
                       service.status == NoticeStatus.timer
-                          ? Text(
-                              "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}",
-                              style: const TextStyle(fontSize: 18),
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}",
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                Text(
+                                  "${service.currentStockTime.year}년 ${service.currentStockTime.month}월 ${service.currentStockTime.day}일",
+                                  style: const TextStyle(fontSize: 10),
+                                ),
+                              ],
                             )
                           : const Text(
                               "새로운 뉴스가 업데이트 되었어요! \n뉴스를 확인해보세요!",
@@ -107,19 +117,38 @@ class FirstPageView extends StatelessWidget {
                                 );
                               }).toList();
                             },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(service.selectedStock,
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold)),
-                                const Icon(Icons.arrow_drop_down),
-                              ],
+                            child: Container(
+                              padding: const EdgeInsets.only(
+                                  left: 18, right: 10, top: 10, bottom: 10),
+                              decoration: BoxDecoration(
+                                color: const Color(0xffF4F4F4),
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black38,
+                                    blurRadius: 1,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(service.selectedStock,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.bold)),
+                                  Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           Text(
-                            "${service.visibleStockData.last.close.toInt()}원",
+                            "${Formatter.format(service.visibleStockData.last.close.toInt())}원",
                             style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
