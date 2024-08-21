@@ -9,21 +9,11 @@ class ProfileDetailPage extends StatefulWidget {
 }
 
 class ProfileDetailPageState extends State<ProfileDetailPage> {
-  late TextEditingController _nameController;
-  late TextEditingController _emailController;
-  late TextEditingController _phoneController;
-  late TextEditingController _passwordController;
-  bool _isEditing = false;
-
-  late String initialName;
-  late String initialEmail;
+  final TextEditingController _nameController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
@@ -43,55 +33,60 @@ class ProfileDetailPageState extends State<ProfileDetailPage> {
             children: [
               const CircleAvatar(
                 radius: 40,
-                backgroundImage: AssetImage('assets/images/person.png'),
+                backgroundImage:
+                    AssetImage('assets/images/profile/profile_image1.png'),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               const Text(
                 '프로필 사진',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black54,
+                  color: ColorTheme.Black1,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 32),
               LayoutBuilder(
                 builder: (context, constraints) {
-                  double textFieldWidth = constraints.maxWidth * 0.7;
+                  double textFieldWidth = constraints.maxWidth * 0.6;
                   double labelWidth = constraints.maxWidth * 0.2;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       _buildLabeledTextField(
+                        controller: TextEditingController(text: 'dd'),
+                        label: '이메일',
+                        width: textFieldWidth,
+                        labelWidth: labelWidth,
+                        canEditing: false,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildLabeledTextField(
                         controller: _nameController,
                         label: '이름',
                         width: textFieldWidth,
                         labelWidth: labelWidth,
+                        canEditing: true,
                       ),
-                      const SizedBox(height: 16),
-                      _buildLabeledTextField(
-                        controller: _emailController,
-                        label: '이메일',
-                        width: textFieldWidth,
-                        labelWidth: labelWidth,
+                      const SizedBox(height: 50),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorTheme.Purple1,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 38, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          '저장하기',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 16),
-                      _buildLabeledTextField(
-                        controller: _phoneController,
-                        label: '전화번호',
-                        width: textFieldWidth,
-                        labelWidth: labelWidth,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildLabeledTextField(
-                        controller: _passwordController,
-                        label: '비밀번호',
-                        obscureText: true,
-                        width: textFieldWidth,
-                        labelWidth: labelWidth,
-                      ),
-                      const SizedBox(height: 24),
-                      _buildActionButtons(),
                     ],
                   );
                 },
@@ -106,9 +101,9 @@ class ProfileDetailPageState extends State<ProfileDetailPage> {
   Widget _buildLabeledTextField({
     required TextEditingController controller,
     required String label,
-    bool obscureText = false,
     required double width,
     required double labelWidth,
+    required bool canEditing,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -119,9 +114,9 @@ class ProfileDetailPageState extends State<ProfileDetailPage> {
           child: Text(
             label,
             style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.black54,
+              fontSize: 15,
+              color: ColorTheme.Black1,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -130,68 +125,23 @@ class ProfileDetailPageState extends State<ProfileDetailPage> {
           width: width,
           child: TextField(
             controller: controller,
-            obscureText: obscureText,
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+            style: TextStyle(
+              fontSize: 15,
+              color: canEditing ? ColorTheme.Black1 : ColorTheme.Black4,
+            ),
+            decoration: const InputDecoration(
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(
-                  color: Colors.grey,
-                ),
+                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
+              filled: true,
+              fillColor: ColorTheme.Grey1,
             ),
-            enabled: _isEditing,
+            enabled: canEditing,
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              if (_isEditing) {}
-              _isEditing = !_isEditing;
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: ColorTheme.colorPrimary,
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: Text(
-            _isEditing ? '저장' : '편집',
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        if (_isEditing) const SizedBox(width: 16),
-        if (_isEditing)
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ColorTheme.colorNeutral,
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text(
-              '취소',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-            ),
-          ),
       ],
     );
   }

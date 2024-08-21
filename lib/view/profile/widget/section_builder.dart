@@ -6,8 +6,7 @@ Widget buildSectionCard(
   Color backgroundColor = Colors.white,
 }) {
   return Container(
-    margin: const EdgeInsets.symmetric(horizontal: 8.0),
-    padding: const EdgeInsets.all(16.0),
+    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
     decoration: BoxDecoration(
       color: backgroundColor,
       borderRadius: BorderRadius.circular(10.0),

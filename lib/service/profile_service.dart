@@ -41,7 +41,7 @@ class ProfileService {
   Future<void> checkAttendance() async {
     User? user = _auth.currentUser;
     if (user != null) {
-      DocumentReference userDoc = _firestore.collection('users').doc(user.uid);
+      DocumentReference userDoc = _firestore.collection('user').doc(user.uid);
       DocumentSnapshot doc = await userDoc.get();
 
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;

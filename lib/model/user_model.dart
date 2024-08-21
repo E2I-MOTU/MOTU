@@ -12,6 +12,7 @@ class UserModel {
   final List<DateTime> attendance; // 출석 기록
   final List<String> completedTerminalogy; // 완료한 용어공부
   final List<String> completedQuiz; // 완료한 퀴즈
+  final List<String> savedTerminalogy; // 저장한 용어공부
   final List<ScenarioResult> scenarioRecord; // 시나리오 기록
 
   UserModel({
@@ -24,6 +25,7 @@ class UserModel {
     required this.attendance,
     required this.completedTerminalogy,
     required this.completedQuiz,
+    required this.savedTerminalogy,
     required this.scenarioRecord,
   });
 
@@ -46,6 +48,10 @@ class UserModel {
         .map((quiz) => quiz as String)
         .toList();
 
+    List<String> savedTerminalogy = (map['savedTerminalogy'] as List<dynamic>)
+        .map((term) => term as String)
+        .toList();
+
     List<ScenarioResult> scenarioRecord =
         (map['scenarioRecord'] as List<dynamic>)
             .map((data) => ScenarioResult.fromMap(data as Map<String, dynamic>))
@@ -61,6 +67,7 @@ class UserModel {
       attendance: attendance,
       completedTerminalogy: completedTerminalogy,
       completedQuiz: completedQuiz,
+      savedTerminalogy: savedTerminalogy,
       scenarioRecord: scenarioRecord,
     );
   }
@@ -75,6 +82,7 @@ class UserModel {
       'attendance': attendance.map((date) => Timestamp.fromDate(date)).toList(),
       'completedTerminalogy': completedTerminalogy,
       'completedQuiz': completedQuiz,
+      'savedTerminalogy': savedTerminalogy,
       'scenarioRecord': scenarioRecord.map((data) => data.toMap()).toList(),
     };
   }

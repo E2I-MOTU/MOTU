@@ -5,7 +5,7 @@ import '../attendance_calendar_screen.dart';
 List<Widget> buildAttendanceWeek(
     BuildContext context, List<DateTime> attendance) {
   List<Widget> weekWidgets = [];
-  List<String> weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  List<String> weekdays = ['일', '월', '화', '수', '목', '금', '토'];
 
   if (attendance.isEmpty) {
     DateTime today = DateTime.now();
