@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motu/service/auth_service.dart';
+import 'package:motu/util/util.dart';
 import 'package:motu/view/profile/widget/attendance_builder.dart';
 import 'package:motu/view/profile/widget/menu_tile_builder.dart';
 import 'package:motu/view/profile/widget/section_builder.dart';
@@ -49,22 +50,24 @@ class ProfilePageState extends State<ProfilePage> {
       {'title': '문의하기', 'onTap': () {}},
     ];
 
-    final NumberFormat currencyFormat = NumberFormat('#,##0');
-
     return Consumer<AuthService>(builder: (context, service, child) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('마이페이지'),
-          backgroundColor: ColorTheme.White,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () {
-                service.signOut();
-              },
-            ),
-          ],
-          automaticallyImplyLeading: false,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50.0),
+          child: AppBar(
+            title: const Text('마이페이지'),
+            backgroundColor: ColorTheme.White,
+            scrolledUnderElevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () {
+                  service.signOut();
+                },
+              ),
+            ],
+            automaticallyImplyLeading: false,
+          ),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -72,28 +75,19 @@ class ProfilePageState extends State<ProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               ListTile(
-                leading: const CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage('assets/images/person.png'),
+                leading: Image.asset(
+                  'assets/images/profile/profile_image1.png',
+                  width: 48,
+                  height: 48,
                 ),
-                title: const Text("d",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                subtitle: const Text("userData!.email"),
+                title: Text(service.user.name,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
+                subtitle: Text(service.user.email),
                 trailing: const Icon(Icons.arrow_forward_ios,
                     size: 16.0, color: Colors.grey),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                onTap: () async {
-                  // final updatedUserData = await Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) =>
-                  //           ProfileDetailPage(userData: userData!)),
-                  // );
-                  // if (updatedUserData != null) {
-                  //   _updateUserData(updatedUserData);
-                  // }
-                },
+                onTap: () async {},
               ),
               const SizedBox(height: 16),
               const ListTile(
@@ -104,8 +98,10 @@ class ProfilePageState extends State<ProfilePage> {
                 contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
               ),
               Container(
-                padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
+                padding:
+                    const EdgeInsets.fromLTRB(24.0, 16, 8.0, 16), // 내부 padding
                 margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10.0),
@@ -117,49 +113,52 @@ class ProfilePageState extends State<ProfilePage> {
                     ),
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.monetization_on,
-                            size: 16.0, color: ColorTheme.colorPrimary),
-                        SizedBox(width: 8.0),
-                        Text(
-                          '보유 자산',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
-                          ),
+                        Row(
+                          children: [
+                            Image.asset(
+                              "assets/images/profile/balance_icon.png",
+                              width: 18,
+                              height: 18,
+                            ),
+                            const SizedBox(width: 8.0),
+                            const Text(
+                              '보유 자산',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 4.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                        const SizedBox(height: 4.0),
                         Text(
-                          currencyFormat.format(33),
+                          Formatter.format(service.user.balance),
                           style: const TextStyle(
-                            fontSize: 24,
+                            fontSize: 32,
                             fontWeight: FontWeight.w500,
                             color: ColorTheme.colorPrimary,
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.arrow_forward_ios,
-                              size: 16.0, color: Colors.grey),
-                          onPressed: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (context) => BalanceDetailPage(
-                            //           balance: 33)),
-                            // );
-                          },
-                        ),
                       ],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.arrow_forward_ios,
+                          size: 16.0, color: Colors.grey),
+                      onPressed: () {
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => BalanceDetailPage(
+                        //           balance: 33)),
+                        // );
+                      },
                     ),
                   ],
                 ),

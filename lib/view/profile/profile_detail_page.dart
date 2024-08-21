@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/theme/color_theme.dart'; // ColorTheme import
-import '../../model/user_model.dart';
-import '../../service/profile_service.dart';
 
 class ProfileDetailPage extends StatefulWidget {
-  final UserModel userData;
-
-  const ProfileDetailPage({super.key, required this.userData});
+  const ProfileDetailPage({super.key});
 
   @override
-  _ProfileDetailPageState createState() => _ProfileDetailPageState();
+  ProfileDetailPageState createState() => ProfileDetailPageState();
 }
 
-class _ProfileDetailPageState extends State<ProfileDetailPage> {
-  final ProfileService _service = ProfileService();
+class ProfileDetailPageState extends State<ProfileDetailPage> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
@@ -22,49 +17,6 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
 
   late String initialName;
   late String initialEmail;
-
-  @override
-  void initState() {
-    super.initState();
-    initialName = widget.userData.name;
-    initialEmail = widget.userData.email;
-
-    _nameController = TextEditingController(text: initialName);
-    _emailController = TextEditingController(text: initialEmail);
-    _phoneController = TextEditingController(text: '');
-    _passwordController = TextEditingController(text: '');
-  }
-
-  Future<void> _saveProfile() async {
-    await _service.updateUserInfo(
-      widget.userData.uid,
-      _nameController.text,
-      _emailController.text,
-    );
-
-    UserModel updatedUserData = UserModel(
-      uid: widget.userData.uid,
-      email: _emailController.text,
-      name: _nameController.text,
-      photoUrl: widget.userData.photoUrl,
-      balanceHistory: widget.userData.balanceHistory,
-      completedTerminalogy: widget.userData.completedTerminalogy,
-      completedQuiz: widget.userData.completedQuiz,
-      scenarioRecord: widget.userData.scenarioRecord,
-      balance: widget.userData.balance,
-      attendance: widget.userData.attendance,
-    );
-
-    Navigator.pop(context, updatedUserData);
-  }
-
-  void _cancelEditing() {
-    setState(() {
-      _nameController.text = initialName;
-      _emailController.text = initialEmail;
-      _isEditing = false;
-    });
-  }
 
   @override
   void dispose() {
@@ -202,9 +154,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
         ElevatedButton(
           onPressed: () {
             setState(() {
-              if (_isEditing) {
-                _saveProfile();
-              }
+              if (_isEditing) {}
               _isEditing = !_isEditing;
             });
           },
@@ -226,7 +176,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
         if (_isEditing) const SizedBox(width: 16),
         if (_isEditing)
           ElevatedButton(
-            onPressed: _cancelEditing,
+            onPressed: () {},
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorTheme.colorNeutral,
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
