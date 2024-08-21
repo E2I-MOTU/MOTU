@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:motu/provider/scenario_service.dart';
+import 'package:motu/service/scenario_service.dart';
 import 'package:motu/view/scenario/widget/order/stock_trade_widget.dart';
 import 'package:motu/widget/motu_button.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +9,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../model/stock_data.dart';
+import '../../../util/util.dart';
 
 class FirstPageView extends StatelessWidget {
   const FirstPageView({super.key});
@@ -53,9 +54,18 @@ class FirstPageView extends StatelessWidget {
                         ),
                       ),
                       service.status == NoticeStatus.timer
-                          ? Text(
-                              "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}",
-                              style: const TextStyle(fontSize: 18),
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}",
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                Text(
+                                  "${service.currentStockTime.year}년 ${service.currentStockTime.month}월 ${service.currentStockTime.day}일",
+                                  style: const TextStyle(fontSize: 10),
+                                ),
+                              ],
                             )
                           : const Text(
                               "새로운 뉴스가 업데이트 되었어요! \n뉴스를 확인해보세요!",
@@ -107,19 +117,38 @@ class FirstPageView extends StatelessWidget {
                                 );
                               }).toList();
                             },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(service.selectedStock,
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold)),
-                                const Icon(Icons.arrow_drop_down),
-                              ],
+                            child: Container(
+                              padding: const EdgeInsets.only(
+                                  left: 18, right: 10, top: 10, bottom: 10),
+                              decoration: BoxDecoration(
+                                color: const Color(0xffF4F4F4),
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black38,
+                                    blurRadius: 1,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(service.selectedStock,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.bold)),
+                                  Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           Text(
-                            "\$${service.visibleStockData.last.close.toStringAsFixed(2)}",
+                            "${Formatter.format(service.visibleStockData.last.close.toInt())}원",
                             style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -134,22 +163,25 @@ class FirstPageView extends StatelessWidget {
                         key: globalKey,
                         // 주요 X축, Y축 설정
                         primaryXAxis: DateTimeAxis(
-                          dateFormat: DateFormat.MMMd(),
+                          dateFormat: DateFormat.Md("ko_KR"),
                           intervalType: DateTimeIntervalType.days,
                           interval: 1,
                           majorGridLines: const MajorGridLines(width: 0),
                           edgeLabelPlacement: EdgeLabelPlacement.shift,
                           initialVisibleMinimum: service.visibleStockData.last.x
                               .subtract(const Duration(days: 20)),
-                          initialVisibleMaximum:
-                              service.visibleStockData.last.x,
+                          // initialVisibleMaximum:
+                          //     service.visibleStockData.last.x,
                         ),
                         primaryYAxis: NumericAxis(
                           minimum: service.yMinimum,
                           maximum: service.yMaximum,
                           interval: service.yInterval,
-                          numberFormat:
-                              NumberFormat.simpleCurrency(decimalDigits: 0),
+                          numberFormat: NumberFormat.currency(
+                            locale: 'ko_KR',
+                            symbol: '₩',
+                            decimalDigits: 0,
+                          ),
                           opposedPosition: true,
                         ),
                         // 축 범위 설정
@@ -204,6 +236,7 @@ class FirstPageView extends StatelessWidget {
                         ),
                         onActualRangeChanged: (ActualRangeChangedArgs args) {
                           SchedulerBinding.instance.addPostFrameCallback((_) {
+                            service.setActualArgs(args);
                             service.updateYAxisRange(args);
                           });
                         },
@@ -216,7 +249,7 @@ class FirstPageView extends StatelessWidget {
                         children: [
                           Expanded(
                             child: MotuNormalButton(
-                              context: context,
+                              context,
                               text: '매수',
                               color: Colors.red,
                               onPressed: () {
@@ -235,7 +268,7 @@ class FirstPageView extends StatelessWidget {
                           const SizedBox(width: 24),
                           Expanded(
                             child: MotuNormalButton(
-                              context: context,
+                              context,
                               text: '매도',
                               color: Colors.blue,
                               onPressed: () {
@@ -276,10 +309,10 @@ class FirstPageView extends StatelessWidget {
       activationMode: ActivationMode.longPress,
       builder: (context, trackballDetails) {
         String date = formatDate(trackballDetails.point?.x);
-        String? open = trackballDetails.point?.open?.toStringAsFixed(2);
-        String? close = trackballDetails.point?.close?.toStringAsFixed(2);
-        String? high = trackballDetails.point?.high?.toStringAsFixed(2);
-        String? low = trackballDetails.point?.low?.toStringAsFixed(2);
+        String? open = trackballDetails.point?.open?.toInt().toString();
+        String? close = trackballDetails.point?.close?.toInt().toString();
+        String? high = trackballDetails.point?.high?.toInt().toString();
+        String? low = trackballDetails.point?.low?.toInt().toString();
 
         if (trackballDetails.seriesIndex == 0) {
           return Container(
@@ -307,28 +340,28 @@ class FirstPageView extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '시작 \t\t\t\t\t\$$open',
+                  '시작 \t\t\t\t\t$open원',
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  '마지막\t\t\t\$$close',
+                  '마지막\t\t\t$close원',
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  '최고 \t\t\t\t\t\$$high',
+                  '최고 \t\t\t\t\t$high원',
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  '최저 \t\t\t\t\t\$$low',
+                  '최저 \t\t\t\t\t$low원',
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,

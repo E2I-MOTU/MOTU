@@ -1,18 +1,18 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:motu/provider/scenario_service.dart';
+import 'package:motu/service/auth_service.dart';
+import 'package:motu/service/scenario_service.dart';
 import 'package:motu/firebase_options.dart';
 import 'package:motu/provider/terminology_quiz_provider.dart';
 import 'package:motu/view/login/login.dart';
+import 'package:motu/view/main_page.dart';
 import 'package:motu/view/scenario/scenario_list.dart';
+import 'package:motu/view/theme/color_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:motu/provider/navigation_provider.dart';
 import 'package:motu/provider/chat_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
-import 'service/scenario_news_service.dart';
-import 'service/scenario_stock_service.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
@@ -27,9 +27,8 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => AuthService()),
         ChangeNotifierProvider(create: (context) => ScenarioService()),
-        ChangeNotifierProvider(create: (context) => ScenarioNewsService()),
-        ChangeNotifierProvider(create: (context) => ScenarioStockService()),
         ChangeNotifierProvider(create: (context) => ChatService()),
         ChangeNotifierProvider(create: (context) => NavigationService()),
         ChangeNotifierProvider(create: (_) => TerminologyQuizService()),
@@ -44,14 +43,23 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+
+    authService.initialize();
+
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'MOTU',
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
-        primaryColor: const Color(0xFF701FFF),
+        primaryColor: ColorTheme.Purple1,
+        scaffoldBackgroundColor: ColorTheme.White,
+        fontFamily: "Pretendard",
       ),
-      home: const LoginPage(),
+      home: Consumer<AuthService>(builder: (context, service, child) {
+        return service.auth.currentUser != null
+            ? const MainPage()
+            : const LoginPage();
+      }),
     );
   }
 }

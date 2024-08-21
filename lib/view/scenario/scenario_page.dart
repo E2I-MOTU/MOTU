@@ -1,12 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:motu/view/scenario/balance/stock_balance.dart';
-import 'package:motu/view/scenario/news/stock_news.dart';
+import 'package:motu/view/scenario/news/stock_news_tab.dart';
 import 'package:motu/view/scenario/order/stock_order.dart';
+import 'package:motu/widget/common_dialog.dart';
 import 'package:provider/provider.dart';
 
-import '../../provider/scenario_service.dart';
+import '../../service/scenario_service.dart';
 
 class ScenarioPage extends StatelessWidget {
   const ScenarioPage({super.key});
@@ -18,13 +17,18 @@ class ScenarioPage extends StatelessWidget {
     return Consumer<ScenarioService>(builder: (context, service, child) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("주제", style: TextStyle(fontSize: 18)),
+          title: const Text("COVID", style: TextStyle(fontSize: 18)),
           leading: GestureDetector(
             onTap: () {
-              Navigator.pop(context);
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return CommonDialog(context);
+                },
+              );
             },
             child: Container(
-              padding: const EdgeInsets.all(16), // 패딩 조절
+              padding: const EdgeInsets.all(18), // 패딩 조절
               child: Image.asset(
                 "assets/images/scenario/exit.png",
                 fit: BoxFit.contain, // 이미지가 컨테이너에 맞게 조절됨
@@ -57,19 +61,19 @@ class ScenarioPage extends StatelessWidget {
                       children: [
                         const Text("뉴스",
                             style: TextStyle(fontWeight: FontWeight.bold)),
-                        service.unreadNewsCount != 0
-                            ? const SizedBox(width: 7)
+                        service.checkUnreadNews() != 0
+                            ? const SizedBox(width: 6)
                             : const SizedBox(),
                         // 동그란 원 안에 Text로 숫자를 표시할 수 있는 원을 만들어줘
-                        service.unreadNewsCount != 0
+                        service.checkUnreadNews() != 0
                             ? Container(
-                                padding: const EdgeInsets.all(4),
+                                padding: const EdgeInsets.all(3),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).primaryColor,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Text(
-                                  service.unreadNewsCount.toString(),
+                                  service.checkUnreadNews().toString(),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 8,

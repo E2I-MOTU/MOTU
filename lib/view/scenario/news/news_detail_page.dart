@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../model/scenario_news.dart';
+import '../../../model/stock_news.dart';
 
 class NewsDetailPage extends StatelessWidget {
-  final ScenarioNews news;
+  final StockNews news;
 
   const NewsDetailPage({super.key, required this.news});
 
@@ -28,11 +28,45 @@ class NewsDetailPage extends StatelessWidget {
                       fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
+              const SizedBox(height: 10),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  '${news.date.year.toString().padLeft(4, '0')}-${news.date.month.toString().padLeft(2, '0')}-${news.date.day.toString().padLeft(2, '0')}',
+                  textAlign: TextAlign.start,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
               const SizedBox(height: 20),
-              Image.network(
-                news.imageURL,
+              SizedBox(
                 width: double.infinity,
-                fit: BoxFit.cover,
+                child: Image.network(
+                  news.imageURL,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (BuildContext context, Widget child,
+                      ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child; // 로딩이 끝났으면 이미지 반환
+                    }
+                    return SizedBox(
+                      height: 400,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  (loadingProgress.expectedTotalBytes ?? 1)
+                              : null,
+                        ),
+                      ),
+                    );
+                  },
+                  errorBuilder: (BuildContext context, Object error,
+                      StackTrace? stackTrace) {
+                    return const Center(
+                      child: Icon(Icons.error), // 에러 시 표시할 아이콘
+                    );
+                  },
+                ),
               ),
               const SizedBox(height: 20),
               Align(
