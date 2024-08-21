@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motu/provider/scenario_service.dart';
+import 'package:motu/service/scenario_service.dart';
 import 'package:motu/widget/motu_button.dart';
 import 'package:provider/provider.dart';
 

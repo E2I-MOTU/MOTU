@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/theme/color_theme.dart'; // ColorTheme import
-import '../../model/user_data.dart';
+import '../../model/user_model.dart';
 import '../../service/profile_service.dart';
 
 class ProfileDetailPage extends StatefulWidget {
@@ -37,7 +37,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
 
   Future<void> _saveProfile() async {
     await _service.updateUserInfo(
-      widget.userData.uid!,
+      widget.userData.uid,
       _nameController.text,
       _emailController.text,
     );
@@ -46,6 +46,11 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
       uid: widget.userData.uid,
       email: _emailController.text,
       name: _nameController.text,
+      photoUrl: widget.userData.photoUrl,
+      balanceHistory: widget.userData.balanceHistory,
+      completedTerminalogy: widget.userData.completedTerminalogy,
+      completedQuiz: widget.userData.completedQuiz,
+      scenarioRecord: widget.userData.scenarioRecord,
       balance: widget.userData.balance,
       attendance: widget.userData.attendance,
     );
@@ -84,12 +89,12 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              CircleAvatar(
+              const CircleAvatar(
                 radius: 40,
                 backgroundImage: AssetImage('assets/images/person.png'),
               ),
               const SizedBox(height: 8),
-              Text(
+              const Text(
                 '프로필 사진',
                 style: TextStyle(
                   fontSize: 16,
@@ -161,7 +166,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
           width: labelWidth,
           child: Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: Colors.black54,
@@ -175,10 +180,10 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
             controller: controller,
             obscureText: obscureText,
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: Colors.grey,
                 ),
               ),
@@ -205,32 +210,31 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: ColorTheme.colorPrimary,
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
           ),
           child: Text(
             _isEditing ? '저장' : '편집',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               color: Colors.white,
             ),
           ),
         ),
-        if (_isEditing)
-          const SizedBox(width: 16),
+        if (_isEditing) const SizedBox(width: 16),
         if (_isEditing)
           ElevatedButton(
             onPressed: _cancelEditing,
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorTheme.colorNeutral,
-              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text(
+            child: const Text(
               '취소',
               style: TextStyle(
                 fontSize: 16,

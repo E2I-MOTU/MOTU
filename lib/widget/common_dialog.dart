@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:motu/widget/motu_button.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/navigation_provider.dart';
+import '../view/main_page.dart';
 
 Widget CommonDialog(BuildContext context) {
   Size size = MediaQuery.of(context).size;
@@ -30,7 +34,9 @@ Widget CommonDialog(BuildContext context) {
                     context,
                     text: "아니요",
                     color: Theme.of(context).primaryColor,
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -38,7 +44,18 @@ Widget CommonDialog(BuildContext context) {
                   child: MotuCancelButton(
                     context: context,
                     text: "예",
-                    onPressed: () {},
+                    onPressed: () {
+                      final navService = Provider.of<NavigationService>(context,
+                          listen: false);
+                      navService.setSelectedIndex(2);
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MainPage(),
+                        ),
+                        (route) => false, // 모든 기존 경로를 제거
+                      );
+                    },
                   ),
                 ),
               ],

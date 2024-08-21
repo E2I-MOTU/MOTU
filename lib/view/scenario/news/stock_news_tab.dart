@@ -3,7 +3,7 @@ import 'package:motu/model/stock_news.dart';
 import 'package:motu/view/scenario/widget/news/news_tile.dart';
 import 'package:provider/provider.dart';
 
-import '../../../provider/scenario_service.dart';
+import '../../../service/scenario_service.dart';
 
 class StockNewsTab extends StatelessWidget {
   const StockNewsTab({super.key});

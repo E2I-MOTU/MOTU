@@ -5,7 +5,7 @@ import 'package:motu/view/scenario/order/stock_order.dart';
 import 'package:motu/widget/common_dialog.dart';
 import 'package:provider/provider.dart';
 
-import '../../provider/scenario_service.dart';
+import '../../service/scenario_service.dart';
 
 class ScenarioPage extends StatelessWidget {
   const ScenarioPage({super.key});

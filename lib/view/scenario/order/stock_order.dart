@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/scenario/order/first_page_view.dart';
 import 'package:provider/provider.dart';
-import '../../../provider/scenario_service.dart';
+import '../../../service/scenario_service.dart';
 import 'second_page_view.dart';
 
 class StockOrderTab extends StatelessWidget {
