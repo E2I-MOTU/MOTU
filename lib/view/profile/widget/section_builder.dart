@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-Widget buildSectionCard(BuildContext context, {
+Widget buildSectionCard(
+  BuildContext context, {
   required List<Widget> children,
   Color backgroundColor = Colors.white,
 }) {
@@ -14,7 +15,7 @@ Widget buildSectionCard(BuildContext context, {
         BoxShadow(
           color: Colors.black.withOpacity(0.25),
           blurRadius: 4.0,
-          offset: Offset(0, 2),
+          offset: const Offset(0, 2),
         ),
       ],
     ),

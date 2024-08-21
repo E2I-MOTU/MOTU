@@ -7,6 +7,8 @@
   adjClose: 수정 종가입니다.
   volume: 거래량입니다. 해당 거래일에 거래된 주식의 총 수량을 나타냅니다.
 */
+import 'dart:developer';
+
 import 'package:intl/intl.dart';
 
 class StockData {
@@ -26,15 +28,30 @@ class StockData {
   final int volume;
 
   factory StockData.fromList(List<dynamic> data) {
-    return StockData(
-      x: data[0] is DateTime
-          ? data[0]
-          : DateFormat('yyyy-MM-dd').parse(data[0].toString()),
-      open: data[1] is double ? data[1] : double.parse(data[1].toString()),
-      high: data[2] is double ? data[2] : double.parse(data[2].toString()),
-      low: data[3] is double ? data[3] : double.parse(data[3].toString()),
-      close: data[4] is double ? data[4] : double.parse(data[4].toString()),
-      volume: data[6] is int ? data[6] : int.parse(data[6].toString()),
-    );
+    try {
+      return StockData(
+        x: data[0] is DateTime
+            ? data[0]
+            : DateFormat('yyyy-MM-dd').parse(data[0].toString()),
+        open: data[1] is num
+            ? data[1].toDouble()
+            : double.parse(data[1].toString()),
+        high: data[2] is num
+            ? data[2].toDouble()
+            : double.parse(data[2].toString()),
+        low: data[3] is num
+            ? data[3].toDouble()
+            : double.parse(data[3].toString()),
+        close: data[4] is num
+            ? data[4].toDouble()
+            : double.parse(data[4].toString()),
+        volume:
+            data[5] is num ? data[5].toInt() : int.parse(data[5].toString()),
+      );
+    } catch (e) {
+      log('Error parsing StockData: $e');
+      log('Problematic data: $data');
+      rethrow;
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:motu/provider/scenario_service.dart';
+import 'package:motu/service/scenario_service.dart';
+import 'package:motu/util/util.dart';
 import 'package:motu/widget/motu_button.dart';
 import 'package:provider/provider.dart';
 
@@ -88,6 +89,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
+                                border: InputBorder.none,
                                 suffixText: '주', // 여기에 원하는 텍스트를 넣습니다.
                                 suffixStyle: TextStyle(
                                   color: Colors.grey,
@@ -134,7 +136,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
                               ),
                             ),
                       Text(
-                        '\$${service.visibleStockData.last.close.toStringAsFixed(2)}',
+                        '${Formatter.format(service.visibleStockData.last.close.toInt())}원',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -157,7 +159,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
                               ),
                             ),
                       Text(
-                        '\$${(_quantity * service.visibleStockData.last.close).toStringAsFixed(2)}',
+                        '${Formatter.format((_quantity * service.visibleStockData.last.close).toInt())}원',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -180,7 +182,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
                 const SizedBox(width: 20),
                 Expanded(
                   child: MotuNormalButton(
-                    context: context,
+                    context,
                     text: "확인",
                     color: Theme.of(context).primaryColor,
                     onPressed: () {

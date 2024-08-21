@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../model/user_data.dart';
+import '../model/user_model.dart';
 
 class ProfileService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -9,7 +9,8 @@ class ProfileService {
   Future<UserModel?> getUserInfo() async {
     User? user = _auth.currentUser;
     if (user != null) {
-      DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
+      DocumentSnapshot doc =
+          await _firestore.collection('users').doc(user.uid).get();
       if (doc.exists) {
         return UserModel.fromMap(user.uid, doc.data() as Map<String, dynamic>);
       }
@@ -50,7 +51,9 @@ class ProfileService {
 
       bool hasAttendedToday = attendance.any((date) {
         DateTime dateTime = (date as Timestamp).toDate();
-        return dateTime.year == now.year && dateTime.month == now.month && dateTime.day == now.day;
+        return dateTime.year == now.year &&
+            dateTime.month == now.month &&
+            dateTime.day == now.day;
       });
 
       if (!hasAttendedToday) {
@@ -81,7 +84,8 @@ class ProfileService {
   Future<List<DateTime>> getAttendance() async {
     User? user = _auth.currentUser;
     if (user != null) {
-      DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
+      DocumentSnapshot doc =
+          await _firestore.collection('users').doc(user.uid).get();
 
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
@@ -102,7 +106,9 @@ class ProfileService {
           .limit(10)
           .get();
 
-      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+      return snapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
     }
     return [];
   }
