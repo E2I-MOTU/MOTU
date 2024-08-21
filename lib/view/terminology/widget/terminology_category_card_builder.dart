@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../theme/color_theme.dart';
 
-Widget buildCategoryCard(BuildContext context, String title, String catchphrase, Color color, Widget? nextScreen, bool isCompleted) {
+Widget buildCategoryCard(
+    BuildContext context,
+    String title,
+    String catchphrase,
+    Color color,
+    Widget? nextScreen,
+    bool isCompleted) {
   return Stack(
     children: [
       Container(
@@ -81,12 +87,12 @@ Widget buildCategoryCard(BuildContext context, String title, String catchphrase,
       ),
       if (isCompleted)
         Positioned(
-          top: 8,
-          right: 8,
-          child: Icon(
-            Icons.emoji_events,
-            color: Colors.amber,
-            size: 30,
+          top: 10,
+          right: 10,
+          child: Image.asset(
+            'assets/images/medal.png',
+            width: 40,
+            height: 40,
           ),
         ),
     ],

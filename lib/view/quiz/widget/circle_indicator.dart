@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../theme/color_theme.dart';
 
 class CircularScoreIndicator extends StatelessWidget {
@@ -22,36 +21,29 @@ class CircularScoreIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double percentage = score / totalQuestions;
     return Stack(
       alignment: Alignment.center,
       children: [
-        if (!isCompleted)
-          SizedBox(
-            width: width,
-            height: height,
-            child: CircularProgressIndicator(
-              value: percentage,
-              backgroundColor: Colors.white,
-              valueColor: const AlwaysStoppedAnimation<Color>(ColorTheme.colorPrimary),
-              strokeWidth: strokeWidth,
+        SizedBox(
+          width: width,
+          height: height,
+          child: CircularProgressIndicator(
+            value: score / totalQuestions,
+            backgroundColor: Colors.white,
+            valueColor: AlwaysStoppedAnimation<Color>(
+              isCompleted ? Colors.orange : ColorTheme.colorPrimary,
             ),
+            strokeWidth: strokeWidth,
           ),
-        if (isCompleted)
-          const Icon(
-            Icons.emoji_events,
-            color: Colors.orange,
-            size: 30,
-          )
-        else
-          Text(
-            '$score/$totalQuestions',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: ColorTheme.colorPrimary,
-            ),
+        ),
+        Text(
+          '$score/$totalQuestions',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: isCompleted ? Colors.orange : ColorTheme.colorPrimary,
           ),
+        ),
       ],
     );
   }

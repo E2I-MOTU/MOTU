@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flip_card/flip_card.dart';
-import 'package:flip_card/flip_card_controller.dart';
-import 'package:motu/text_utils.dart';
+import '../../../text_utils.dart';
+import '../../theme/color_theme.dart';
 import '../quiz_screen.dart';
 import 'circle_indicator.dart';
+
+String formatQuizId(String quizId) {
+  int maxLength = 9;
+  if (quizId.length <= maxLength) return quizId;
+
+  StringBuffer formattedId = StringBuffer();
+  for (int i = 0; i < quizId.length; i += maxLength) {
+    if (i + maxLength < quizId.length) {
+      formattedId.write(quizId.substring(i, i + maxLength) + '\n');
+    } else {
+      formattedId.write(quizId.substring(i));
+    }
+  }
+  return formattedId.toString();
+}
 
 Widget buildQuizCard({
   required BuildContext context,
@@ -15,140 +29,108 @@ Widget buildQuizCard({
   required bool isCompleted,
   required bool isNewQuiz,
 }) {
-  var flipCardController = FlipCardController();
-
-  Widget buildCardContent(String buttonText, VoidCallback onPressed) {
-    return Column(
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  quizId,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  preventWordBreak(catchphrase),
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+  return Stack(
+    children: [
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+        decoration: BoxDecoration(
+          color: isCompleted
+              ? Colors.orange[100]
+              : Colors.primaries[quizId.hashCode % Colors.primaries.length][100],
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 4,
+              offset: Offset(0, 4),
             ),
-          ),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: ElevatedButton(
-            onPressed: onPressed,
-            child: Text(buttonText, style: const TextStyle(color: Colors.black)),
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Text(
+                      formatQuizId(quizId),
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 5),
+                    child: Text(
+                      preventWordBreak(catchphrase),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  return isCompleted
-      ? Stack(
-    children: [
-      Card(
-        color: Colors.orange[100],
-        child: buildCardContent('복습하기', () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => QuizScreen(collectionName: quizId, uid: uid),
-            ),
-          );
-        }),
-      ),
-      Positioned(
-        top: 8,
-        right: 8,
-        child: CircularScoreIndicator(
-          score: score,
-          totalQuestions: totalQuestions,
-          isCompleted: isCompleted,
-        ),
-      ),
-    ],
-  )
-      : isNewQuiz
-      ? Card(
-    color: Colors.primaries[quizId.hashCode % Colors.primaries.length][100],
-    child: buildCardContent('배워보자', () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => QuizScreen(collectionName: quizId, uid: uid),
-        ),
-      );
-    }),
-  )
-      : FlipCard(
-    controller: flipCardController,
-    direction: FlipDirection.HORIZONTAL,
-    front: Card(
-      color: Colors.primaries[quizId.hashCode % Colors.primaries.length][100],
-      child: buildCardContent('점수보기', () {
-        flipCardController.toggleCard();
-      }),
-    ),
-    back: Card(
-      color: Colors.primaries[quizId.hashCode % Colors.primaries.length][100],
-      child: Column(
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularScoreIndicator(
-                  score: score,
-                  totalQuestions: totalQuestions,
-                  isCompleted: isCompleted,
-                  width: 120,
-                  height: 120,
-                  strokeWidth: 20,
-                ),
-              ],
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => QuizScreen(collectionName: quizId, uid: uid),
+            Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: double.infinity,
+                height: 30,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QuizScreen(collectionName: quizId, uid: uid),
+                      ),
+                    );
+                  },
+                  child: const Text('풀어보자'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorTheme.colorWhite,
+                    foregroundColor: ColorTheme.colorPrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  );
-                },
-                child: const Text(
-                  '다시 풀어보기',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                    decoration: TextDecoration.underline,
-                    decorationColor: Colors.grey,
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
+      if (isCompleted)
+        Positioned(
+          top: 10,
+          right: 10,
+          child: Image.asset(
+            'assets/images/medal.png',
+            width: 40,
+            height: 40,
+          ),
+        )
+      else if (score > 0 && totalQuestions > 0)
+        Positioned(
+          top: 10,
+          right: 10,
+          child: CircularScoreIndicator(
+            score: score,
+            totalQuestions: totalQuestions,
+            isCompleted: isCompleted,
+            width: 40,
+            height: 40,
+            strokeWidth: 4,
+          ),
+        ),
+    ],
   );
 }
