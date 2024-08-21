@@ -141,6 +141,7 @@ class AuthService with ChangeNotifier {
         attendance: [],
         completedTerminalogy: [],
         completedQuiz: [],
+        savedTerminalogy: [],
         scenarioRecord: [],
       );
 
