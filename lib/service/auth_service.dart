@@ -181,4 +181,21 @@ class AuthService with ChangeNotifier {
     await _auth.signOut();
     notifyListeners();
   }
+
+  Future<List<DateTime>> getAttendance() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot doc =
+      await _firestore.collection('user').doc(user.uid).get();
+      if (doc.exists) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        List<dynamic> attendanceList = data['attendance'] ?? [];
+        List<DateTime> attendanceDates = attendanceList
+            .map((timestamp) => (timestamp as Timestamp).toDate())
+            .toList();
+        return attendanceDates;
+      }
+    }
+    return [];
+  }
 }
