@@ -8,6 +8,7 @@ class QuizQuestionWidget extends StatelessWidget {
   final bool answered;
   final Function(String) onSelectAnswer;
   final Function onSubmit;
+  final Function onPrevious;
   final int currentQuestionIndex;
   final int totalQuestions;
   final bool isShortAnswer;
@@ -21,6 +22,7 @@ class QuizQuestionWidget extends StatelessWidget {
     required this.answered,
     required this.onSelectAnswer,
     required this.onSubmit,
+    required this.onPrevious,
     required this.currentQuestionIndex,
     required this.totalQuestions,
     this.isShortAnswer = false,
@@ -43,7 +45,7 @@ class QuizQuestionWidget extends StatelessWidget {
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
-                textAlign: TextAlign.left, // Ensure left alignment of text
+                textAlign: TextAlign.left,
               ),
             ),
             if (isShortAnswer)
@@ -117,18 +119,40 @@ class QuizQuestionWidget extends StatelessWidget {
                   ),
                 );
               }).toList(),
-            TextButton(
-              onPressed: () {
-                onSubmit();
-              },
-              child: const Text(
-                '다음 문제로 넘어가기',
-                style: TextStyle(
-                  color: Colors.grey,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.grey,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: Image.asset(
+                    currentQuestionIndex > 1
+                        ? 'assets/images/arrow_back_active.png'
+                        : 'assets/images/arrow_back_inactive.png',
+                    width: 40.0,
+                    height: 40.0,
+                    fit: BoxFit.contain,
+                  ),
+                  onPressed: currentQuestionIndex > 1
+                      ? () {
+                    onPrevious();
+                  }
+                      : null,
                 ),
-              ),
+                IconButton(
+                  icon: Image.asset(
+                    currentQuestionIndex < totalQuestions
+                        ? 'assets/images/arrow_forward_active.png'
+                        : 'assets/images/arrow_forward_inactive.png',
+                    width: 40.0,
+                    height: 40.0,
+                    fit: BoxFit.contain,
+                  ),
+                  onPressed: currentQuestionIndex < totalQuestions
+                      ? () {
+                    onSubmit();
+                  }
+                      : null,
+                ),
+              ],
             ),
           ],
         ),
