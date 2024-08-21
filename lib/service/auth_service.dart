@@ -166,6 +166,17 @@ class AuthService with ChangeNotifier {
     throw Exception("User not found");
   }
 
+  Future<void> updateUserInfo(String name) async {
+    if (_auth.currentUser != null) {
+      await _firestore.collection('user').doc(_auth.currentUser!.uid).update({
+        'name': name,
+      });
+      _user = await getUserInfo();
+      log("🔄 User Info Updated: ${_user.name}");
+      notifyListeners();
+    }
+  }
+
   Future<void> signOut() async {
     await _auth.signOut();
     notifyListeners();

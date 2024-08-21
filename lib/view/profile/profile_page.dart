@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../util/util.dart';
 import '../theme/color_theme.dart';
+import 'balance_detail_page.dart';
 import 'profile_detail_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -20,22 +21,19 @@ class ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Consumer<AuthService>(builder: (context, service, child) {
       return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50.0),
-          child: AppBar(
-            title: const Text('마이페이지'),
-            backgroundColor: ColorTheme.White,
-            scrolledUnderElevation: 0,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.logout),
-                onPressed: () {
-                  service.signOut();
-                },
-              ),
-            ],
-            automaticallyImplyLeading: false,
-          ),
+        appBar: AppBar(
+          title: const Text('마이페이지'),
+          backgroundColor: ColorTheme.White,
+          scrolledUnderElevation: 0,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                service.signOut();
+              },
+            ),
+          ],
+          automaticallyImplyLeading: false,
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -59,7 +57,7 @@ class ProfilePageState extends State<ProfilePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) {
-                      return const ProfileDetailPage();
+                      return ProfileDetailPage(userName: service.user.name);
                     }),
                   );
                 },
@@ -70,70 +68,72 @@ class ProfilePageState extends State<ProfilePage> {
                 style: TextStyle(fontSize: 15),
               ),
               const SizedBox(height: 16),
-              Container(
-                padding:
-                const EdgeInsets.fromLTRB(24.0, 16, 8.0, 16), // 내부 padding
 
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.25),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Image.asset(
-                              "assets/images/profile/balance_icon.png",
-                              width: 18,
-                              height: 18,
-                            ),
-                            const SizedBox(width: 8.0),
-                            const Text(
-                              '보유 자산',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87,
+              // MARK: - 잔고 내역
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const BalanceDetailPage();
+                    }),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(
+                      24.0, 16, 24.0, 16), // 내부 padding
+
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.25),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Image.asset(
+                                "assets/images/profile/balance_icon.png",
+                                width: 18,
+                                height: 18,
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4.0),
-                        Text(
-                          Formatter.format(service.user.balance),
-                          style: const TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w500,
-                            color: ColorTheme.colorPrimary,
+                              const SizedBox(width: 8.0),
+                              const Text(
+                                '보유 자산',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios,
+                          const SizedBox(height: 4.0),
+                          Text(
+                            Formatter.format(service.user.balance),
+                            style: const TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w500,
+                              color: ColorTheme.colorPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Icon(Icons.arrow_forward_ios,
                           size: 16.0, color: Colors.grey),
-                      onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => BalanceDetailPage(
-                        //           balance: 33)),
-                        // );
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const Divider(

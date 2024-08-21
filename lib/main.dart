@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:motu/provider/navigation_provider.dart';
 import 'package:motu/provider/chat_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:toastification/toastification.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
@@ -46,19 +47,21 @@ class App extends StatelessWidget {
 
     authService.initialize();
 
-    return MaterialApp(
-      title: 'MOTU',
-      theme: ThemeData(
-        useMaterial3: true,
-        primaryColor: ColorTheme.Purple1,
-        scaffoldBackgroundColor: ColorTheme.White,
-        fontFamily: "Pretendard",
+    return ToastificationWrapper(
+      child: MaterialApp(
+        title: 'MOTU',
+        theme: ThemeData(
+          useMaterial3: true,
+          primaryColor: ColorTheme.Purple1,
+          scaffoldBackgroundColor: ColorTheme.White,
+          fontFamily: "Pretendard",
+        ),
+        home: Consumer<AuthService>(builder: (context, service, child) {
+          return service.auth.currentUser != null
+              ? const MainPage()
+              : const LoginPage();
+        }),
       ),
-      home: Consumer<AuthService>(builder: (context, service, child) {
-        return service.auth.currentUser != null
-            ? const MainPage()
-            : const LoginPage();
-      }),
     );
   }
 }
