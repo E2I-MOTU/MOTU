@@ -7,7 +7,6 @@ import 'package:motu/firebase_options.dart';
 import 'package:motu/provider/terminology_quiz_provider.dart';
 import 'package:motu/view/login/login.dart';
 import 'package:motu/view/main_page.dart';
-import 'package:motu/view/scenario/scenario_list.dart';
 import 'package:motu/view/theme/color_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:motu/provider/navigation_provider.dart';

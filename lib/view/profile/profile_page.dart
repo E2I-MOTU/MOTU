@@ -5,10 +5,12 @@ import 'package:motu/view/profile/widget/attendance_builder.dart';
 import 'package:motu/view/profile/widget/menu_tile_builder.dart';
 import 'package:motu/view/profile/widget/section_builder.dart';
 import 'package:intl/intl.dart';
+import 'package:motu/widget/custom_divider.dart';
 import 'package:provider/provider.dart';
 
 import '../terminology/bookmark.dart';
 import '../theme/color_theme.dart';
+import 'profile_detail_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -20,36 +22,6 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> learningStatusItems = [
-      {
-        'title': '수료 완료',
-        'onTap': () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //       builder: (context) => CompletionPage(uid: userData!.uid)),
-          // );
-        }
-      },
-      {'title': '학습 진도', 'onTap': () {}},
-      {
-        'title': '용어 목록',
-        'onTap': () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => BookmarkPage()),
-          );
-        }
-      },
-      {'title': '시나리오 기록', 'onTap': () {}},
-    ];
-
-    final List<Map<String, dynamic>> customerServiceItems = [
-      {'title': 'FAQ', 'onTap': () {}},
-      {'title': '공지사항', 'onTap': () {}},
-      {'title': '문의하기', 'onTap': () {}},
-    ];
-
     return Consumer<AuthService>(builder: (context, service, child) {
       return Scaffold(
         appBar: PreferredSize(
@@ -70,7 +42,7 @@ class ProfilePageState extends State<ProfilePage> {
           ),
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -86,21 +58,27 @@ class ProfilePageState extends State<ProfilePage> {
                 subtitle: Text(service.user.email),
                 trailing: const Icon(Icons.arrow_forward_ios,
                     size: 16.0, color: Colors.grey),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                onTap: () async {},
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const ProfileDetailPage();
+                    }),
+                  );
+                },
               ),
               const SizedBox(height: 16),
-              const ListTile(
-                title: Text(
-                  '잔고 내역',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+              const Text(
+                '잔고 내역',
+                style: TextStyle(fontSize: 15),
               ),
+              const SizedBox(height: 16),
+              // MARK: - 잔고 내역
               Container(
                 padding:
                     const EdgeInsets.fromLTRB(24.0, 16, 8.0, 16), // 내부 padding
-                margin: const EdgeInsets.symmetric(horizontal: 8.0),
+
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -163,45 +141,194 @@ class ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
-              const ListTile(
-                title: Text(
-                  '출석 현황',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+              const Divider(
+                height: 50,
+                color: ColorTheme.Grey2,
               ),
+              const Text(
+                "출석 현황",
+                style: TextStyle(color: ColorTheme.Black2),
+              ),
+              const SizedBox(height: 16),
+              // MARK: - 출석 현황
               buildSectionCard(
                 context,
                 children: buildAttendanceWeek(context, []),
                 backgroundColor: ColorTheme.colorNeutral,
               ),
-              const SizedBox(height: 16),
-              const ListTile(
-                title: Text(
-                  '학습 현황',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              const Divider(
+                height: 50,
+                color: ColorTheme.Grey2,
+              ),
+              const Text(
+                "학습 현황",
+                style: TextStyle(color: ColorTheme.Black2),
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  visualDensity: VisualDensity.compact,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                  ),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "학습한 용어 목록",
+                      style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: ColorTheme.Black1,
+                    ),
+                  ],
                 ),
               ),
-              ...learningStatusItems.map((item) {
-                return buildMenuTile(
-                  title: item['title'],
-                  onTap: item['onTap'],
-                );
-              }),
-              const SizedBox(height: 16),
-              const ListTile(
-                title: Text(
-                  '고객센터',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              // MARK: - 학습 현황
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "해결한 퀴즈 목록",
+                      style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: ColorTheme.Black1,
+                    ),
+                  ],
                 ),
               ),
-              ...customerServiceItems.map((item) {
-                return buildMenuTile(
-                  title: item['title'],
-                  onTap: item['onTap'],
-                );
-              }),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "저장한 용어 목록",
+                      style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: ColorTheme.Black1,
+                    ),
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "참여한 시나리오 기록",
+                      style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: ColorTheme.Black1,
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(
+                height: 50,
+                color: ColorTheme.Grey2,
+              ),
+              const Text(
+                "고객 센터",
+                style: TextStyle(color: ColorTheme.Black2),
+              ),
+              // MARK: - 고객 센터
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "FAQ",
+                      style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: ColorTheme.Black1,
+                    ),
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "문의하기",
+                      style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: ColorTheme.Black1,
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(
+                height: 50,
+                color: ColorTheme.Grey2,
+              ),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "개인정보 처리방침",
+                      style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: ColorTheme.Black1,
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
