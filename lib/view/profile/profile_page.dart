@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:motu/service/auth_service.dart';
-import 'package:motu/util/util.dart';
 import 'package:motu/view/profile/widget/attendance_builder.dart';
-import 'package:motu/view/profile/widget/menu_tile_builder.dart';
 import 'package:motu/view/profile/widget/section_builder.dart';
-import 'package:intl/intl.dart';
-import 'package:motu/widget/custom_divider.dart';
 import 'package:provider/provider.dart';
 
-import '../terminology/bookmark.dart';
+import '../../util/util.dart';
 import '../theme/color_theme.dart';
 import 'balance_detail_page.dart';
 import 'profile_detail_page.dart';
@@ -72,6 +68,7 @@ class ProfilePageState extends State<ProfilePage> {
                 style: TextStyle(fontSize: 15),
               ),
               const SizedBox(height: 16),
+
               // MARK: - 잔고 내역
               GestureDetector(
                 onTap: () {
@@ -148,11 +145,24 @@ class ProfilePageState extends State<ProfilePage> {
                 style: TextStyle(color: ColorTheme.Black2),
               ),
               const SizedBox(height: 16),
-              // MARK: - 출석 현황
-              buildSectionCard(
-                context,
-                children: buildAttendanceWeek(context, []),
-                backgroundColor: ColorTheme.colorNeutral,
+              FutureBuilder<List<DateTime>>(
+                future: service.getAttendance(),
+                builder: (BuildContext context, AsyncSnapshot<List<DateTime>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return const Center(child: Text('출석 현황을 불러오는 중 오류가 발생했습니다.'));
+                  }
+
+                  List<DateTime> attendance = snapshot.data ?? [];
+
+                  return buildSectionCard(
+                    context,
+                    children: buildAttendanceWeek(context, attendance),
+                    backgroundColor: ColorTheme.colorNeutral,
+                  );
+                },
               ),
               const Divider(
                 height: 50,
@@ -187,7 +197,6 @@ class ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
-              // MARK: - 학습 현황
               TextButton(
                 onPressed: () {},
                 style: TextButton.styleFrom(
@@ -259,7 +268,6 @@ class ProfilePageState extends State<ProfilePage> {
                 "고객 센터",
                 style: TextStyle(color: ColorTheme.Black2),
               ),
-              // MARK: - 고객 센터
               TextButton(
                 onPressed: () {},
                 style: TextButton.styleFrom(

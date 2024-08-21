@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/color_theme.dart';
 import '../attendance_calendar_screen.dart';
 
-List<Widget> buildAttendanceWeek(
-    BuildContext context, List<DateTime> attendance) {
+List<Widget> buildAttendanceWeek(BuildContext context, List<DateTime> attendance) {
   List<Widget> weekWidgets = [];
   List<String> weekdays = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -13,18 +12,15 @@ List<Widget> buildAttendanceWeek(
   } else {
     attendance.sort();
 
-    DateTime startDay = attendance.last;
+    DateTime startDay = attendance.first;
 
-    for (int i = attendance.length - 2; i >= 0; i--) {
-      if (attendance[i + 1].difference(attendance[i]).inDays == 1) {
+    for (int i = 1; i < attendance.length; i++) {
+      if (attendance[i].difference(attendance[i - 1]).inDays > 1) {
         startDay = attendance[i];
-      } else {
-        break;
       }
     }
 
-    weekWidgets =
-        _buildWeekFromStartDay(context, weekdays, startDay, attendance);
+    weekWidgets = _buildWeekFromStartDay(context, weekdays, startDay, attendance);
   }
 
   return [
@@ -35,18 +31,13 @@ List<Widget> buildAttendanceWeek(
   ];
 }
 
-List<Widget> _buildWeekFromStartDay(BuildContext context, List<String> weekdays,
-    DateTime startDay, List<DateTime> attendance) {
+List<Widget> _buildWeekFromStartDay(BuildContext context, List<String> weekdays, DateTime startDay, List<DateTime> attendance) {
   List<Widget> weekWidgets = [];
 
   for (int i = 0; i < 7; i++) {
     DateTime day = startDay.add(Duration(days: i));
-    bool isChecked = attendance.any((date) =>
-        date.year == day.year &&
-        date.month == day.month &&
-        date.day == day.day);
-    weekWidgets.add(
-        _buildDayWidget(context, weekdays[day.weekday % 7], day, isChecked));
+    bool isChecked = attendance.any((date) => date.year == day.year && date.month == day.month && date.day == day.day);
+    weekWidgets.add(_buildDayWidget(context, weekdays[day.weekday % 7], day, isChecked));
   }
 
   return weekWidgets;
