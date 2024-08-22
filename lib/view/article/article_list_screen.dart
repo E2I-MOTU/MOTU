@@ -34,7 +34,7 @@ class ArticleListScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('뉴스 목록'),
+        title: Text('경제꿀팁'),
         backgroundColor: Colors.white,
       ),
       body: FutureBuilder<List<Article>>(
