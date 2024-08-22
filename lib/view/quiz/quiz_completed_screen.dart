@@ -143,12 +143,7 @@ class QuizCompletedScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   if (incorrectAnswers.isEmpty) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => QuizSelectionScreen(uid: uid),
-                      ),
-                    );
+                    Navigator.pop(context);
                   } else {
                     Navigator.push(
                       context,
