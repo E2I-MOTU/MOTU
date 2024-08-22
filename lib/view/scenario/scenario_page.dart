@@ -88,7 +88,7 @@ class ScenarioPage extends StatelessWidget {
                   SizedBox(
                     width: size.width * 0.12,
                     child: const Tab(
-                        child: Text("잔고",
+                        child: Text("현황",
                             style: TextStyle(fontWeight: FontWeight.bold))),
                   ),
                 ],
