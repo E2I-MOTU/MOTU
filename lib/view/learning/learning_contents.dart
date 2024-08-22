@@ -45,7 +45,7 @@ class LearningContentscreen extends StatelessWidget {
                     Container(
                       alignment: Alignment.centerLeft,
                       child: Transform.translate(
-                        offset: Offset(20, 0),
+                        offset: const Offset(20, 0),
                         child: const Text(
                           '오늘의 공부\n함께 시작해볼까요?',
                           style: TextStyle(
@@ -59,19 +59,43 @@ class LearningContentscreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 60),
+              const SizedBox(height: 40),
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,
                   padding: const EdgeInsets.all(15),
                   crossAxisSpacing: 15,
                   mainAxisSpacing: 20,
-                  childAspectRatio: 5 / 6,
+                  childAspectRatio: 3 / 4,
                   children: [
-                    buildCard(context, '용어\n공부하기', ColorTheme.colorWhite, TermMain(uid: auth.currentUser!.uid)),
-                    buildCard(context, '퀴즈 풀며\n내 실력\n확인해보기', ColorTheme.colorWhite, QuizSelectionScreen(uid: auth.currentUser!.uid)),
-                    buildCard(context, '꼭 필요한\n경제꿀팁 읽으며\n경제지식 쌓기', ColorTheme.colorWhite, ArticleListScreen()),
-                    buildCard(context, '오늘의\n시사 정보\n확인하기', ColorTheme.colorWhite, NewsListScreen()),
+                    buildCard(
+                      context,
+                      '용어\n공부하기',
+                      ColorTheme.colorWhite,
+                      TermMain(uid: auth.currentUser!.uid),
+                      'assets/images/character/curious_panda.png',
+                    ),
+                    buildCard(
+                      context,
+                      '퀴즈 풀며\n내 실력\n확인해보기',
+                      ColorTheme.colorWhite,
+                      QuizSelectionScreen(uid: auth.currentUser!.uid),
+                      'assets/images/character/study_panda.png',
+                    ),
+                    buildCard(
+                      context,
+                      '꼭 필요한\n경제꿀팁 읽으며\n경제지식 쌓기',
+                      ColorTheme.colorWhite,
+                      ArticleListScreen(),
+                      'assets/images/character/news_panda.png',
+                    ),
+                    buildCard(
+                      context,
+                      '오늘의\n시사 정보\n확인하기',
+                      ColorTheme.colorWhite,
+                      NewsListScreen(),
+                      'assets/images/character/teaching_panda.png',
+                    ),
                   ],
                 ),
               ),
@@ -91,22 +115,24 @@ class LearningContentscreen extends StatelessWidget {
               child: Row(
                 children: [
                   Transform.translate(
-                    offset: Offset(-10, 0),
+                    offset: const Offset(-10, 0),
                     child: Container(
                       width: screenWidth * 0.2,
                       height: screenWidth * 0.2,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.local_fire_department, color: Colors.red, size: 30),
+                      child: Image.asset(
+                        'assets/images/character/face_circle.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Transform.translate(
-                      offset: Offset(-10, 0),
+                      offset: const Offset(-10, 0),
                       child: const Text(
                         '즐겁게 공부하고,\n모의투자 머니도 벌어봐요!',
                         style: TextStyle(
