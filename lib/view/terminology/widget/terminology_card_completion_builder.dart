@@ -42,9 +42,8 @@ Widget buildCompletionPage(BuildContext context, String title, String documentNa
                 ),
                 SizedBox(height: 20), // Reduced space between title and image
                 Image.asset(
-                  'assets/images/default_panda.png',
-                  height: 150,
-                  width: 150,
+                  'assets/images/character/complete_panda.png',
+                  width: 240,
                 ),
                 SizedBox(height: 20), // Reduced space between image and text
                 Text(

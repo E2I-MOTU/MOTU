@@ -84,6 +84,7 @@ flutter:
     - assets/images/scenario/
     - assets/images/login/
     - assets/images/profile/
+    - assets/images/character/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
