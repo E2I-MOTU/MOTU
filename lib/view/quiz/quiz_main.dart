@@ -26,7 +26,7 @@ class QuizSelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTheme.colorWhite,
+      backgroundColor: ColorTheme.colorNeutral,
       appBar: AppBar(
         backgroundColor: ColorTheme.colorWhite,
         title: const Text(
@@ -110,9 +110,9 @@ class QuizSelectionScreen extends StatelessWidget {
 
                   return GridView.count(
                     crossAxisCount: 2,
-                    mainAxisSpacing: 10.0,
-                    crossAxisSpacing: 10.0,
-                    childAspectRatio: 4 / 5,
+                    mainAxisSpacing: 20.0,
+                    crossAxisSpacing: 20.0,
+                    childAspectRatio: 1.6 / 2,
                     children: newQuizzes + incompleteQuizzes + completedQuizzes,
                   );
                 },
