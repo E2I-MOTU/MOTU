@@ -39,7 +39,7 @@ class QuizCompletedScreen extends StatelessWidget {
     if (percentage < 50) {
       return 'assets/images/sad_panda.png';
     } else if (percentage >= 50 && percentage < 90) {
-      return 'assets/images/panda.png';
+      return 'assets/images/default_panda.png';
     } else {
       return 'assets/images/congratulation_panda.png';
     }

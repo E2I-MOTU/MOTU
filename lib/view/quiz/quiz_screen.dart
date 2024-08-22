@@ -49,7 +49,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Image.asset(
-                        'assets/images/panda.png',
+                        'assets/images/default_panda.png',
                         height: 80,
                       ),
                       const SizedBox(height: 10),
