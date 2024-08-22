@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/color_theme.dart';
 
-Widget buildCard(BuildContext context, String text, Color color, Widget? nextScreen) {
+Widget buildCard(BuildContext context, String text, Color color, Widget? nextScreen, String imagePath) {
   return Container(
     padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
@@ -12,7 +12,7 @@ Widget buildCard(BuildContext context, String text, Color color, Widget? nextScr
           color: Colors.black.withOpacity(0.2), // 그림자 색상
           spreadRadius: 2, // 그림자 확산 범위
           blurRadius: 2, // 그림자 흐림 반경
-          offset: Offset(0, 4), // 그림자의 위치 (x, y)
+          offset: const Offset(0, 4), // 그림자의 위치 (x, y)
         ),
       ],
     ),
@@ -20,7 +20,7 @@ Widget buildCard(BuildContext context, String text, Color color, Widget? nextScr
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 15, top: 15),
+          padding: const EdgeInsets.only(left: 15, top: 8),
           child: Align(
             alignment: Alignment.topLeft,
             child: Text(
@@ -32,6 +32,13 @@ Widget buildCard(BuildContext context, String text, Color color, Widget? nextScr
               ),
               textAlign: TextAlign.left,
             ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Image.asset(
+            imagePath,
+            width: 100,
           ),
         ),
         ElevatedButton(
@@ -50,9 +57,9 @@ Widget buildCard(BuildContext context, String text, Color color, Widget? nextScr
             ),
             backgroundColor: ColorTheme.colorSecondary,
             foregroundColor: ColorTheme.colorWhite,
-            minimumSize: Size(140, 40), // 원하는 가로 길이와 세로 길이 설정
+            minimumSize: const Size(140, 40),
           ),
-        )
+        ),
       ],
     ),
   );

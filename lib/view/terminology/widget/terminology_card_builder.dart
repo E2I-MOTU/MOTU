@@ -99,7 +99,7 @@ Widget buildTermCard(BuildContext context, String term, String definition, Strin
                      */
                   ),
                   Image.asset(
-                    'assets/images/teaching_panda.png',
+                    'assets/images/character/teaching_panda.png',
                     height: 110,
                   ),
                 ],
