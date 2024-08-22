@@ -1,5 +1,6 @@
-import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../widget/drawer_menu.dart';
 import '../../service/home_service.dart';
 import '../theme/color_theme.dart';
@@ -12,170 +13,123 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int currentSlide = 0;
-  late PageController _pageController;
-  late Timer _timer;
   final HomeService _controller = HomeService();
 
   @override
-  void initState() {
-    super.initState();
-    _pageController = PageController(initialPage: 0);
-    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
-      setState(() {
-        currentSlide = (currentSlide + 1) % 4;
-      });
-      _pageController.animateToPage(
-        currentSlide,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeIn,
-      );
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: ColorTheme.colorWhite,
-      appBar: AppBar(
-        backgroundColor: ColorTheme.colorWhite,
-        title: const Text('홈페이지'),
-        automaticallyImplyLeading: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {},
-          ),
-        ],
-      ),
       drawer: const DrawerMenu(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  children: [
-                    SizedBox(
-                      height: 200,
-                      width: double.infinity,
-                      child: PageView.builder(
-                        controller: _pageController,
-                        onPageChanged: (value) {
-                          setState(() {
-                            currentSlide = value;
-                          });
-                        },
-                        itemCount: 4,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            height: 200,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: ColorTheme.colorDisabled,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    Positioned.fill(
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(
-                              4,
-                                  (index) => AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                width: currentSlide == index ? 15 : 8,
-                                height: 8,
-                                margin: const EdgeInsets.only(right: 3),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: currentSlide == index
-                                      ? ColorTheme.colorPrimary
-                                      : ColorTheme.colorWhite,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "오늘의 추천 학습",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text("전체보기"),
-                      style: TextButton.styleFrom(
-                        foregroundColor: ColorTheme.colorFont, // 버튼 텍스트 색상 설정
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  height: 200,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: List.generate(4, (index) {
-                      return AspectRatio(
-                        aspectRatio: 2.6 / 3,
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 15.0),
-                          decoration: BoxDecoration(
-                            color: ColorTheme.colorDisabled,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-                const SizedBox(height: 30,),
-                GestureDetector(
-                  onTap: () => _controller.checkAttendance(context),
-                  child: Container(
-                    height: 100,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            expandedHeight: screenHeight * 0.3,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                children: [
+                  Container(
+                    width: screenWidth,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
                       color: ColorTheme.colorDisabled,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 30,
+                    right: 30,
+                    child: SizedBox(
+                      width: 140,
+                      height: 40,
+                      child: ElevatedButton(
+                        onPressed: () => _controller.checkAttendance(context),
+                        child: const Text('출석체크 하기'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorTheme.colorPrimary,
+                          foregroundColor: ColorTheme.colorWhite,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            title: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Image.asset(
+                  'assets/images/motu_logo.png',
+                  height: 100,
+                ),
+              ),
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(
+                  Icons.notifications_none,
+                  color: Colors.black,
+                ),
+                onPressed: () {},
+              ),
+            ],
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "오늘의 추천 학습",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text("전체보기"),
+                        style: TextButton.styleFrom(
+                          foregroundColor: ColorTheme.colorFont,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300], // 와이어프레임 배경색
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
                       child: Text(
-                        '출석체크',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: ColorTheme.colorWhite,),
+                        "추천 학습이 표시될 영역입니다.",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

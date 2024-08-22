@@ -13,13 +13,16 @@ Widget buildCategoryCard(
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
         decoration: BoxDecoration(
-          color: color,
           borderRadius: BorderRadius.circular(20),
+          image: const DecorationImage(
+            image: AssetImage('assets/images/term_background.png'),
+            fit: BoxFit.cover,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
               blurRadius: 4,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
