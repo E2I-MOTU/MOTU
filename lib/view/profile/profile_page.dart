@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../util/util.dart';
 import '../theme/color_theme.dart';
 import 'balance_detail_page.dart';
+import 'completed_term_page.dart';
 import 'profile_detail_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -176,7 +177,14 @@ class ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const CompletedTermPage();
+                    }),
+                  );
+                },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   visualDensity: VisualDensity.compact,

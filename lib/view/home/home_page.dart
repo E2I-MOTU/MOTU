@@ -1,7 +1,4 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../widget/drawer_menu.dart';
 import '../../service/home_service.dart';
 import '../theme/color_theme.dart';
 
@@ -22,7 +19,6 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: ColorTheme.colorWhite,
-      drawer: const DrawerMenu(),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -35,7 +31,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Container(
                     width: screenWidth,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: ColorTheme.colorDisabled,
                     ),
                   ),
@@ -47,7 +43,6 @@ class _HomePageState extends State<HomePage> {
                       height: 40,
                       child: ElevatedButton(
                         onPressed: () => _controller.checkAttendance(context),
-                        child: const Text('출석체크 하기'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorTheme.colorPrimary,
                           foregroundColor: ColorTheme.colorWhite,
@@ -55,6 +50,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
+                        child: const Text('출석체크 하기'),
                       ),
                     ),
                   ),
@@ -63,12 +59,9 @@ class _HomePageState extends State<HomePage> {
             ),
             title: Align(
               alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Image.asset(
-                  'assets/images/motu_logo.png',
-                  height: 100,
-                ),
+              child: Image.asset(
+                'assets/images/motu_logo.png',
+                height: 100,
               ),
             ),
             actions: [
@@ -100,10 +93,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                       TextButton(
                         onPressed: () {},
-                        child: const Text("전체보기"),
                         style: TextButton.styleFrom(
                           foregroundColor: ColorTheme.colorFont,
                         ),
+                        child: const Text("전체보기"),
                       ),
                     ],
                   ),
