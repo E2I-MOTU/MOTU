@@ -34,15 +34,17 @@ Widget buildQuizCard({
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
         decoration: BoxDecoration(
-          color: isCompleted
-              ? Colors.orange[100]
-              : Colors.primaries[quizId.hashCode % Colors.primaries.length][100],
+          color: Colors.white.withOpacity(0.8),
           borderRadius: BorderRadius.circular(20),
+          image: const DecorationImage(
+            image: AssetImage('assets/images/quiz_background.png'),
+            fit: BoxFit.cover,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
               blurRadius: 4,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -61,7 +63,7 @@ Widget buildQuizCard({
                       formatQuizId(quizId),
                       style: const TextStyle(
                         fontSize: 15,
-                        color: Colors.black,
+                        color: ColorTheme.colorWhite,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -72,7 +74,7 @@ Widget buildQuizCard({
                       preventWordBreak(catchphrase),
                       style: const TextStyle(
                         fontSize: 12,
-                        color: Colors.black,
+                        color: ColorTheme.colorWhite,
                       ),
                       textAlign: TextAlign.left,
                     ),
