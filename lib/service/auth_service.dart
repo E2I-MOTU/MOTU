@@ -186,7 +186,7 @@ class AuthService with ChangeNotifier {
     User? user = _auth.currentUser;
     if (user != null) {
       DocumentSnapshot doc =
-      await _firestore.collection('user').doc(user.uid).get();
+          await _firestore.collection('user').doc(user.uid).get();
       if (doc.exists) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         List<dynamic> attendanceList = data['attendance'] ?? [];
@@ -197,5 +197,26 @@ class AuthService with ChangeNotifier {
       }
     }
     return [];
+  }
+
+  int _periodIndex = 0;
+  int get periodIndex => _periodIndex;
+  void setPeriodIndex(int index) {
+    _periodIndex = index;
+    notifyListeners();
+  }
+
+  int _typeIndex = 0;
+  int get typeIndex => _typeIndex;
+  void setTypeIndex(int index) {
+    _typeIndex = index;
+    notifyListeners();
+  }
+
+  int _orderIndex = 0;
+  int get orderIndex => _orderIndex;
+  void setOrderIndex(int index) {
+    _orderIndex = index;
+    notifyListeners();
   }
 }
