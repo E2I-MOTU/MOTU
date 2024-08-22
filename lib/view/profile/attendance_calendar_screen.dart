@@ -2,22 +2,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:motu/view/theme/color_theme.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../../service/profile_service.dart';
+import '../../service/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class AttendanceScreen extends StatefulWidget {
+  const AttendanceScreen({super.key});
+
   @override
   _AttendanceScreenState createState() => _AttendanceScreenState();
 }
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
-  final ProfileService _service = ProfileService();
   late Future<List<DateTime>> _attendanceFuture;
   DateTime _focusedDay = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    _attendanceFuture = _service.getAttendance();
+    _attendanceFuture = Provider.of<AuthService>(context, listen: false).getAttendance();
   }
 
   void _selectDate(BuildContext context) {
@@ -28,7 +30,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           height: MediaQuery.of(context).size.height / 3,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
           ),
           child: CupertinoDatePicker(
             mode: CupertinoDatePickerMode.date,
@@ -55,7 +57,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         title: const Text('출석체크'),
         actions: [
           IconButton(
-            icon: Icon(Icons.calendar_today, color: ColorTheme.colorPrimary),
+            icon: const Icon(Icons.calendar_today, color: ColorTheme.colorPrimary),
             onPressed: () {
               _selectDate(context);
             },
