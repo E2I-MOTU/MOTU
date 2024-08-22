@@ -18,21 +18,45 @@ Widget BottomNavBar() {
         print(index);
         service.setSelectedIndex(index);
       },
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
+          icon: Image.asset(
+            service.selectedIndex == 0
+                ? 'assets/images/icon/home_selected.png'
+                : 'assets/images/icon/home_unselected.png',
+            width: 24,
+            height: 24,
+          ),
           label: '홈',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.quiz),
+          icon: Image.asset(
+            service.selectedIndex == 1
+                ? 'assets/images/icon/learning_selected.png'
+                : 'assets/images/icon/learning_unselected.png',
+            width: 24,
+            height: 24,
+          ),
           label: '학습하기',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.auto_graph),
+          icon: Image.asset(
+            service.selectedIndex == 2
+                ? 'assets/images/icon/scenario_selected.png'
+                : 'assets/images/icon/scenario_unselected.png',
+            width: 24,
+            height: 24,
+          ),
           label: '시나리오',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
+          icon: Image.asset(
+            service.selectedIndex == 3
+                ? 'assets/images/icon/mypage_selected.png'
+                : 'assets/images/icon/mypage_unselected.png',
+            width: 24,
+            height: 24,
+          ),
           label: '프로필',
         ),
       ],
