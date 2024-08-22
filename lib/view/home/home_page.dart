@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../widget/drawer_menu.dart';
 import '../../service/home_service.dart';
 import '../theme/color_theme.dart';
 
@@ -22,7 +21,6 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: ColorTheme.colorWhite,
-      drawer: const DrawerMenu(),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -67,7 +65,7 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.only(left: 10.0),
                 child: Image.asset(
                   'assets/images/motu_logo.png',
-                  height: 100,
+                  height: 120,
                 ),
               ),
             ),
@@ -83,11 +81,10 @@ class _HomePageState extends State<HomePage> {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -109,9 +106,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 10),
                   Container(
-                    height: 200,
+                    height: screenHeight * 0.2,
                     decoration: BoxDecoration(
-                      color: Colors.grey[300], // 와이어프레임 배경색
+                      color: Colors.grey[300],
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
@@ -125,7 +122,87 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 40),
+                  
+                  const Text(
+                    "학습 진도율",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    height: screenHeight * 0.2,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(child: _buildProgressContainer("지금까지 공부한 용어")),
+                        Expanded(child: _buildProgressContainer("지금까지 풀어본 문제")),
+                      ],
+                    ),
+                  ),
                 ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProgressContainer(String text) {
+    return Container(
+      height: 150,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Image.asset(
+            text == "지금까지 공부한 용어"
+                ? 'assets/images/character/curious_panda.png'
+                : 'assets/images/character/study_panda.png',
+            height: 60,
+          ),
+          const SizedBox(height: 10),
+          Container(
+            height: 30,
+            width: 80,
+            decoration: BoxDecoration(
+              color: ColorTheme.colorPrimary40,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [],
+            ),
+            child: Center(
+              child: Text(
+                "00개",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: ColorTheme.colorWhite,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
