@@ -18,8 +18,6 @@ class TerminologyQuizService with ChangeNotifier {
   String _documentName = '';
   final TextEditingController _answerController = TextEditingController();
 
-  List<String> _userAnswers = [];
-
   int get currentQuestionIndex => _currentQuestionIndex;
   int get score => _score;
   bool get answered => _answered;
@@ -77,48 +75,16 @@ class TerminologyQuizService with ChangeNotifier {
   }
 
   Future<void> nextQuestion() async {
-    if (_currentQuestionIndex < _questions.length - 1) {
-      if (_userAnswers.length > _currentQuestionIndex) {
-        _userAnswers[_currentQuestionIndex] = _selectedAnswer;
-      } else {
-        _userAnswers.add(_selectedAnswer);
-      }
+    _currentQuestionIndex++;
+    _answered = false;
+    _correct = false;
+    _selectedAnswer = '';
+    _answerController.clear(); // Clear the controller
 
-      _currentQuestionIndex++;
-      _answered = false;
-      _correct = false;
-
-      _selectedAnswer = _userAnswers.length > _currentQuestionIndex
-          ? _userAnswers[_currentQuestionIndex]
-          : '';
-      _answerController.text = _selectedAnswer;
-    } else {
+    if (_currentQuestionIndex >= _questions.length) {
       await saveQuizCompletion();
     }
-    notifyListeners();
-  }
 
-  void previousQuestion() {
-    if (_currentQuestionIndex > 0) {
-      _currentQuestionIndex--;
-      _answered = false;
-      _correct = false;
-
-      _selectedAnswer = _userAnswers.length > _currentQuestionIndex
-          ? _userAnswers[_currentQuestionIndex]
-          : '';
-      _answerController.text = _selectedAnswer;
-      notifyListeners();
-    }
-  }
-
-  void selectAnswer(String answer) {
-    _selectedAnswer = answer;
-    if (_userAnswers.length > _currentQuestionIndex) {
-      _userAnswers[_currentQuestionIndex] = answer;
-    } else {
-      _userAnswers.add(answer);
-    }
     notifyListeners();
   }
 
@@ -150,5 +116,10 @@ class TerminologyQuizService with ChangeNotifier {
     } catch (e) {
       print('Error saving quiz completion: $e');
     }
+  }
+
+  void selectAnswer(String answer) {
+    _selectedAnswer = answer;
+    notifyListeners();
   }
 }
