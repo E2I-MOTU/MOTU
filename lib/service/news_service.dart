@@ -9,7 +9,7 @@ class NewsService {
 
   Future<List<NewsArticle>> fetchNews(String topic) async {
     final response = await http.get(
-      Uri.parse('https://openapi.naver.com/v1/search/news.json?query=$topic&display=10&sort=date'),
+      Uri.parse('https://openapi.naver.com/v1/search/news.json?query=$topic&display=100&sort=date'),
       headers: {
         'X-Naver-Client-Id': clientId,
         'X-Naver-Client-Secret': clientSecret,
