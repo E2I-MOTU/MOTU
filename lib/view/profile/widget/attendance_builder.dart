@@ -69,8 +69,13 @@ Widget _buildDayWidget(
                   ? ColorTheme.colorPrimary
                   : ColorTheme.colorTertiary,
             ),
-            child: Icon(
-              isChecked ? Icons.check : Icons.close,
+            child: isChecked
+                ? Image.asset(
+              'assets/images/stamp.png',
+              fit: BoxFit.cover,
+            )
+                : Icon(
+              Icons.close,
               color: Colors.white,
             ),
           ),
