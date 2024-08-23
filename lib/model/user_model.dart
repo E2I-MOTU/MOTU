@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:motu/model/balance_detail.dart';
+import 'package:motu/model/bookmark_data.dart';
+import 'package:motu/model/completed.dart';
 import 'package:motu/model/scenario_result.dart';
 
 class UserModel {
@@ -10,9 +12,9 @@ class UserModel {
   final int balance; // 보유 자산
   final List<BalanceDetail> balanceHistory; // 자산 변동 내역
   final List<DateTime> attendance; // 출석 기록
-  final List<String> completedTerminalogy; // 완료한 용어공부
-  final List<String> completedQuiz; // 완료한 퀴즈
-  final List<String> savedTerminalogy; // 저장한 용어공부
+  // final List<Completed> completedTerminalogy; // 완료한 용어공부
+  // final List<Completed> completedQuiz; // 완료한 퀴즈
+  // final List<BookmarkData> bookmarks; // 저장한 용어공부
   final List<ScenarioResult> scenarioRecord; // 시나리오 기록
 
   UserModel({
@@ -23,52 +25,37 @@ class UserModel {
     required this.balance,
     required this.balanceHistory,
     required this.attendance,
-    required this.completedTerminalogy,
-    required this.completedQuiz,
-    required this.savedTerminalogy,
+    // required this.completedTerminalogy,
+    // required this.completedQuiz,
+    // required this.bookmarks,
     required this.scenarioRecord,
   });
 
   factory UserModel.fromMap(String uid, Map<String, dynamic> map) {
-    List<BalanceDetail> balanceHistory =
-        (map['balanceHistory'] as List<dynamic>)
-            .map((data) => BalanceDetail.fromMap(data as Map<String, dynamic>))
-            .toList();
-
-    List<DateTime> attendance = (map['attendance'] as List<dynamic>)
-        .map((date) => (date as Timestamp).toDate())
-        .toList();
-
-    List<String> completedTerminalogy =
-        (map['completedTerminalogy'] as List<dynamic>)
-            .map((term) => term as String)
-            .toList();
-
-    List<String> completedQuiz = (map['completedQuiz'] as List<dynamic>)
-        .map((quiz) => quiz as String)
-        .toList();
-
-    List<String> savedTerminalogy = (map['savedTerminalogy'] as List<dynamic>)
-        .map((term) => term as String)
-        .toList();
-
-    List<ScenarioResult> scenarioRecord =
-        (map['scenarioRecord'] as List<dynamic>)
-            .map((data) => ScenarioResult.fromMap(data as Map<String, dynamic>))
-            .toList();
-
     return UserModel(
       uid: uid,
       email: map['email'],
       name: map['name'],
       photoUrl: map['photoUrl'],
       balance: map['balance'],
-      balanceHistory: balanceHistory,
-      attendance: attendance,
-      completedTerminalogy: completedTerminalogy,
-      completedQuiz: completedQuiz,
-      savedTerminalogy: savedTerminalogy,
-      scenarioRecord: scenarioRecord,
+      balanceHistory: (map['balanceHistory'] as List)
+          .map((data) => BalanceDetail.fromMap(data))
+          .toList(),
+      attendance: (map['attendance'] as List)
+          .map((date) => (date as Timestamp).toDate())
+          .toList(),
+      // completedTerminalogy: (map['completedTerminalogy'] as List)
+      //     .map((data) => Completed.fromMap(data))
+      //     .toList(),
+      // completedQuiz: (map['completedQuiz'] as List)
+      //     .map((data) => Completed.fromMap(data))
+      //     .toList(),
+      // bookmarks: (map['bookmarks'] as List)
+      //     .map((data) => BookmarkData.fromMap(data))
+      //     .toList(),
+      scenarioRecord: (map['scenarioRecord'] as List)
+          .map((data) => ScenarioResult.fromMap(data))
+          .toList(),
     );
   }
 
@@ -80,9 +67,9 @@ class UserModel {
       'balance': balance,
       'balanceHistory': balanceHistory.map((data) => data.toMap()).toList(),
       'attendance': attendance.map((date) => Timestamp.fromDate(date)).toList(),
-      'completedTerminalogy': completedTerminalogy,
-      'completedQuiz': completedQuiz,
-      'savedTerminalogy': savedTerminalogy,
+      // 'completedTerminalogy': completedTerminalogy,
+      // 'completedQuiz': completedQuiz,
+      // 'bookmarks': bookmarks,
       'scenarioRecord': scenarioRecord.map((data) => data.toMap()).toList(),
     };
   }

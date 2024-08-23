@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../service/home_service.dart';
@@ -40,36 +39,32 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: Stack(
                     children: [
-                      // 사용자 이름 표시
+                      // 사용자 이름 및 추가 문구 표시
                       Positioned(
                         bottom: screenHeight * 0.32 / 3.5,
                         left: 30,
-                        child: Container(
-                          color: Colors.transparent,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '안녕하세요 ${service.user.name}님',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '안녕하세요 ${service.user.name}님',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
                               ),
-                              const SizedBox(height: 2,),
-                              Text(
-                                '오늘도 MOTU에서\n투자 공부 함께해요!',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              '오늘도 MOTU에서\n투자 공부 함께해요!',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-
                       // 출석체크 버튼
                       Positioned(
                         bottom: 30,
@@ -90,7 +85,6 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-
                       // 로고 이미지
                       Positioned(
                         top: 20,
@@ -100,7 +94,6 @@ class _HomePageState extends State<HomePage> {
                           height: 120,
                         ),
                       ),
-
                       // 알림 아이콘
                       Positioned(
                         top: 50,
@@ -113,7 +106,6 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () {},
                         ),
                       ),
-
                       // 캐릭터 이미지
                       Positioned(
                         right: 20,
@@ -222,7 +214,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Text(
             text,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
             ),
           ),
@@ -240,9 +232,8 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(
               color: ColorTheme.colorPrimary40,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [],
             ),
-            child: Center(
+            child: const Center(
               child: Text(
                 "00개",
                 style: TextStyle(

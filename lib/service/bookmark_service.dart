@@ -6,11 +6,14 @@ class BookmarkService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<void> addBookmark(String term, String definition, String example, String category) async {
+  Future<void> addBookmark(
+      String term, String definition, String example, String category) async {
     User? user = _auth.currentUser;
     if (user != null) {
-      CollectionReference bookmarks = _firestore.collection('users').doc(user.uid).collection('bookmarks');
-      QuerySnapshot existingBookmark = await bookmarks.where('term', isEqualTo: term).get();
+      CollectionReference bookmarks =
+          _firestore.collection('user').doc(user.uid).collection('bookmarks');
+      QuerySnapshot existingBookmark =
+          await bookmarks.where('term', isEqualTo: term).get();
 
       if (existingBookmark.docs.isEmpty) {
         await bookmarks.add({
@@ -29,8 +32,10 @@ class BookmarkService {
   Future<void> deleteBookmark(String term) async {
     User? user = _auth.currentUser;
     if (user != null) {
-      CollectionReference bookmarks = _firestore.collection('users').doc(user.uid).collection('bookmarks');
-      QuerySnapshot existingBookmark = await bookmarks.where('term', isEqualTo: term).get();
+      CollectionReference bookmarks =
+          _firestore.collection('user').doc(user.uid).collection('bookmarks');
+      QuerySnapshot existingBookmark =
+          await bookmarks.where('term', isEqualTo: term).get();
 
       for (var doc in existingBookmark.docs) {
         await doc.reference.delete();
@@ -43,7 +48,7 @@ class BookmarkService {
     User? user = _auth.currentUser;
     if (user != null) {
       QuerySnapshot snapshot = await _firestore
-          .collection('users')
+          .collection('user')
           .doc(user.uid)
           .collection('bookmarks')
           .orderBy('timestamp', descending: true)

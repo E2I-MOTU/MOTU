@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,8 +17,15 @@ class QuizSelectionScreen extends StatelessWidget {
 
   Future<Map<String, dynamic>> getProgress(String collectionName) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final totalQuestions = (await firestore.collection('quiz').doc(collectionName).get()).data()?.length ?? 0;
-    final completedQuestions = (await firestore.collection('user_progress').doc(collectionName).get()).data()?['completed'] ?? 0;
+    final totalQuestions =
+        (await firestore.collection('quiz').doc(collectionName).get())
+                .data()
+                ?.length ??
+            0;
+    final completedQuestions =
+        (await firestore.collection('user_progress').doc(collectionName).get())
+                .data()?['completed'] ??
+            0;
     return {
       'total': totalQuestions,
       'completed': completedQuestions,
@@ -34,15 +43,15 @@ class QuizSelectionScreen extends StatelessWidget {
           style: TextStyle(color: Colors.black),
         ),
         leading: IconButton(
-          icon: Icon(CupertinoIcons.left_chevron),
+          icon: const Icon(CupertinoIcons.left_chevron),
           onPressed: () {
             NavigationService().setSelectedIndex(1);
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => MainPage(),
+                builder: (context) => const MainPage(),
               ),
-                  (route) => false, // 모든 기존 경로를 제거
+              (route) => false, // 모든 기존 경로를 제거
             );
           },
         ),
@@ -62,7 +71,8 @@ class QuizSelectionScreen extends StatelessWidget {
               }
 
               var quizCollections = snapshot.data!.docs;
-              List<Future<Map<String, dynamic>?>> progressFutures = quizCollections.map((quiz) {
+              List<Future<Map<String, dynamic>?>> progressFutures =
+                  quizCollections.map((quiz) {
                 var quizId = quiz.id;
                 return _userService.getQuizProgress(uid, quizId);
               }).toList();
@@ -70,7 +80,8 @@ class QuizSelectionScreen extends StatelessWidget {
               return FutureBuilder<List<Map<String, dynamic>?>>(
                 future: Future.wait(progressFutures),
                 builder: (context, progressSnapshots) {
-                  if (progressSnapshots.connectionState == ConnectionState.waiting) {
+                  if (progressSnapshots.connectionState ==
+                      ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
@@ -84,9 +95,15 @@ class QuizSelectionScreen extends StatelessWidget {
                     var data = quiz.data() as Map<String, dynamic>;
                     var quizId = quiz.id;
                     var score = progress != null ? (progress['score'] ?? 0) : 0;
-                    var totalQuestions = progress != null ? (progress['totalQuestions'] ?? 15) : 15;
-                    var isCompleted = progress != null ? score >= totalQuestions * 0.9 : false;
+                    var totalQuestions = progress != null
+                        ? (progress['totalQuestions'] ?? 15)
+                        : 15;
+                    var isCompleted = progress != null
+                        ? score >= totalQuestions * 0.9
+                        : false;
                     var isNewQuiz = progress == null;
+
+                    log(progress.toString());
 
                     var quizCard = buildQuizCard(
                       context: context,

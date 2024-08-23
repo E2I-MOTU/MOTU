@@ -1,42 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../model/user_model.dart';
 
 class ProfileService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<UserModel?> getUserInfo() async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      DocumentSnapshot doc =
-          await _firestore.collection('users').doc(user.uid).get();
-      if (doc.exists) {
-        return UserModel.fromMap(user.uid, doc.data() as Map<String, dynamic>);
-      }
-    }
-    return null;
-  }
+  // Future<UserModel?> getUserInfo() async {
+  //   User? user = _auth.currentUser;
+  //   if (user != null) {
+  //     DocumentSnapshot doc =
+  //         await _firestore.collection('user').doc(user.uid).get();
+  //     if (doc.exists) {
+  //       return UserModel.fromMap(user.uid, doc.data() as Map<String, dynamic>);
+  //     }
+  //   }
+  //   return null;
+  // }
 
-  Future<void> updateName(String newName) async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      await _firestore.collection('users').doc(user.uid).update({
-        'name': newName,
-      });
-    }
-  }
+  // Future<void> updateName(String newName) async {
+  //   User? user = _auth.currentUser;
+  //   if (user != null) {
+  //     await _firestore.collection('user').doc(user.uid).update({
+  //       'name': newName,
+  //     });
+  //   }
+  // }
 
-  Future<void> updateUserInfo(String uid, String name, String email) async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      DocumentReference userDoc = _firestore.collection('users').doc(uid);
-      await userDoc.update({
-        'name': name,
-        'email': email,
-      });
-    }
-  }
+  // Future<void> updateUserInfo(String uid, String name, String email) async {
+  //   User? user = _auth.currentUser;
+  //   if (user != null) {
+  //     DocumentReference userDoc = _firestore.collection('user').doc(uid);
+  //     await userDoc.update({
+  //       'name': name,
+  //       'email': email,
+  //     });
+  //   }
+  // }
 
   Future<void> checkAttendance() async {
     User? user = _auth.currentUser;
@@ -85,7 +84,7 @@ class ProfileService {
     User? user = _auth.currentUser;
     if (user != null) {
       DocumentSnapshot doc =
-          await _firestore.collection('users').doc(user.uid).get();
+          await _firestore.collection('user').doc(user.uid).get();
 
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
@@ -99,7 +98,7 @@ class ProfileService {
     User? user = _auth.currentUser;
     if (user != null) {
       QuerySnapshot snapshot = await _firestore
-          .collection('users')
+          .collection('user')
           .doc(user.uid)
           .collection('bookmarks')
           .orderBy('timestamp', descending: true)

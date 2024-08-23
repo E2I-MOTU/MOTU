@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import 'dart:developer' as dev;
 import '../service/user_service.dart';
 
 class TerminologyQuizService with ChangeNotifier {
@@ -13,12 +14,10 @@ class TerminologyQuizService with ChangeNotifier {
   String _selectedAnswer = '';
   List<Map<String, dynamic>> _questions = [];
   bool _isLoading = true;
-  List<Map<String, dynamic>> _incorrectAnswers = [];
+  final List<Map<String, dynamic>> _incorrectAnswers = [];
   String _uid = '';
   String _documentName = '';
   final TextEditingController _answerController = TextEditingController();
-
-  List<String> _userAnswers = [];
 
   int get currentQuestionIndex => _currentQuestionIndex;
   int get score => _score;
@@ -30,21 +29,24 @@ class TerminologyQuizService with ChangeNotifier {
   List<Map<String, dynamic>> get incorrectAnswers => _incorrectAnswers;
   TextEditingController get answerController => _answerController;
 
-  Future<void> loadQuestions(String collectionName, String documentName, String uid) async {
+  Future<void> loadQuestions(
+      String collectionName, String documentName, String uid) async {
     _uid = uid;
     _documentName = documentName;
     try {
-      final doc = await _firestore.collection(collectionName).doc(documentName).get();
+      final doc =
+          await _firestore.collection(collectionName).doc(documentName).get();
       final data = doc.data()?['test'] ?? {};
 
-      List<Map<String, dynamic>> questionsList = (data as Map).values.map((item) {
+      List<Map<String, dynamic>> questionsList =
+          (data as Map).values.map((item) {
         return Map<String, dynamic>.from(item as Map);
       }).toList();
 
-      questionsList.forEach((question) {
+      for (var question in questionsList) {
         List<dynamic> options = question['options'];
         options.shuffle(Random());
-      });
+      }
 
       questionsList.shuffle(Random());
 
@@ -77,54 +79,26 @@ class TerminologyQuizService with ChangeNotifier {
   }
 
   Future<void> nextQuestion() async {
-    if (_currentQuestionIndex < _questions.length - 1) {
-      if (_userAnswers.length > _currentQuestionIndex) {
-        _userAnswers[_currentQuestionIndex] = _selectedAnswer;
-      } else {
-        _userAnswers.add(_selectedAnswer);
-      }
+    _currentQuestionIndex++;
+    _answered = false;
+    _correct = false;
+    _selectedAnswer = '';
+    _answerController.clear(); // Clear the controller
 
-      _currentQuestionIndex++;
-      _answered = false;
-      _correct = false;
-
-      _selectedAnswer = _userAnswers.length > _currentQuestionIndex
-          ? _userAnswers[_currentQuestionIndex]
-          : '';
-      _answerController.text = _selectedAnswer;
-    } else {
+    if (_currentQuestionIndex >= _questions.length) {
       await saveQuizCompletion();
     }
-    notifyListeners();
-  }
 
-  void previousQuestion() {
-    if (_currentQuestionIndex > 0) {
-      _currentQuestionIndex--;
-      _answered = false;
-      _correct = false;
-
-      _selectedAnswer = _userAnswers.length > _currentQuestionIndex
-          ? _userAnswers[_currentQuestionIndex]
-          : '';
-      _answerController.text = _selectedAnswer;
-      notifyListeners();
-    }
-  }
-
-  void selectAnswer(String answer) {
-    _selectedAnswer = answer;
-    if (_userAnswers.length > _currentQuestionIndex) {
-      _userAnswers[_currentQuestionIndex] = answer;
-    } else {
-      _userAnswers.add(answer);
-    }
     notifyListeners();
   }
 
   Future<void> saveQuizCompletion() async {
     try {
-      final userQuizRef = _firestore.collection('users').doc(_uid).collection('terminology_quiz').doc(_documentName);
+      final userQuizRef = _firestore
+          .collection('user')
+          .doc(_uid)
+          .collection('completedTerminology')
+          .doc(_documentName);
       final snapshot = await userQuizRef.get();
 
       bool wasPreviouslyCompleted = false;
@@ -135,8 +109,10 @@ class TerminologyQuizService with ChangeNotifier {
         previousScore = quizData['score'] ?? 0;
       }
 
-      final newCompleted = wasPreviouslyCompleted || (_score / _questions.length >= 0.9);
-      final finalScore = wasPreviouslyCompleted ? max(_score, previousScore) : _score;
+      final newCompleted =
+          wasPreviouslyCompleted || (_score / _questions.length >= 0.9);
+      final finalScore =
+          wasPreviouslyCompleted ? max(_score, previousScore) : _score;
 
       await userQuizRef.set({
         'score': finalScore,
@@ -145,10 +121,16 @@ class TerminologyQuizService with ChangeNotifier {
       });
 
       if (newCompleted && !wasPreviouslyCompleted) {
-        await _userService.updateUserBalance(_uid, 100000); // Add 100,000 reward if completed
+        await _userService.updateUserBalance(
+            _uid, 100000); // Add 100,000 reward if completed
       }
     } catch (e) {
       print('Error saving quiz completion: $e');
     }
+  }
+
+  void selectAnswer(String answer) {
+    _selectedAnswer = answer;
+    notifyListeners();
   }
 }

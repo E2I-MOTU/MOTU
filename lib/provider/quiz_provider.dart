@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 import '../service/user_service.dart';
+import 'dart:developer' as dev;
 
 class QuizService with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -13,8 +14,8 @@ class QuizService with ChangeNotifier {
   String _selectedAnswer = '';
   List<Map<String, dynamic>> _questions = [];
   bool _isLoading = true;
-  List<Map<String, dynamic>> _incorrectAnswers = [];
-  bool _isHintVisible = false;  // 힌트 표시 여부
+  final List<Map<String, dynamic>> _incorrectAnswers = [];
+  bool _isHintVisible = false; // 힌트 표시 여부
 
   int get currentQuestionIndex => _currentQuestionIndex;
   int get score => _score;
@@ -24,17 +25,18 @@ class QuizService with ChangeNotifier {
   List<Map<String, dynamic>> get questions => _questions;
   bool get isLoading => _isLoading;
   List<Map<String, dynamic>> get incorrectAnswers => _incorrectAnswers;
-  bool get isHintVisible => _isHintVisible;  // 힌트 표시 여부
+  bool get isHintVisible => _isHintVisible; // 힌트 표시 여부
 
   Future<void> loadQuestions(String collectionName) async {
     try {
-      final snapshot = await _firestore.collection('quiz').doc(collectionName).get();
+      final snapshot =
+          await _firestore.collection('quiz').doc(collectionName).get();
 
       List<Map<String, dynamic>> questionsList = [];
 
       var data = snapshot.data();
       if (data == null) {
-        print('No data found for the given collection name.');
+        dev.log('No data found for the given collection name.');
       } else {
         data.forEach((key, value) {
           if (key != 'catchphrase') {
@@ -42,10 +44,10 @@ class QuizService with ChangeNotifier {
           }
         });
 
-        questionsList.forEach((question) {
+        for (var question in questionsList) {
           List<dynamic> options = question['options'];
           options.shuffle(Random());
-        });
+        }
 
         questionsList.shuffle(Random());
       }
@@ -54,7 +56,7 @@ class QuizService with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      print('Error loading questions: $e');
+      dev.log('Error loading questions: $e');
       _isLoading = false;
       notifyListeners();
     }
@@ -87,7 +89,8 @@ class QuizService with ChangeNotifier {
       if (_score / _questions.length >= 0.9) {
         await _userService.updateUserBalance(uid, 100000);
       }
-      await _userService.saveQuizCompletion(uid, collectionName, _score);
+      await _userService.saveQuizCompletion(
+          uid, collectionName, _score, _questions.length);
     }
 
     notifyListeners();

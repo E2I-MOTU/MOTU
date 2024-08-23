@@ -53,6 +53,10 @@ class App extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           primaryColor: ColorTheme.Purple1,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: ColorTheme.White,
+            scrolledUnderElevation: 0,
+          ),
           scaffoldBackgroundColor: ColorTheme.White,
           fontFamily: "Pretendard",
         ),
