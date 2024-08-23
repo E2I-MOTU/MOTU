@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:motu/text_utils.dart';
 import 'package:provider/provider.dart';
 import '../../service/home_service.dart';
 import '../../service/auth_service.dart';
+import '../terminology/widget/terminology_category_card_builder.dart';
 import '../theme/color_theme.dart';
+import '../terminology/terminology_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,6 +17,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final HomeService _controller = HomeService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<List<QueryDocumentSnapshot>> _getRandomCategories() async {
+    final snapshot = await _firestore.collection('terminology').get();
+    final documents = snapshot.docs;
+    documents.shuffle();
+    return documents.take(4).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,24 +154,46 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
-                      Container(
-                        height: screenHeight * 0.2,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "추천 학습이 표시될 영역입니다.",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
+                      FutureBuilder<List<QueryDocumentSnapshot>>(
+                        future: _getRandomCategories(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                          final documents = snapshot.data!;
+                          return Container(
+                            height: 240,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: documents.map((doc) {
+                                final data = doc.data() as Map<String, dynamic>;
+                                return AspectRatio(
+                                  aspectRatio: 1.6 / 2,
+                                  child: Container(
+                                    margin: const EdgeInsets.only(top: 10, bottom: 10, right: 10, left: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: buildCategoryCard(
+                                      context,
+                                      data['title'],
+                                      preventWordBreak(data['catchphrase']),
+                                      Colors.white,
+                                      TermCard(
+                                        title: data['title'],
+                                        documentName: doc.id,
+                                        uid: Provider.of<AuthService>(context, listen: false).user.uid,
+                                      ),
+                                      false,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
+                          );
+                        },
                       ),
+
                       const SizedBox(height: 30),
                       const Text(
                         "학습 진도율",
