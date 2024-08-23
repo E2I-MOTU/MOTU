@@ -13,11 +13,15 @@ import 'terminology_search.dart';
 class TermMain extends StatelessWidget {
   final String uid;
 
-  const TermMain({Key? key, required this.uid}) : super(key: key);
+  const TermMain({super.key, required this.uid});
 
   Future<bool> checkCompletionStatus(String uid, String docId) async {
     final firestore = FirebaseFirestore.instance;
-    final userQuizRef = firestore.collection('users').doc(uid).collection('terminology_quiz').doc(docId);
+    final userQuizRef = firestore
+        .collection('user')
+        .doc(uid)
+        .collection('completedTerminology')
+        .doc(docId);
     final snapshot = await userQuizRef.get();
     if (snapshot.exists) {
       return snapshot.data()?['completed'] ?? false;
@@ -33,15 +37,15 @@ class TermMain extends StatelessWidget {
         backgroundColor: ColorTheme.colorWhite,
         title: const Text('용어학습'),
         leading: IconButton(
-          icon: Icon(CupertinoIcons.left_chevron),
+          icon: const Icon(CupertinoIcons.left_chevron),
           onPressed: () {
             NavigationService().setSelectedIndex(1);
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => MainPage(),
+                builder: (context) => const MainPage(),
               ),
-                  (route) => false, // 모든 기존 경로를 제거
+              (route) => false, // 모든 기존 경로를 제거
             );
           },
         ),
@@ -71,10 +75,12 @@ class TermMain extends StatelessWidget {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('terminology').snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection('terminology')
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 var documents = snapshot.data!.docs;
                 return GridView.count(
@@ -88,15 +94,19 @@ class TermMain extends StatelessWidget {
                     return FutureBuilder<bool>(
                       future: checkCompletionStatus(uid, doc.id),
                       builder: (context, completionSnapshot) {
-                        if (completionSnapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator();
+                        if (completionSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
                         }
                         return buildCategoryCard(
                           context,
                           data['title'],
                           preventWordBreak(data['catchphrase']),
                           Colors.white,
-                          TermCard(title: data['title'], documentName: doc.id, uid: uid),
+                          TermCard(
+                              title: data['title'],
+                              documentName: doc.id,
+                              uid: uid),
                           completionSnapshot.data ?? false,
                         );
                       },

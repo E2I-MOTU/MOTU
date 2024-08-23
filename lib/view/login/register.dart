@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../main_page.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});
@@ -10,36 +9,34 @@ class RegisterPage extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> _register(BuildContext context) async {
-    try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
+  // Future<void> _register(BuildContext context) async {
+  //   try {
+  //     UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+  //       email: _emailController.text,
+  //       password: _passwordController.text,
+  //     );
 
-      User? user = userCredential.user;
-      await _firestore.collection('users').doc(user?.uid).set({
-        'email': _emailController.text,
-        'name': _nameController.text,
-        'phone': _phoneController.text,
-        'balance': 1000000,
-        'attendance': [], // Adding the attendance field as an empty array
-      });
+  //     User? user = userCredential.user;
+  //     await _firestore.collection('users').doc(user?.uid).set({
+  //       'email': _emailController.text,
+  //       'name': _nameController.text,
+  //       'phone': _phoneController.text,
+  //       'balance': 1000000,
+  //       'attendance': [], // Adding the attendance field as an empty array
+  //     });
 
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const MainPage()),
-            (Route<dynamic> route) => false,
-      );
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? '회원가입 실패')),
-      );
-    }
-  }
+  //     Navigator.pushAndRemoveUntil(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => const MainPage()),
+  //           (Route<dynamic> route) => false,
+  //     );
+  //   } on FirebaseAuthException catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text(e.message ?? '회원가입 실패')),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +86,7 @@ class RegisterPage extends StatelessWidget {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () => _register(context),
+                  onPressed: () {},
                   child: const Text('회원가입'),
                 ),
               ),

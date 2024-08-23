@@ -12,7 +12,11 @@ class TermSearchDelegate extends SearchDelegate {
 
   Future<bool> checkCompletionStatus(String uid, String docId) async {
     final firestore = FirebaseFirestore.instance;
-    final userQuizRef = firestore.collection('users').doc(uid).collection('terminology_quiz').doc(docId);
+    final userQuizRef = firestore
+        .collection('user')
+        .doc(uid)
+        .collection('completedTerminology')
+        .doc(docId);
     final snapshot = await userQuizRef.get();
     if (snapshot.exists) {
       return snapshot.data()?['completed'] ?? false;
@@ -34,7 +38,8 @@ class TermSearchDelegate extends SearchDelegate {
         ),
         filled: true,
         fillColor: ColorTheme.colorNeutral, // 텍스트 필드 배경색
-        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20), // 텍스트 필드 내부 패딩
+        contentPadding: const EdgeInsets.symmetric(
+            vertical: 12, horizontal: 20), // 텍스트 필드 내부 패딩
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
           borderRadius: BorderRadius.circular(30), // 텍스트 필드에 라운드 모양 추가
@@ -48,9 +53,9 @@ class TermSearchDelegate extends SearchDelegate {
 
   @override
   TextStyle get searchFieldStyle => const TextStyle(
-    fontSize: 12, // 입력 텍스트 폰트 크기
-    color: Colors.black, // 입력 텍스트 색상
-  );
+        fontSize: 12, // 입력 텍스트 폰트 크기
+        color: Colors.black, // 입력 텍스트 색상
+      );
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -88,7 +93,8 @@ class TermSearchDelegate extends SearchDelegate {
     return Container(
       color: ColorTheme.colorNeutral,
       child: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('terminology').snapshots(),
+        stream:
+            FirebaseFirestore.instance.collection('terminology').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
@@ -116,15 +122,18 @@ class TermSearchDelegate extends SearchDelegate {
               return FutureBuilder<bool>(
                 future: checkCompletionStatus(uid, doc.id),
                 builder: (context, completionSnapshot) {
-                  if (completionSnapshot.connectionState == ConnectionState.waiting) {
+                  if (completionSnapshot.connectionState ==
+                      ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
                   return buildCategoryCard(
                     context,
                     data['title'],
-                    preventWordBreak(data['catchphrase']), // preventWordBreak 사용
+                    preventWordBreak(
+                        data['catchphrase']), // preventWordBreak 사용
                     Colors.grey,
-                    TermCard(title: data['title'], documentName: doc.id, uid: uid),
+                    TermCard(
+                        title: data['title'], documentName: doc.id, uid: uid),
                     completionSnapshot.data ?? false,
                   );
                 },

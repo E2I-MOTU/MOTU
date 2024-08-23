@@ -139,9 +139,9 @@ class AuthService with ChangeNotifier {
           ),
         ],
         attendance: [],
-        completedTerminalogy: [],
-        completedQuiz: [],
-        savedTerminalogy: [],
+        // completedTerminalogy: [],
+        // completedQuiz: [],
+        // bookmarks: [],
         scenarioRecord: [],
       );
 
