@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motu/view/scenario/balance/my_status.dart';
 import 'package:motu/widget/custom_divider.dart';
 import 'package:motu/view/scenario/balance/investment_status_toggle.dart';
 import 'package:motu/view/scenario/balance/sales_record.dart';
@@ -13,6 +14,7 @@ class StockBalanceTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const MyStatus(),
           const InvestmentStatusToggle(),
           CustomDivider(),
           const StockListView(),

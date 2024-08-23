@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../util/util.dart';
 import '../theme/color_theme.dart';
 import 'balance_detail_page.dart';
+import 'completed_term_page.dart';
 import 'profile_detail_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -114,7 +115,7 @@ class ProfilePageState extends State<ProfilePage> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.black87,
+                                  color: ColorTheme.Black3,
                                 ),
                               ),
                             ],
@@ -147,12 +148,14 @@ class ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 16),
               FutureBuilder<List<DateTime>>(
                 future: service.getAttendance(),
-                builder: (BuildContext context, AsyncSnapshot<List<DateTime>> snapshot) {
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<DateTime>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
-                    return const Center(child: Text('출석 현황을 불러오는 중 오류가 발생했습니다.'));
+                    return const Center(
+                        child: Text('출석 현황을 불러오는 중 오류가 발생했습니다.'));
                   }
 
                   List<DateTime> attendance = snapshot.data ?? [];
@@ -174,7 +177,14 @@ class ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const CompletedTermPage();
+                    }),
+                  );
+                },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   visualDensity: VisualDensity.compact,

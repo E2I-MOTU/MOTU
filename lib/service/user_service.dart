@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import 'dart:developer' as dev;
 
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> updateUserBalance(String uid, int additionalBalance) async {
     try {
-      final userRef = _firestore.collection('users').doc(uid);
+      final userRef = _firestore.collection('user').doc(uid);
       await _firestore.runTransaction((transaction) async {
         final snapshot = await transaction.get(userRef);
         if (!snapshot.exists) {
@@ -24,9 +25,15 @@ class UserService {
     }
   }
 
-  Future<void> saveQuizCompletion(String uid, String quizId, int score) async {
+  // 경제/금융 퀴즈
+  Future<void> saveQuizCompletion(
+      String uid, String quizId, int score, int questionLength) async {
     try {
-      final userQuizRef = _firestore.collection('users').doc(uid).collection('quiz').doc(quizId);
+      final userQuizRef = _firestore
+          .collection('user')
+          .doc(uid)
+          .collection('completedQuiz')
+          .doc(quizId);
       final snapshot = await userQuizRef.get();
 
       bool wasPreviouslyCompleted = false;
@@ -37,8 +44,10 @@ class UserService {
         previousScore = quizData['score'] ?? 0;
       }
 
-      final newCompleted = wasPreviouslyCompleted || (score / (score + 10 - score) >= 0.9);
-      final finalScore = wasPreviouslyCompleted ? max(score, previousScore) : score;
+      final newCompleted =
+          wasPreviouslyCompleted || (score / questionLength >= 0.9);
+      final finalScore =
+          wasPreviouslyCompleted ? max(score, previousScore) : score;
 
       await userQuizRef.set({
         'score': finalScore,
@@ -50,10 +59,16 @@ class UserService {
     }
   }
 
-  Future<Map<String, dynamic>?> getQuizProgress(String uid, String quizId) async {
+  Future<Map<String, dynamic>?> getQuizProgress(
+      String uid, String quizId) async {
     try {
-      final userQuizRef = _firestore.collection('users').doc(uid).collection('quiz').doc(quizId);
+      final userQuizRef = _firestore
+          .collection('user')
+          .doc(uid)
+          .collection('completedQuiz')
+          .doc(quizId);
       final snapshot = await userQuizRef.get();
+      // dev.log('Quiz progress: ${snapshot.data()}');
       return snapshot.data();
     } catch (e) {
       print('Error getting quiz progress: $e');
