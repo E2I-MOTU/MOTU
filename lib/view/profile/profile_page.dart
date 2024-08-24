@@ -6,6 +6,7 @@ import 'package:motu/view/profile/widget/section_builder.dart';
 import 'package:provider/provider.dart';
 
 import '../../util/util.dart';
+import '../terminology/bookmark.dart';
 import '../theme/color_theme.dart';
 import 'balance_detail_page.dart';
 import 'completed_term_page.dart';
@@ -237,7 +238,14 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const BookmarkPage();
+                    }),
+                  );
+                },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   visualDensity: VisualDensity.compact,
