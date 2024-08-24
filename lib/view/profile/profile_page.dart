@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motu/service/auth_service.dart';
+import 'package:motu/view/profile/completed_quiz_page.dart';
 import 'package:motu/view/profile/widget/attendance_builder.dart';
 import 'package:motu/view/profile/widget/section_builder.dart';
 import 'package:provider/provider.dart';
@@ -208,7 +209,14 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const CompletedQuizPage();
+                    }),
+                  );
+                },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   visualDensity: VisualDensity.compact,
@@ -278,6 +286,7 @@ class ProfilePageState extends State<ProfilePage> {
                 "고객 센터",
                 style: TextStyle(color: ColorTheme.Black2),
               ),
+              const SizedBox(height: 12),
               TextButton(
                 onPressed: () {},
                 style: TextButton.styleFrom(
