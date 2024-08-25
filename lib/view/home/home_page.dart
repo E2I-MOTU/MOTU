@@ -4,6 +4,7 @@ import 'package:motu/text_utils.dart';
 import 'package:provider/provider.dart';
 import '../../service/home_service.dart';
 import '../../service/auth_service.dart';
+import '../quiz/widget/quiz_category_builder.dart';
 import '../terminology/widget/terminology_category_card_builder.dart';
 import '../theme/color_theme.dart';
 import '../terminology/terminology_card.dart';
@@ -19,11 +20,30 @@ class _HomePageState extends State<HomePage> {
   final HomeService _controller = HomeService();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<List<QueryDocumentSnapshot>> _getRandomCategories() async {
-    final snapshot = await _firestore.collection('terminology').get();
-    final documents = snapshot.docs;
-    documents.shuffle();
-    return documents.take(4).toList();
+  Future<List<Map<String, dynamic>>> _getRandomCategoriesAndQuizzes() async {
+    // Fetch terminology categories
+    final terminologySnapshot = await _firestore.collection('terminology').get();
+    final terminologyDocuments = terminologySnapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      data['type'] = 'terminology';
+      return data;
+    }).toList();
+
+    // Fetch quiz categories
+    final quizSnapshot = await _firestore.collection('quiz').get();
+    final quizDocuments = quizSnapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      data['type'] = 'quiz';
+      return data;
+    }).toList();
+
+    // 랜덤 선택
+    final combinedDocuments = [...terminologyDocuments, ...quizDocuments];
+    combinedDocuments.shuffle();
+
+    return combinedDocuments.take(5).toList();
   }
 
   @override
@@ -154,8 +174,8 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                      FutureBuilder<List<QueryDocumentSnapshot>>(
-                        future: _getRandomCategories(),
+                      FutureBuilder<List<Map<String, dynamic>>>(
+                        future: _getRandomCategoriesAndQuizzes(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
                             return const Center(child: CircularProgressIndicator());
@@ -165,8 +185,7 @@ class _HomePageState extends State<HomePage> {
                             height: 240,
                             child: ListView(
                               scrollDirection: Axis.horizontal,
-                              children: documents.map((doc) {
-                                final data = doc.data() as Map<String, dynamic>;
+                              children: documents.map((data) {
                                 return AspectRatio(
                                   aspectRatio: 1.6 / 2,
                                   child: Container(
@@ -174,17 +193,28 @@ class _HomePageState extends State<HomePage> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    child: buildCategoryCard(
+                                    child: data['type'] == 'terminology'
+                                        ? buildCategoryCard(
                                       context,
                                       data['title'],
                                       preventWordBreak(data['catchphrase']),
                                       Colors.white,
                                       TermCard(
                                         title: data['title'],
-                                        documentName: doc.id,
+                                        documentName: data['id'],
                                         uid: Provider.of<AuthService>(context, listen: false).user.uid,
                                       ),
                                       false,
+                                    )
+                                        : buildQuizCard(
+                                      context: context,
+                                      uid: Provider.of<AuthService>(context, listen: false).user.uid,
+                                      quizId: data['id'],
+                                      catchphrase: data['catchphrase'] ?? '설명 없음',
+                                      score: 0, // You can adjust based on actual data
+                                      totalQuestions: 10, // Adjust based on actual data
+                                      isCompleted: false, // Adjust based on actual data
+                                      isNewQuiz: true,
                                     ),
                                   ),
                                 );
@@ -193,7 +223,6 @@ class _HomePageState extends State<HomePage> {
                           );
                         },
                       ),
-
                       const SizedBox(height: 30),
                       const Text(
                         "학습 진도율",
