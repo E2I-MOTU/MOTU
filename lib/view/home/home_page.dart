@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
@@ -48,56 +50,58 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<Map<String, int>> _getCompletedCounts() async {
-    final userUid = Provider
-        .of<AuthService>(context, listen: false)
-        .user
-        .uid;
+    final userUid = Provider.of<AuthService>(context, listen: false).user.uid;
 
-    // Completed Terminology Count
-    final terminologySnapshot = await _firestore
-        .collection('completedTerminology')
-        .where('uid', isEqualTo: userUid)
-        .where('completed', isEqualTo: true)
-        .get();
-
-    final int terminologyCount = terminologySnapshot.docs.fold<int>(
-        0, (previousValue, doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      final score = (data['score'] ?? 0) as int;
-      print('Terminology ID: ${doc.id}, Score: $score');
-      return previousValue + score;
-    });
-
-    // Completed Quiz Count
-    final quizSnapshot = await _firestore
+    // Fetch completed quiz
+    final quizCategoriesSnapshot = await _firestore
+        .collection('user')
+        .doc(userUid)
         .collection('completedQuiz')
-        .where('uid', isEqualTo: userUid)
-        .where('completed', isEqualTo: true)
         .get();
 
-    final int quizCount = quizSnapshot.docs.fold<int>(0, (previousValue, doc) {
+    int totalQuizScore = 0;
+    for (var doc in quizCategoriesSnapshot.docs) {
       final data = doc.data() as Map<String, dynamic>;
-      final score = (data['score'] ?? 0) as int;
-      print('Quiz ID: ${doc.id}, Score: $score');
-      return previousValue + score;
-    });
+
+      // 데이터 확인
+      log('Quiz Data: $data');
+
+      // Check if the quiz is completed
+      if (data['completed'] == true) {
+        totalQuizScore += (data['score'] as int?) ?? 0;
+      }
+    }
+
+    // Fetch completed terminology
+    final terminologyCategoriesSnapshot = await _firestore
+        .collection('user')
+        .doc(userUid)
+        .collection('completedTerminology')
+        .get();
+
+    int totalTerminologyScore = 0;
+    for (var doc in terminologyCategoriesSnapshot.docs) {
+      final data = doc.data() as Map<String, dynamic>;
+
+      // 데이터 확인
+      log('Terminology Data: $data');
+
+      // Check if the terminology is completed
+      if (data['completed'] == true) {
+        totalTerminologyScore += (data['score'] as int?) ?? 0;
+      }
+    }
 
     return {
-      'terminologyCount': terminologyCount,
-      'quizCount': quizCount,
+      'totalQuizScore': totalQuizScore,
+      'totalTerminologyScore': totalTerminologyScore,
     };
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-    final screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Consumer<AuthService>(
       builder: (context, service, child) {
@@ -120,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: Stack(
                     children: [
-                      // 사용자 이름 및 추가 문구 표시
+                      // 사용자 이름 및 문구
                       Positioned(
                         bottom: screenHeight * 0.32 / 3.5,
                         left: 30,
@@ -225,6 +229,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
+                      // 추천학습 불러오기
                       FutureBuilder<List<Map<String, dynamic>>>(
                         future: _getRandomCategoriesAndQuizzes(),
                         builder: (context, snapshot) {
@@ -257,30 +262,19 @@ class _HomePageState extends State<HomePage> {
                                       TermCard(
                                         title: data['title'],
                                         documentName: data['id'],
-                                        uid: Provider
-                                            .of<AuthService>(
-                                            context, listen: false)
-                                            .user
-                                            .uid,
+                                        uid: Provider.of<AuthService>(context, listen: false).user.uid,
                                       ),
                                       false,
                                     )
                                         : buildQuizCard(
                                       context: context,
-                                      uid: Provider
-                                          .of<AuthService>(
-                                          context, listen: false)
-                                          .user
-                                          .uid,
+                                      uid: Provider.of<AuthService>(context, listen: false).user.uid,
                                       quizId: data['id'],
                                       catchphrase: data['catchphrase'] ??
                                           '설명 없음',
                                       score: 0,
-                                      // You can adjust based on actual data
-                                      totalQuestions: 10,
-                                      // Adjust based on actual data
+                                      totalQuestions: 15,
                                       isCompleted: false,
-                                      // Adjust based on actual data
                                       isNewQuiz: true,
                                     ),
                                   ),
@@ -291,6 +285,7 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       const SizedBox(height: 30),
+
                       const Text(
                         "학습 진도율",
                         style: TextStyle(
@@ -327,13 +322,13 @@ class _HomePageState extends State<HomePage> {
                                 Expanded(
                                   child: _buildProgressContainer(
                                     "지금까지 공부한 용어",
-                                    counts['terminologyCount'] ?? 0,
+                                    counts['totalTerminologyScore'] ?? 0,
                                   ),
                                 ),
                                 Expanded(
                                   child: _buildProgressContainer(
                                     "지금까지 풀어본 문제",
-                                    counts['quizCount'] ?? 0,
+                                    counts['totalQuizScore'] ?? 0,
                                   ),
                                 ),
                               ],
