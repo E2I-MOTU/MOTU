@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../provider/bookmark_provider.dart';
 
 class BookmarkPage extends StatelessWidget {
+  const BookmarkPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(

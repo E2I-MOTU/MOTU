@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import '../../service/home_service.dart';
+import '../../service/auth_service.dart';
+import '../../text_utils.dart';
+import '../quiz/widget/quiz_category_builder.dart';
+import '../terminology/terminology_card.dart';
+import '../terminology/widget/terminology_category_card_builder.dart';
 import '../theme/color_theme.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,152 +18,341 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final HomeService _controller = HomeService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<List<Map<String, dynamic>>> _getRandomCategoriesAndQuizzes() async {
+    // Fetch terminology categories
+    final terminologySnapshot = await _firestore.collection('terminology')
+        .get();
+    final terminologyDocuments = terminologySnapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      data['type'] = 'terminology';
+      return data;
+    }).toList();
+
+    // Fetch quiz categories
+    final quizSnapshot = await _firestore.collection('quiz').get();
+    final quizDocuments = quizSnapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      data['id'] = doc.id;
+      data['type'] = 'quiz';
+      return data;
+    }).toList();
+
+    // 랜덤 선택
+    final combinedDocuments = [...terminologyDocuments, ...quizDocuments];
+    combinedDocuments.shuffle();
+
+    return combinedDocuments.take(5).toList();
+  }
+
+  Future<Map<String, int>> _getCompletedCounts() async {
+    final userUid = Provider
+        .of<AuthService>(context, listen: false)
+        .user
+        .uid;
+
+    // Completed Terminology Count
+    final terminologySnapshot = await _firestore
+        .collection('completedTerminology')
+        .where('uid', isEqualTo: userUid)
+        .where('completed', isEqualTo: true)
+        .get();
+
+    final int terminologyCount = terminologySnapshot.docs.fold<int>(
+        0, (previousValue, doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      final score = (data['score'] ?? 0) as int;
+      print('Terminology ID: ${doc.id}, Score: $score');
+      return previousValue + score;
+    });
+
+    // Completed Quiz Count
+    final quizSnapshot = await _firestore
+        .collection('completedQuiz')
+        .where('uid', isEqualTo: userUid)
+        .where('completed', isEqualTo: true)
+        .get();
+
+    final int quizCount = quizSnapshot.docs.fold<int>(0, (previousValue, doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      final score = (data['score'] ?? 0) as int;
+      print('Quiz ID: ${doc.id}, Score: $score');
+      return previousValue + score;
+    });
+
+    return {
+      'terminologyCount': terminologyCount,
+      'quizCount': quizCount,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
+    final screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
 
-    return Scaffold(
-      backgroundColor: ColorTheme.colorWhite,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            expandedHeight: screenHeight * 0.3,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                children: [
-                  Container(
-                    width: screenWidth,
-                    decoration: const BoxDecoration(
-                      color: ColorTheme.colorDisabled,
+    return Consumer<AuthService>(
+      builder: (context, service, child) {
+        return Scaffold(
+          backgroundColor: ColorTheme.colorWhite,
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                // 상단 배너 컨테이너
+                Container(
+                  width: screenWidth,
+                  height: screenHeight * 0.32,
+                  decoration: BoxDecoration(
+                    color: ColorTheme.colorDisabled,
+                    image: DecorationImage(
+                      image: AssetImage(
+                          'assets/images/home_banner_background.png'),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  Positioned(
-                    bottom: 30,
-                    right: 30,
-                    child: SizedBox(
-                      width: 140,
-                      height: 40,
-                      child: ElevatedButton(
-                        onPressed: () => _controller.checkAttendance(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorTheme.colorPrimary,
-                          foregroundColor: ColorTheme.colorWhite,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                  child: Stack(
+                    children: [
+                      // 사용자 이름 및 추가 문구 표시
+                      Positioned(
+                        bottom: screenHeight * 0.32 / 3.5,
+                        left: 30,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '안녕하세요 ${service.user.name}님',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              '오늘도 MOTU에서\n투자 공부 함께해요!',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // 출석체크 버튼
+                      Positioned(
+                        bottom: 30,
+                        left: 30,
+                        child: SizedBox(
+                          width: 140,
+                          height: 32,
+                          child: ElevatedButton(
+                            onPressed: () =>
+                                _controller.checkAttendance(context),
+                            child: const Text('출석체크 하기'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorTheme.colorPrimary,
+                              foregroundColor: ColorTheme.colorWhite,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
                           ),
                         ),
-                        child: const Text('출석체크 하기'),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            title: Align(
-              alignment: Alignment.centerLeft,
-              child: Image.asset(
-                'assets/images/motu_logo.png',
-                height: 100,
-              ),
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(
-                  Icons.notifications_none,
-                  color: Colors.black,
-                ),
-                onPressed: () {},
-              ),
-            ],
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "오늘의 추천 학습",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      // 로고 이미지
+                      Positioned(
+                        top: 20,
+                        left: 10,
+                        child: Image.asset(
+                          'assets/images/motu_logo.png',
+                          height: 120,
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(
-                          foregroundColor: ColorTheme.colorFont,
+                      // 알림 아이콘
+                      Positioned(
+                        top: 50,
+                        right: 10,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.notifications_none,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {},
                         ),
-                        child: const Text("전체보기"),
+                      ),
+                      // 캐릭터 이미지
+                      Positioned(
+                        right: 20,
+                        bottom: 20,
+                        child: Image.asset(
+                          'assets/images/character/hi_panda.png',
+                          height: 120,
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  Container(
-                    height: screenHeight * 0.2,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "추천 학습이 표시될 영역입니다.",
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8, horizontal: 20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "오늘의 추천 학습",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text("전체보기"),
+                            style: TextButton.styleFrom(
+                              foregroundColor: ColorTheme.colorFont,
+                            ),
+                          ),
+                        ],
+                      ),
+                      FutureBuilder<List<Map<String, dynamic>>>(
+                        future: _getRandomCategoriesAndQuizzes(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          final documents = snapshot.data!;
+                          return Container(
+                            height: 240,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: documents.map((data) {
+                                return AspectRatio(
+                                  aspectRatio: 1.6 / 2,
+                                  child: Container(
+                                    margin: const EdgeInsets.only(top: 10,
+                                        bottom: 10,
+                                        right: 10,
+                                        left: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: data['type'] == 'terminology'
+                                        ? buildCategoryCard(
+                                      context,
+                                      data['title'],
+                                      preventWordBreak(data['catchphrase']),
+                                      Colors.white,
+                                      TermCard(
+                                        title: data['title'],
+                                        documentName: data['id'],
+                                        uid: Provider
+                                            .of<AuthService>(
+                                            context, listen: false)
+                                            .user
+                                            .uid,
+                                      ),
+                                      false,
+                                    )
+                                        : buildQuizCard(
+                                      context: context,
+                                      uid: Provider
+                                          .of<AuthService>(
+                                          context, listen: false)
+                                          .user
+                                          .uid,
+                                      quizId: data['id'],
+                                      catchphrase: data['catchphrase'] ??
+                                          '설명 없음',
+                                      score: 0,
+                                      // You can adjust based on actual data
+                                      totalQuestions: 10,
+                                      // Adjust based on actual data
+                                      isCompleted: false,
+                                      // Adjust based on actual data
+                                      isNewQuiz: true,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 30),
+                      const Text(
+                        "학습 진도율",
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.grey[600],
+                          fontWeight: FontWeight.bold,
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                    ),
+                      const SizedBox(height: 10),
+                      FutureBuilder<Map<String, int>>(
+                        future: _getCompletedCounts(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+
+                          final counts = snapshot.data!;
+                          return Container(
+                            height: screenHeight * 0.2,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: _buildProgressContainer(
+                                    "지금까지 공부한 용어",
+                                    counts['terminologyCount'] ?? 0,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _buildProgressContainer(
+                                    "지금까지 풀어본 문제",
+                                    counts['quizCount'] ?? 0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 40),
-                  const Text(
-                    "학습 진도율",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    height: screenHeight * 0.2,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(child: _buildProgressContainer("지금까지 공부한 용어")),
-                        Expanded(child: _buildProgressContainer("지금까지 풀어본 문제")),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildProgressContainer(String text) {
+  Widget _buildProgressContainer(String text, int count) {
     return Container(
       height: 150,
       decoration: BoxDecoration(
@@ -187,12 +383,11 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(
               color: ColorTheme.colorPrimary40,
               borderRadius: BorderRadius.circular(20),
-              boxShadow: const [],
             ),
-            child: const Center(
+            child: Center(
               child: Text(
-                "00개",
-                style: TextStyle(
+                "$count개",
+                style: const TextStyle(
                   fontSize: 12,
                   color: ColorTheme.colorWhite,
                   fontWeight: FontWeight.bold,

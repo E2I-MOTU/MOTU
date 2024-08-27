@@ -32,7 +32,7 @@ class ChatService with ChangeNotifier {
       body: json.encode({
         'model': 'gpt-3.5-turbo',
         'messages': [
-          {'role': 'system', 'content': '너는 경제 및 투자 교육용 챗봇이야. 사용자의 질문에 대해 정확하고 유익한 답변을 제공해.'},
+          {'role': 'system', 'content': '너는 MOTU라는 경제 및 투자 교육용 어플리케이션의 교육용 챗봇이야. 사용자의 질문에 대해 정확하고 유익한 답변을 제공해. 올바른 투자 가치관을 가질 수 있도록 사용자를 도와줘.'},
           {'role': 'user', 'content': prompt},
         ],
         'max_tokens': 150,
