@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:motu/text_utils.dart';
 import 'package:provider/provider.dart';
 import '../../service/home_service.dart';
 import '../../service/auth_service.dart';
+import '../../text_utils.dart';
 import '../quiz/widget/quiz_category_builder.dart';
+import '../terminology/terminology_card.dart';
 import '../terminology/widget/terminology_category_card_builder.dart';
 import '../theme/color_theme.dart';
-import '../terminology/terminology_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,7 +22,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<Map<String, dynamic>>> _getRandomCategoriesAndQuizzes() async {
     // Fetch terminology categories
-    final terminologySnapshot = await _firestore.collection('terminology').get();
+    final terminologySnapshot = await _firestore.collection('terminology')
+        .get();
     final terminologyDocuments = terminologySnapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       data['id'] = doc.id;
@@ -46,10 +47,57 @@ class _HomePageState extends State<HomePage> {
     return combinedDocuments.take(5).toList();
   }
 
+  Future<Map<String, int>> _getCompletedCounts() async {
+    final userUid = Provider
+        .of<AuthService>(context, listen: false)
+        .user
+        .uid;
+
+    // Completed Terminology Count
+    final terminologySnapshot = await _firestore
+        .collection('completedTerminology')
+        .where('uid', isEqualTo: userUid)
+        .where('completed', isEqualTo: true)
+        .get();
+
+    final int terminologyCount = terminologySnapshot.docs.fold<int>(
+        0, (previousValue, doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      final score = (data['score'] ?? 0) as int;
+      print('Terminology ID: ${doc.id}, Score: $score');
+      return previousValue + score;
+    });
+
+    // Completed Quiz Count
+    final quizSnapshot = await _firestore
+        .collection('completedQuiz')
+        .where('uid', isEqualTo: userUid)
+        .where('completed', isEqualTo: true)
+        .get();
+
+    final int quizCount = quizSnapshot.docs.fold<int>(0, (previousValue, doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      final score = (data['score'] ?? 0) as int;
+      print('Quiz ID: ${doc.id}, Score: $score');
+      return previousValue + score;
+    });
+
+    return {
+      'terminologyCount': terminologyCount,
+      'quizCount': quizCount,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
+    final screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
 
     return Consumer<AuthService>(
       builder: (context, service, child) {
@@ -65,7 +113,8 @@ class _HomePageState extends State<HomePage> {
                   decoration: BoxDecoration(
                     color: ColorTheme.colorDisabled,
                     image: DecorationImage(
-                      image: AssetImage('assets/images/home_banner_background.png'),
+                      image: AssetImage(
+                          'assets/images/home_banner_background.png'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -105,7 +154,8 @@ class _HomePageState extends State<HomePage> {
                           width: 140,
                           height: 32,
                           child: ElevatedButton(
-                            onPressed: () => _controller.checkAttendance(context),
+                            onPressed: () =>
+                                _controller.checkAttendance(context),
                             child: const Text('출석체크 하기'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: ColorTheme.colorPrimary,
@@ -151,7 +201,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8, horizontal: 20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -178,7 +229,8 @@ class _HomePageState extends State<HomePage> {
                         future: _getRandomCategoriesAndQuizzes(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
-                            return const Center(child: CircularProgressIndicator());
+                            return const Center(
+                                child: CircularProgressIndicator());
                           }
                           final documents = snapshot.data!;
                           return Container(
@@ -189,7 +241,10 @@ class _HomePageState extends State<HomePage> {
                                 return AspectRatio(
                                   aspectRatio: 1.6 / 2,
                                   child: Container(
-                                    margin: const EdgeInsets.only(top: 10, bottom: 10, right: 10, left: 4),
+                                    margin: const EdgeInsets.only(top: 10,
+                                        bottom: 10,
+                                        right: 10,
+                                        left: 4),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
@@ -202,18 +257,30 @@ class _HomePageState extends State<HomePage> {
                                       TermCard(
                                         title: data['title'],
                                         documentName: data['id'],
-                                        uid: Provider.of<AuthService>(context, listen: false).user.uid,
+                                        uid: Provider
+                                            .of<AuthService>(
+                                            context, listen: false)
+                                            .user
+                                            .uid,
                                       ),
                                       false,
                                     )
                                         : buildQuizCard(
                                       context: context,
-                                      uid: Provider.of<AuthService>(context, listen: false).user.uid,
+                                      uid: Provider
+                                          .of<AuthService>(
+                                          context, listen: false)
+                                          .user
+                                          .uid,
                                       quizId: data['id'],
-                                      catchphrase: data['catchphrase'] ?? '설명 없음',
-                                      score: 0, // You can adjust based on actual data
-                                      totalQuestions: 10, // Adjust based on actual data
-                                      isCompleted: false, // Adjust based on actual data
+                                      catchphrase: data['catchphrase'] ??
+                                          '설명 없음',
+                                      score: 0,
+                                      // You can adjust based on actual data
+                                      totalQuestions: 10,
+                                      // Adjust based on actual data
+                                      isCompleted: false,
+                                      // Adjust based on actual data
                                       isNewQuiz: true,
                                     ),
                                   ),
@@ -232,26 +299,47 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Container(
-                        height: screenHeight * 0.2,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
+                      FutureBuilder<Map<String, int>>(
+                        future: _getCompletedCounts(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+
+                          final counts = snapshot.data!;
+                          return Container(
+                            height: screenHeight * 0.2,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(child: _buildProgressContainer("지금까지 공부한 용어")),
-                            Expanded(child: _buildProgressContainer("지금까지 풀어본 문제")),
-                          ],
-                        ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: _buildProgressContainer(
+                                    "지금까지 공부한 용어",
+                                    counts['terminologyCount'] ?? 0,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _buildProgressContainer(
+                                    "지금까지 풀어본 문제",
+                                    counts['quizCount'] ?? 0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -264,7 +352,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildProgressContainer(String text) {
+  Widget _buildProgressContainer(String text, int count) {
     return Container(
       height: 150,
       decoration: BoxDecoration(
@@ -296,10 +384,10 @@ class _HomePageState extends State<HomePage> {
               color: ColorTheme.colorPrimary40,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Center(
+            child: Center(
               child: Text(
-                "00개",
-                style: TextStyle(
+                "$count개",
+                style: const TextStyle(
                   fontSize: 12,
                   color: ColorTheme.colorWhite,
                   fontWeight: FontWeight.bold,
