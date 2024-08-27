@@ -13,7 +13,7 @@ class NewsListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 1.0),
       child: Container(
         height: 120,
         child: Card(
@@ -51,16 +51,6 @@ class NewsListItem extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[700],
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            article.press,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[500],
                             ),
                           ),
                         ],
