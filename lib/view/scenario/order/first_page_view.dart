@@ -257,6 +257,7 @@ class FirstPageView extends StatelessWidget {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return const AlertDialog(
+                                      backgroundColor: Colors.white,
                                       content: StockTradeWidget(
                                           tradeType: StockTradeType.buy),
                                     );
@@ -276,6 +277,7 @@ class FirstPageView extends StatelessWidget {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return const AlertDialog(
+                                      backgroundColor: Colors.white,
                                       content: StockTradeWidget(
                                           tradeType: StockTradeType.sell),
                                     );
