@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:motu/service/scenario_service.dart';
+import 'package:provider/provider.dart';
 
 class SalesRecord extends StatelessWidget {
   const SalesRecord({super.key});
@@ -7,42 +9,71 @@ class SalesRecord extends StatelessWidget {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 8.0),
-            child: Text(
-              '매매 일지',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildHeaderText('종목명 | 매매 구분'),
-                  _buildHeaderText('체결단가 | 체결수량'),
-                ],
+    return Consumer<ScenarioService>(builder: (context, service, child) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(left: 8.0),
+              child: Text(
+                '투자 일지',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              const Divider(color: Colors.grey),
-              const SizedBox(height: 10),
-              _buildSalesRow(
-                  '관련주 A / 현금 매도', '4,545 | 100주', Colors.blue, screenSize),
-              _buildSalesRow(
-                  '관련주 C / 현금 매수', '78,500 | 10주', Colors.red, screenSize),
-              _buildSalesRow(
-                  '관련주 D / 현금 매수', '4,545 | 50주', Colors.red, screenSize),
-            ],
-          ),
-        ],
-      ),
-    );
+            ),
+            const SizedBox(height: 16),
+            service.investRecords.isNotEmpty
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildHeaderText('종목명 | 매매 구분'),
+                          _buildHeaderText('체결단가 | 체결수량'),
+                        ],
+                      ),
+                      const Divider(color: Colors.grey),
+                      const SizedBox(height: 10),
+                      Column(
+                        children: service.investRecords.map<Widget>((record) {
+                          return _buildSalesRow(
+                              "${record.stock} / ${record.type == TransactionType.buy ? '매수' : '매도'}",
+                              "${record.price} | ${record.amount}주",
+                              record.type == TransactionType.buy
+                                  ? Colors.red
+                                  : Colors.blue,
+                              screenSize);
+                        }).toList(),
+                      ),
+                      // _buildSalesRow(
+                      //     '관련주 A / 매도', '4,545 | 100주', Colors.blue, screenSize),
+                      // _buildSalesRow(
+                      //     '관련주 C / 매수', '78,500 | 10주', Colors.red, screenSize),
+                      // _buildSalesRow(
+                      //     '관련주 D / 매수', '4,545 | 50주', Colors.red, screenSize),
+                    ],
+                  )
+                : const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 20),
+                        Text(
+                          "투자한 기록이 없습니다.",
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildHeaderText(String text) {

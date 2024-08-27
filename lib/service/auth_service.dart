@@ -199,24 +199,13 @@ class AuthService with ChangeNotifier {
     return [];
   }
 
-  int _periodIndex = 0;
-  int get periodIndex => _periodIndex;
-  void setPeriodIndex(int index) {
-    _periodIndex = index;
-    notifyListeners();
-  }
+  void setUserBalance(int amount) {
+    _user.balance = amount;
 
-  int _typeIndex = 0;
-  int get typeIndex => _typeIndex;
-  void setTypeIndex(int index) {
-    _typeIndex = index;
-    notifyListeners();
-  }
+    _firestore.collection('user').doc(_auth.currentUser!.uid).update({
+      'balance': amount,
+    });
 
-  int _orderIndex = 0;
-  int get orderIndex => _orderIndex;
-  void setOrderIndex(int index) {
-    _orderIndex = index;
     notifyListeners();
   }
 }

@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:motu/model/invest_record.dart';
 import 'package:motu/model/stock_financial.dart';
 import 'package:motu/model/stock_info.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -19,6 +20,11 @@ enum NoticeStatus { timer, news }
 enum ScenarioType {
   covid,
   war,
+}
+
+enum TransactionType {
+  buy,
+  sell,
 }
 
 enum Quarter {
@@ -121,6 +127,7 @@ class ScenarioService extends ChangeNotifier {
   Map<String, List<StockData>> get storedAllStockData => _storedAllStockData;
 
   final Map<String, List<StockData>> _visibleAllStockData = {};
+  Map<String, List<StockData>> get visibleAllStockData => _visibleAllStockData;
   List<StockData> _visibleStockData = [];
   List<StockData> get visibleStockData => _visibleStockData;
 
@@ -339,6 +346,12 @@ class ScenarioService extends ChangeNotifier {
       }
 
       updateCurrentStockInfo();
+
+      // 현재 보유한 주식의 총 투자 금액 업데이트
+      updateTotalRatingPrice();
+
+      // 현재 보유한 주식의 총 평가 금액 업데이트
+      updateUnrealizedPnL();
 
       // 분기 별 정보 업데이트
       int month = currentStockTime.month;
@@ -809,5 +822,107 @@ class ScenarioService extends ChangeNotifier {
       }
     }
     return unreadCount;
+  }
+
+  // MARK: - 보유 주식 데이터
+  int totalPurchasePrice = 0; // 총 구매 금액
+
+  int totalRatingPrice = 0; // 평가 금액
+
+  int unrealizedPnL = 0; // 평가 손익
+
+  int realizedPnL = 0; // 실현 손익
+
+  final Map<String, List<int>> _investStocks = {
+    '관련주 A': [0, 0],
+    '관련주 B': [0, 0],
+    '관련주 C': [0, 0],
+    '관련주 D': [0, 0],
+    '관련주 E': [0, 0],
+  };
+  Map<String, List<int>> get investStocks => _investStocks;
+  void setInvestStocks(String stock, TransactionType type, int amount) {
+    int currentAmount = _investStocks[stock]![0];
+    if (type == TransactionType.buy) {
+      _investStocks[stock]![0] = currentAmount + amount;
+    } else {
+      _investStocks[stock]![0] = currentAmount - amount;
+    }
+
+    int currentTotalPrice = _investStocks[stock]![1];
+    int price = _visibleAllStockData[stock]!.last.close.toInt();
+    if (type == TransactionType.buy) {
+      _investStocks[stock]![1] = currentTotalPrice + price * amount;
+    } else {
+      _investStocks[stock]![1] = currentTotalPrice - price * amount;
+    }
+
+    notifyListeners();
+  }
+
+  bool checkInvested() {
+    for (String stock in _investStocks.keys) {
+      if (_investStocks[stock]![0] != 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  final List<InvestRecord> _investRecords = [];
+  List<InvestRecord> get investRecords => _investRecords;
+  void setInvestRecords(InvestRecord record) {
+    _investRecords.add(record);
+
+    notifyListeners();
+  }
+
+  void updateTotalRatingPrice() {
+    int total = 0;
+    for (String stock in _investStocks.keys) {
+      total += _investStocks[stock]![0] *
+          visibleAllStockData[stock]!.last.close.toInt();
+    }
+    totalRatingPrice = total;
+
+    notifyListeners();
+  }
+
+  void updateTotalPurchasePrice() {
+    int total = 0;
+    for (String stock in _investStocks.keys) {
+      total += _investStocks[stock]![1];
+    }
+    totalPurchasePrice = total;
+
+    notifyListeners();
+  }
+
+  void updateUnrealizedPnL() {
+    int total = 0;
+    for (String stock in _investStocks.keys) {
+      int currentValue = _investStocks[stock]![0] *
+          visibleAllStockData[stock]!.last.close.toInt();
+      int purchaseValue = _investStocks[stock]![1];
+      total += (currentValue - purchaseValue);
+    }
+
+    unrealizedPnL = total;
+
+    notifyListeners();
+  }
+
+  void updateRealizedPnL(InvestRecord record) {
+    int averagePrice =
+        _investStocks[selectedStock]![1] ~/ _investStocks[selectedStock]![0];
+    int currentPrice = visibleAllStockData[selectedStock]!.last.close.toInt();
+    int amount = record.amount;
+
+    if (record.type == TransactionType.sell) {
+      realizedPnL += (currentPrice - averagePrice) * amount;
+    }
+    dev.log('This Realized PnL: ${(currentPrice - averagePrice) * amount}}');
+
+    notifyListeners();
   }
 }

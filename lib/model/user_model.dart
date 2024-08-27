@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:motu/model/balance_detail.dart';
-import 'package:motu/model/bookmark_data.dart';
-import 'package:motu/model/completed.dart';
 import 'package:motu/model/scenario_result.dart';
 
 class UserModel {
@@ -9,9 +7,9 @@ class UserModel {
   final String email; // 이메일
   final String name; // 이름
   final String photoUrl; // 프로필 사진
-  final int balance; // 보유 자산
-  final List<BalanceDetail> balanceHistory; // 자산 변동 내역
-  final List<DateTime> attendance; // 출석 기록
+  int balance; // 보유 자산
+  List<BalanceDetail> balanceHistory; // 자산 변동 내역
+  List<DateTime> attendance; // 출석 기록
   // final List<Completed> completedTerminalogy; // 완료한 용어공부
   // final List<Completed> completedQuiz; // 완료한 퀴즈
   // final List<BookmarkData> bookmarks; // 저장한 용어공부
