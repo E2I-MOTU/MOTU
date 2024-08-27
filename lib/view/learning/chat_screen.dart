@@ -8,6 +8,8 @@ class ChatbotScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorTheme.colorWhite,
@@ -32,21 +34,44 @@ class ChatbotScreen extends StatelessWidget {
                       final isUser = message.containsKey('user');
                       return Align(
                         alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                        child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
-                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: isUser
-                                ? ColorTheme.colorPrimary20
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          child: Text(
-                            isUser ? message['user']! : message['bot']!,
-                            style: TextStyle(
-                              color: Colors.black,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (!isUser)
+                              Container(
+                                width: screenWidth * 0.1,
+                                height: screenWidth * 0.1,
+                                margin: EdgeInsets.only(left: 20),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                ),
+                                child: Image.asset(
+                                  'assets/images/character/chatbot_profile.png',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            Flexible(
+                              child: Container(
+                                margin: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 10.0, right: 30.0),
+                                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
+                                decoration: BoxDecoration(
+                                  color: isUser
+                                      ? ColorTheme.colorPrimary20
+                                      : ColorTheme.colorNeutral,
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: Text(
+                                  isUser ? message['user']! : message['bot']!,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                  ),
+                                  softWrap: true,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       );
                     },
@@ -82,7 +107,7 @@ class ChatbotScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: Icon(Icons.send),
+                      icon: Icon(Icons.arrow_upward),
                       color: Colors.white,
                       onPressed: () {
                         final text = _controller.text;
