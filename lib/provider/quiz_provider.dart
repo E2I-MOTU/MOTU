@@ -87,7 +87,7 @@ class QuizService with ChangeNotifier {
 
     if (_currentQuestionIndex >= _questions.length) {
       if (_score / _questions.length >= 0.9) {
-        await _userService.updateUserBalance(uid, 100000);
+        await _userService.updateUserBalance(uid, 100000, "퀴즈 학습 완료 보상");
       }
       await _userService.saveQuizCompletion(
           uid, collectionName, _score, _questions.length);

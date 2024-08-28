@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 import 'dart:developer' as dev;
 
+import '../model/balance_detail.dart';
+
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> updateUserBalance(String uid, int additionalBalance) async {
+  Future<void> updateUserBalance(String uid, int additionalBalance, String content) async {
     try {
       final userRef = _firestore.collection('user').doc(uid);
       await _firestore.runTransaction((transaction) async {
@@ -18,7 +20,23 @@ class UserService {
         final currentBalance = userData['balance'] ?? 0;
         final newBalance = currentBalance + additionalBalance;
 
+        // 잔고 업데이트
         transaction.update(userRef, {'balance': newBalance});
+
+        // BalanceDetail 객체 생성
+        BalanceDetail newBalanceDetail = BalanceDetail(
+          date: DateTime.now(),
+          content: content,
+          amount: additionalBalance,
+          isIncome: true,
+        );
+
+        // 기존 balanceHistory를 가져오고, 새로운 내역을 추가
+        final List<dynamic> balanceHistory = userData['balanceHistory'] ?? [];
+        balanceHistory.add(newBalanceDetail.toMap());
+
+        // 잔고 내역 업데이트
+        transaction.update(userRef, {'balanceHistory': balanceHistory});
       });
     } catch (e) {
       print('Error updating user balance: $e');
