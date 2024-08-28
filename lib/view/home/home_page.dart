@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+import '../../provider/navigation_provider.dart';
 import '../../service/home_service.dart';
 import '../../service/auth_service.dart';
 import '../../text_utils.dart';
@@ -221,7 +222,10 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Provider.of<NavigationService>(context, listen: false)
+                                  .goToLearning(); // '학습하기' 화면으로 이동
+                            },
                             child: const Text("전체보기"),
                             style: TextButton.styleFrom(
                               foregroundColor: ColorTheme.colorFont,
