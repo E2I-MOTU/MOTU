@@ -84,14 +84,28 @@ class ScenarioService extends ChangeNotifier {
   String _selectedStock = '관련주 A';
   String get selectedStock => _selectedStock;
 
+  bool _isChangeStock = false;
+  bool get isChangeStock => _isChangeStock;
+  void setIsChangeStock(bool value) {
+    _isChangeStock = value;
+    notifyListeners();
+  }
+
   // 관련주 변경
   void setSelectedStock(String value) {
     _selectedStock = value;
     dev.log("Selected Stock ID: ${_stockCSVPaths[_selectedStock]![0]}");
 
-    _updateVisibleStockData();
+    _updateAllVisibleData();
 
     updateYAxisRange(_actualArgs);
+
+    setIsChangeStock(true);
+
+    // 2초 후에 isChangeStock을 false로 변경
+    Future.delayed(const Duration(seconds: 2), () {
+      setIsChangeStock(false);
+    });
 
     notifyListeners();
   }
@@ -164,8 +178,12 @@ class ScenarioService extends ChangeNotifier {
       _globalIndex++;
     }
 
-    // 선택된 주식의 visibleStockData 업데이트
-    _updateVisibleStockData();
+    try {
+      // 선택된 주식의 visibleStockData 업데이트
+      _updateVisibleStockData();
+    } catch (e) {
+      dev.log('Error updating visible stock data: $e');
+    }
 
     if (allDataDisplayed) {
       stopDataUpdate(); // 모든 데이터를 표시했으면 타이머 중지
@@ -306,8 +324,11 @@ class ScenarioService extends ChangeNotifier {
 
   // MARK: - 시간 관리하는 부분
   void _updateVisibleStockData() {
+    dev.log("Updating visible stock data for $_selectedStock");
     if (_visibleAllStockData.containsKey(_selectedStock)) {
-      _visibleStockData = List.from(_visibleAllStockData[_selectedStock]!);
+      _visibleStockData = _visibleAllStockData[_selectedStock]!;
+
+      // 데이터가 비어있지 않은지 확인
       currentStockTime = _visibleStockData.last.x;
       if (q01Financial.year == 1900) {
         q01Financial.year = currentStockTime.year;
@@ -316,6 +337,7 @@ class ScenarioService extends ChangeNotifier {
         q04Financial.year = currentStockTime.year;
       }
 
+      // 뉴스 데이터 업데이트
       List<String> toRemove = [];
       for (String newsDate in _allNewsKeys) {
         DateTime newsDateTime = DateTime.parse(newsDate);
@@ -340,11 +362,11 @@ class ScenarioService extends ChangeNotifier {
           notifyListeners();
         }
       }
-
       for (String key in toRemove) {
         _allNewsKeys.remove(key);
       }
 
+      // 현재 주식 종목 정보 업데이트
       updateCurrentStockInfo();
 
       // 현재 보유한 주식의 총 투자 금액 업데이트
@@ -364,10 +386,10 @@ class ScenarioService extends ChangeNotifier {
       } else {
         currentQuarter = Quarter.fourth;
       }
-
       updateQuarterFinancialData();
     } else {
       _visibleStockData = [];
+      dev.log('Warning: No data found for $_selectedStock');
     }
 
     notifyListeners();
@@ -387,7 +409,7 @@ class ScenarioService extends ChangeNotifier {
       return dataXAsDouble >= xMin && dataXAsDouble <= xMax;
     }).toList();
 
-    if (filteredData.isEmpty) return; // 필터링된 데이터가 없을 경우 종료
+    if (filteredData.length < 2) return; // 필터링된 데이터가 없을 경우 종료
 
     // 현재 보이는 데이터의 최소값과 최대값을 찾습니다.
     double minLow =
