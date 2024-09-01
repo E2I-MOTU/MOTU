@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../util/util.dart';
 import '../terminology/bookmark.dart';
 import '../theme/color_theme.dart';
+import 'FAQ_page.dart';
 import 'balance_detail_page.dart';
 import 'completed_term_page.dart';
 import 'profile_detail_page.dart';
@@ -308,7 +309,14 @@ class ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const FAQPage();
+                    }),
+                  );
+                },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   visualDensity: VisualDensity.compact,
