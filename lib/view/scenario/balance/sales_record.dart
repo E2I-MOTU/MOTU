@@ -47,12 +47,6 @@ class SalesRecord extends StatelessWidget {
                               screenSize);
                         }).toList(),
                       ),
-                      // _buildSalesRow(
-                      //     '관련주 A / 매도', '4,545 | 100주', Colors.blue, screenSize),
-                      // _buildSalesRow(
-                      //     '관련주 C / 매수', '78,500 | 10주', Colors.red, screenSize),
-                      // _buildSalesRow(
-                      //     '관련주 D / 매수', '4,545 | 50주', Colors.red, screenSize),
                     ],
                   )
                 : const Center(

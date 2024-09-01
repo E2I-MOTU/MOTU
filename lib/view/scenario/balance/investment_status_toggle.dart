@@ -1,15 +1,12 @@
-import 'dart:ffi';
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:motu/service/scenario_service.dart';
 import 'package:motu/util/util.dart';
 import 'package:provider/provider.dart';
 
 class InvestmentStatusToggle extends StatefulWidget {
-  const InvestmentStatusToggle({super.key});
+  bool haveTitle;
+  InvestmentStatusToggle({super.key, required this.haveTitle});
 
   @override
   InvestmentStatusToggleState createState() => InvestmentStatusToggleState();
@@ -26,17 +23,23 @@ class InvestmentStatusToggleState extends State<InvestmentStatusToggle> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 8.0),
-              child: Text(
-                "투자 현황",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
+            widget.haveTitle
+                ? const Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          "투자 현황",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                    ],
+                  )
+                : const SizedBox(),
             GestureDetector(
               onTap: () {
                 setState(() {

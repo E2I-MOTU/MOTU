@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:motu/view/scenario/balance/stock_balance.dart';
 import 'package:motu/view/scenario/news/stock_news_tab.dart';
 import 'package:motu/view/scenario/order/stock_order.dart';
+import 'package:motu/view/scenario/timeover_page.dart';
 import 'package:motu/widget/common_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -13,6 +14,16 @@ class ScenarioPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    final provider = Provider.of<ScenarioService>(context);
+
+    provider.onNavigate = () {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const TimeoverPage()),
+        (route) => false,
+      );
+    };
 
     return Consumer<ScenarioService>(builder: (context, service, child) {
       return Scaffold(

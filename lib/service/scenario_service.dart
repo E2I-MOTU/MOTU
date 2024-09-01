@@ -15,7 +15,10 @@ import 'package:http/http.dart' as http;
 import '../model/stock_data.dart';
 import '../model/stock_news.dart';
 
-enum NoticeStatus { timer, news }
+enum NoticeStatus {
+  timer,
+  news,
+}
 
 enum ScenarioType {
   covid,
@@ -35,6 +38,8 @@ enum Quarter {
 }
 
 class ScenarioService extends ChangeNotifier {
+  Function? onNavigate; // 페이지 이동 함수
+
   // MARK: - 시나리오 남은 시간 타이머
   Timer? _remainingTimeTimer;
   Duration _remainingTime = Duration.zero;
@@ -187,6 +192,9 @@ class ScenarioService extends ChangeNotifier {
 
     if (allDataDisplayed) {
       stopDataUpdate(); // 모든 데이터를 표시했으면 타이머 중지
+      if (onNavigate != null) {
+        onNavigate!();
+      }
     }
 
     notifyListeners();
@@ -946,5 +954,25 @@ class ScenarioService extends ChangeNotifier {
     dev.log('This Realized PnL: ${(currentPrice - averagePrice) * amount}}');
 
     notifyListeners();
+  }
+
+  // MARK: - 타임 오버 이후
+  String timeoverCommentMsg() {
+    String comment = "";
+
+    switch (_selectedScenario) {
+      case ScenarioType.covid:
+        comment =
+            "코로나는 우리 일상에 많은 변화를 가져다주었어요.\n\n전 세계에 큰 변화를 불러온 코로나는 경제/주가에 어떤 영향을 미쳤는지 함께 알아볼까요?";
+        break;
+      case ScenarioType.war:
+        comment = "전쟁으로 인한 글로벌 경제 위기로 인해 주식 시장이 크게 하락했습니다. \n\n"
+            "투자자들은 주식을 매도하고 현금화하려는 움직임이 활발해졌습니다. \n\n"
+            "이로 인해 주식 시장이 더욱 불안정해졌습니다.";
+        break;
+      default:
+    }
+
+    return comment;
   }
 }
