@@ -11,6 +11,7 @@ import '../quiz/widget/quiz_category_builder.dart';
 import '../terminology/terminology_card.dart';
 import '../terminology/widget/terminology_category_card_builder.dart';
 import '../theme/color_theme.dart';
+import 'notice_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -187,7 +188,12 @@ class _HomePageState extends State<HomePage> {
                               Icons.notifications_none,
                               color: Colors.black,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const NoticePage()),
+                              );
+                            },
                           ),
                         ),
                         // 캐릭터 이미지
