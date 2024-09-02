@@ -4,10 +4,12 @@ import 'package:motu/view/profile/completed_quiz_page.dart';
 import 'package:motu/view/profile/widget/attendance_builder.dart';
 import 'package:motu/view/profile/widget/section_builder.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../util/util.dart';
 import '../terminology/bookmark.dart';
 import '../theme/color_theme.dart';
+import 'FAQ_page.dart';
 import 'balance_detail_page.dart';
 import 'completed_term_page.dart';
 import 'profile_detail_page.dart';
@@ -20,6 +22,17 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
+  // 개인정보 처리방침 URL
+  final String _privacyPolicyUrl = "https://amused-power-1c0.notion.site/5704c05a8fdb471a8b23f38b3ecb77f1";
+
+  void _launchURL() async {
+    if (await canLaunch(_privacyPolicyUrl)) {
+      await launch(_privacyPolicyUrl);
+    } else {
+      throw 'Could not launch $_privacyPolicyUrl';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthService>(builder: (context, service, child) {
@@ -296,7 +309,14 @@ class ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const FAQPage();
+                    }),
+                  );
+                },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   visualDensity: VisualDensity.compact,
@@ -342,7 +362,7 @@ class ProfilePageState extends State<ProfilePage> {
                 color: ColorTheme.Grey2,
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: _launchURL,
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   visualDensity: VisualDensity.compact,

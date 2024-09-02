@@ -122,7 +122,7 @@ class TerminologyQuizService with ChangeNotifier {
 
       if (newCompleted && !wasPreviouslyCompleted) {
         await _userService.updateUserBalance(
-            _uid, 100000); // Add 100,000 reward if completed
+            _uid, 100000, "용어 학습 완료 보상"); // Add 100,000 reward if completed
       }
     } catch (e) {
       print('Error saving quiz completion: $e');
