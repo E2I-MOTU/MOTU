@@ -22,7 +22,7 @@ enum NoticeStatus {
 
 enum ScenarioType {
   covid,
-  war,
+  secondaryBattery,
 }
 
 enum TransactionType {
@@ -39,8 +39,9 @@ enum Quarter {
 
 class ScenarioService extends ChangeNotifier {
   Function? onNavigate; // 페이지 이동 함수
+  Function? showTutorialPopup; // 튜토리얼 팝업 함수
 
-  // MARK: - 시나리오 남은 시간 타이머
+  //* MARK: - 시나리오 남은 시간 타이머
   Timer? _remainingTimeTimer;
   Duration _remainingTime = Duration.zero;
   Duration get remainingTime => _remainingTime;
@@ -48,6 +49,8 @@ class ScenarioService extends ChangeNotifier {
   int millisecondsPeriod = 1500;
 
   void startRemainingTimeTimer() {
+    dev.log("Starting remaining time timer");
+
     if (_storedAllStockData.isEmpty) return;
 
     int totalMilliseconds =
@@ -150,7 +153,7 @@ class ScenarioService extends ChangeNotifier {
   List<StockData> _visibleStockData = [];
   List<StockData> get visibleStockData => _visibleStockData;
 
-// MARK: - 글로벌 타이머 및 인덱스
+//* MARK: - 글로벌 타이머 및 인덱스
   Timer? _globalTimer;
   int _globalIndex = 20;
 
@@ -200,13 +203,21 @@ class ScenarioService extends ChangeNotifier {
     notifyListeners();
   }
 
-// MARK: - Initialize
-  ScenarioService() {
-    _initializeData();
-  }
+//* MARK: - Initialize
+  // ScenarioService() {
+  //   _initializeData();
+  // }
 
-  Future<void> _initializeData() async {
+  Future<void> initializeData() async {
     dev.log("Data initialized");
+    final random = Random();
+    // ScenarioType의 길이를 구하고 그 중에서 랜덤 인덱스를 생성
+    final randomIndex = random.nextInt(ScenarioType.values.length);
+    ScenarioType type = ScenarioType.values[randomIndex];
+    setSelectedScenario(type);
+    dev.log("Selected Scenario: $type");
+
+    showTutorialPopup!(type);
 
     // 모든 관련주 데이터 불러오기
     await _loadAllData();
@@ -220,11 +231,11 @@ class ScenarioService extends ChangeNotifier {
     // y축 범위 설정
     updateYAxisRangeLastData();
 
-    // 주식 차트 타이머 시작
-    startDataUpdate();
+    // // 주식 차트 타이머 시작
+    // startDataUpdate();
 
-    // 남은 시간 타이머 시작
-    startRemainingTimeTimer();
+    // // 남은 시간 타이머 시작
+    // startRemainingTimeTimer();
 
     notifyListeners();
   }
@@ -256,7 +267,7 @@ class ScenarioService extends ChangeNotifier {
         "관련주 E": randomSelectedFiles[4],
       };
 
-      // dev.log('Loaded stock CSV paths: $_stockCSVPaths');
+      dev.log('Loaded stock CSV paths: $_stockCSVPaths');
 
       // Isolate를 사용하여 멀티스레드로 데이터 로드
       List<Future<void>> futures = stockOptions.map((stock) async {
@@ -281,9 +292,9 @@ class ScenarioService extends ChangeNotifier {
           pathRef =
               storageRef.child("scenario/covid/chart/${stockCSVPaths[stock]!}");
           break;
-        case ScenarioType.war:
-          pathRef =
-              storageRef.child("scenario/war/chart/${stockCSVPaths[stock]!}");
+        case ScenarioType.secondaryBattery:
+          pathRef = storageRef.child(
+              "scenario/secondary_battery/chart/${stockCSVPaths[stock]!}");
           break;
         default:
           throw Exception('Invalid scenario type');
@@ -330,7 +341,22 @@ class ScenarioService extends ChangeNotifier {
     }
   }
 
-  // MARK: - 시간 관리하는 부분
+  //* MARK: - 튜토리얼 관련
+  bool _isOnTutorial = false;
+  bool get isOnTutorial => _isOnTutorial;
+  void setIsOnTutorial(bool value) {
+    _isOnTutorial = value;
+    notifyListeners();
+  }
+
+  bool _isStartScenario = false;
+  bool get isStartScenario => _isStartScenario;
+  void setIsStartScenario(bool value) {
+    _isStartScenario = value;
+    notifyListeners();
+  }
+
+  //* MARK: - 시간 관리하는 부분
   void _updateVisibleStockData() {
     dev.log("Updating visible stock data for $_selectedStock");
     if (_visibleAllStockData.containsKey(_selectedStock)) {
@@ -594,8 +620,9 @@ class ScenarioService extends ChangeNotifier {
         case ScenarioType.covid:
           pathRef = storageRef.child("scenario/covid/info/${stockID}_info.csv");
           break;
-        case ScenarioType.war:
-          pathRef = storageRef.child("scenario/war/info/${stockID}_info.csv");
+        case ScenarioType.secondaryBattery:
+          pathRef = storageRef
+              .child("scenario/secondary_battery/info/${stockID}_info.csv");
           break;
         default:
           throw Exception('Invalid scenario type');
@@ -685,9 +712,9 @@ class ScenarioService extends ChangeNotifier {
           pathRef = storageRef
               .child("scenario/covid/financial/${stockID}_financial.csv");
           break;
-        case ScenarioType.war:
-          pathRef = storageRef
-              .child("scenario/war/financial/${stockID}_financial.csv");
+        case ScenarioType.secondaryBattery:
+          pathRef = storageRef.child(
+              "scenario/secondary_battery/financial/${stockID}_financial.csv");
           break;
         default:
           throw Exception('Invalid scenario type');
@@ -826,8 +853,8 @@ class ScenarioService extends ChangeNotifier {
         case ScenarioType.covid:
           doc = await collection.doc('covid').get();
           break;
-        case ScenarioType.war:
-          doc = await collection.doc('war').get();
+        case ScenarioType.secondaryBattery:
+          doc = await collection.doc('secondary_battery').get();
           break;
         default:
       }
@@ -956,6 +983,41 @@ class ScenarioService extends ChangeNotifier {
     notifyListeners();
   }
 
+  // MARK: - 시나리오 초기화
+  void resetAllData() {
+    dev.log("Resetting all data");
+
+    _visibleAllStockData.clear();
+    _visibleStockData.clear();
+    _storedAllStockData.clear();
+    _stockDataInfo.clear();
+    _stockDataFinancial.clear();
+    _news.clear();
+    _allNews.clear();
+    _allNewsKeys.clear();
+
+    _stockCSVPaths.clear();
+    _selectedStock = '관련주 A';
+    _isChangeStock = false;
+
+    _investRecords.clear();
+    _investStocks.forEach((key, value) {
+      _investStocks[key] = [0, 0];
+    });
+
+    totalPurchasePrice = 0;
+    totalRatingPrice = 0;
+    unrealizedPnL = 0;
+    realizedPnL = 0;
+
+    _selectedScenario = null;
+
+    stopDataUpdate();
+    stopRemainingTimeTimer();
+
+    notifyListeners();
+  }
+
   // MARK: - 타임 오버 이후
   String timeoverCommentMsg() {
     String comment = "";
@@ -965,10 +1027,9 @@ class ScenarioService extends ChangeNotifier {
         comment =
             "코로나는 우리 일상에 많은 변화를 가져다주었어요.\n\n전 세계에 큰 변화를 불러온 코로나는 경제/주가에 어떤 영향을 미쳤는지 함께 알아볼까요?";
         break;
-      case ScenarioType.war:
-        comment = "전쟁으로 인한 글로벌 경제 위기로 인해 주식 시장이 크게 하락했습니다. \n\n"
-            "투자자들은 주식을 매도하고 현금화하려는 움직임이 활발해졌습니다. \n\n"
-            "이로 인해 주식 시장이 더욱 불안정해졌습니다.";
+      case ScenarioType.secondaryBattery:
+        comment = "전기차 시대가 도래하면서 2차전지 관련주들이 주목받고 있어요.\n\n"
+            "2차전지 관련주들의 주가는 어떻게 변화했는지 함께 알아볼까요?";
         break;
       default:
     }

@@ -87,7 +87,7 @@ class CommentIntroPage extends StatelessWidget {
             ],
           ),
         );
-      case ScenarioType.war:
+      case ScenarioType.secondaryBattery:
         return const SizedBox();
     }
   }
@@ -172,7 +172,7 @@ class CommentIntroPage extends StatelessWidget {
             ),
           ),
         );
-      case ScenarioType.war:
+      case ScenarioType.secondaryBattery:
         return const SizedBox();
     }
   }

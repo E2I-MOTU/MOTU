@@ -20,7 +20,6 @@ class LearningContentscreen extends StatelessWidget {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      drawer: const DrawerMenu(),
       extendBodyBehindAppBar: true,
       backgroundColor: ColorTheme.colorNeutral,
       body: Stack(
@@ -31,8 +30,8 @@ class LearningContentscreen extends StatelessWidget {
                 width: screenWidth,
                 height: screenHeight * 0.3,
                 padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(40),
                     bottomRight: Radius.circular(40),
                   ),
@@ -157,9 +156,9 @@ class LearningContentscreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => ChatbotScreen()),
           );
         },
-        child: const Icon(Icons.chat),
         backgroundColor: ColorTheme.colorPrimary,
         foregroundColor: Colors.white,
+        child: const Icon(Icons.chat),
       ),
     );
   }

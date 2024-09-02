@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motu/service/scenario_service.dart';
 import 'package:motu/widget/motu_button.dart';
 import 'package:provider/provider.dart';
 
@@ -48,12 +49,17 @@ Widget CommonDialog(BuildContext context) {
                       final navService = Provider.of<NavigationService>(context,
                           listen: false);
                       navService.setSelectedIndex(2);
-                      Navigator.pushAndRemoveUntil(
+
+                      final scenarioService =
+                          Provider.of<ScenarioService>(context, listen: false);
+                      scenarioService.resetAllData();
+
+                      Navigator.replace(
                         context,
-                        MaterialPageRoute(
+                        oldRoute: ModalRoute.of(context)!,
+                        newRoute: MaterialPageRoute(
                           builder: (context) => const MainPage(),
                         ),
-                        (route) => false, // 모든 기존 경로를 제거
                       );
                     },
                   ),

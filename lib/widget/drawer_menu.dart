@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motu/view/scenario/scenario_list.dart';
+import 'package:motu/view/scenario/intro_page.dart';
 import '../view/login/logout.dart';
 
 class DrawerMenu extends StatelessWidget {
@@ -48,7 +48,8 @@ class DrawerMenu extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const ScenarioList()),
+                        MaterialPageRoute(
+                            builder: (context) => const IntroPage()),
                       );
                     },
                   ),

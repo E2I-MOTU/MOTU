@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motu/view/home/home_page.dart';
 import 'package:motu/view/profile/profile_page.dart';
-import 'package:motu/view/scenario/scenario_list.dart';
+import 'package:motu/view/scenario/intro_page.dart';
 import '../view/learning/learning_contents.dart';
 
 class NavigationService with ChangeNotifier {
@@ -18,8 +18,8 @@ class NavigationService with ChangeNotifier {
   final List<Widget> _screens = [
     const HomePage(),
     const LearningContentscreen(),
-    const ScenarioList(),
-    ProfilePage(),
+    const IntroPage(),
+    const ProfilePage(),
   ];
 
   Widget get currentScreen => _screens[_selectedIndex];

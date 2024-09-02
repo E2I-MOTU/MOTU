@@ -10,7 +10,6 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const DrawerMenu(),
       body: Consumer<NavigationService>(
         builder: (context, service, child) {
           return service.currentScreen;

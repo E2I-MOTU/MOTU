@@ -3,6 +3,7 @@ import 'package:motu/view/scenario/balance/stock_balance.dart';
 import 'package:motu/view/scenario/news/stock_news_tab.dart';
 import 'package:motu/view/scenario/order/stock_order.dart';
 import 'package:motu/view/scenario/timeover_page.dart';
+import 'package:motu/view/theme/color_theme.dart';
 import 'package:motu/widget/common_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -103,7 +104,7 @@ class ScenarioPage extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.bold))),
                   ),
                 ],
-                indicatorColor: Theme.of(context).primaryColor,
+                indicatorColor: ColorTheme.Purple1,
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicatorWeight: 5,
                 isScrollable: true,
