@@ -35,8 +35,16 @@ class _IncorrectAnswersScreenState extends State<IncorrectAnswersScreen> {
     }
   }
 
+  void _exitReview() {
+    Navigator.pop(context); // 현재 화면을 닫고 이전 화면으로 돌아가기
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double buttonWidth = screenWidth * 0.8;
+    final double buttonHeight = 60;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('오답 확인'),
@@ -120,6 +128,28 @@ class _IncorrectAnswersScreenState extends State<IncorrectAnswersScreen> {
                             ),
                           ),
                         ),
+                        if (_currentPageIndex == widget.incorrectAnswers.length - 1) ...[
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            width: buttonWidth,
+                            height: buttonHeight,
+                            child: ElevatedButton(
+                              onPressed: _exitReview,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: ColorTheme.colorPrimary,
+                                foregroundColor: ColorTheme.colorWhite,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                textStyle: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              child: const Text('종료하기'),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
