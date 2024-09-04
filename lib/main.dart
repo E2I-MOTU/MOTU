@@ -50,6 +50,7 @@ class App extends StatelessWidget {
     return ToastificationWrapper(
       child: MaterialApp(
         title: 'MOTU',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
           primaryColor: ColorTheme.Purple1,
@@ -59,6 +60,8 @@ class App extends StatelessWidget {
           ),
           scaffoldBackgroundColor: ColorTheme.White,
           fontFamily: "Pretendard",
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
         ),
         home: Consumer<AuthService>(builder: (context, service, child) {
           return service.auth.currentUser != null

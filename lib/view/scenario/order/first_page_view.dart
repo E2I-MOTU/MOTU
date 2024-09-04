@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:motu/service/scenario_service.dart';
@@ -24,7 +22,6 @@ class FirstPageView extends StatelessWidget {
       body: Consumer<ScenarioService>(builder: (context, service, child) {
         int minutes = service.remainingTime.inMinutes;
         int seconds = (service.remainingTime.inSeconds % 60);
-        log('remainingTime: ${service.remainingTime}');
 
         return Column(
           children: [

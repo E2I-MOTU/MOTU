@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:motu/model/scenario_result.dart';
 import 'package:motu/model/user_model.dart';
 
 import '../model/balance_detail.dart';
@@ -204,6 +205,26 @@ class AuthService with ChangeNotifier {
 
     _firestore.collection('user').doc(_auth.currentUser!.uid).update({
       'balance': amount,
+    });
+
+    notifyListeners();
+  }
+
+  void addBalanceDetail(BalanceDetail detail) {
+    _user.balanceHistory.add(detail);
+
+    _firestore.collection('user').doc(_auth.currentUser!.uid).update({
+      'balanceHistory': FieldValue.arrayUnion([detail.toMap()]),
+    });
+
+    notifyListeners();
+  }
+
+  void addScenarioRecord(ScenarioResult result) {
+    _user.scenarioRecord.add(result);
+
+    _firestore.collection('user').doc(_auth.currentUser!.uid).update({
+      'scenarioRecord': FieldValue.arrayUnion([result.toMap()]),
     });
 
     notifyListeners();

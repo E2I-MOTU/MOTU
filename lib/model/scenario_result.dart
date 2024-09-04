@@ -3,12 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ScenarioResult {
   DateTime date;
   String subject;
+  bool isIncome;
   int totalReturn; // 손익
-  double returnRate; // 수익률
+  String returnRate; // 수익률
 
   ScenarioResult({
     required this.date,
     required this.subject,
+    required this.isIncome,
     required this.totalReturn,
     required this.returnRate,
   });
@@ -17,6 +19,7 @@ class ScenarioResult {
     return ScenarioResult(
       date: (map['date'] as Timestamp).toDate(),
       subject: map['subject'],
+      isIncome: map['isIncome'],
       totalReturn: map['totalReturn'],
       returnRate: map['returnRate'],
     );
@@ -26,6 +29,7 @@ class ScenarioResult {
     return {
       'date': Timestamp.fromDate(date),
       'subject': subject,
+      'isIncome': isIncome,
       'totalReturn': totalReturn,
       'returnRate': returnRate,
     };

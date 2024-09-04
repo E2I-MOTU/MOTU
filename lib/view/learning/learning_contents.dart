@@ -71,7 +71,7 @@ class LearningContentscreen extends StatelessWidget {
                       context,
                       '용어\n공부하기',
                       ColorTheme.colorWhite,
-                      TermMain(uid: auth.currentUser!.uid),
+                      const TermMain(),
                       'assets/images/character/curious_panda.png',
                     ),
                     buildCard(

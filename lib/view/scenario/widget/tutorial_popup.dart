@@ -57,11 +57,11 @@ class TutorialPopup extends StatelessWidget {
                       width: size.width * 0.8,
                       child: TextButton(
                         onPressed: () {
-                          service.setIsStartScenario(true);
-                          // 주식 차트 타이머 시작
-                          service.startDataUpdate();
-                          // 남은 시간 타이머 시작
-                          service.startRemainingTimeTimer();
+                          // service.setIsStartScenario(true);
+                          // // 주식 차트 타이머 시작
+                          // service.startDataUpdate();
+                          // // 남은 시간 타이머 시작
+                          // service.startRemainingTimeTimer();
 
                           // 튜토리얼 팝업 닫기
                           Navigator.pop(context);
@@ -107,7 +107,13 @@ class TutorialPopup extends StatelessWidget {
           ),
         );
       case ScenarioType.secondaryBattery:
-        return const SizedBox();
+        return const Text(
+          "2차 전지",
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
+        );
     }
   }
 

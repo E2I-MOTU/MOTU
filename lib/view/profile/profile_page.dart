@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motu/service/auth_service.dart';
 import 'package:motu/view/profile/completed_quiz_page.dart';
+import 'package:motu/view/profile/completed_scenario_page.dart';
 import 'package:motu/view/profile/widget/attendance_builder.dart';
 import 'package:motu/view/profile/widget/section_builder.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,8 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   // 개인정보 처리방침 URL
-  final String _privacyPolicyUrl = "https://amused-power-1c0.notion.site/5704c05a8fdb471a8b23f38b3ecb77f1";
+  final String _privacyPolicyUrl =
+      "https://amused-power-1c0.notion.site/5704c05a8fdb471a8b23f38b3ecb77f1";
 
   void _launchURL() async {
     if (await canLaunch(_privacyPolicyUrl)) {
@@ -279,7 +281,11 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const CompletedScenarioPage();
+                  }));
+                },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   visualDensity: VisualDensity.compact,

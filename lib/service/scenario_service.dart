@@ -9,6 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:motu/model/invest_record.dart';
 import 'package:motu/model/stock_financial.dart';
 import 'package:motu/model/stock_info.dart';
+import 'package:motu/service/auth_service.dart';
+import 'package:motu/util/util.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:http/http.dart' as http;
 
@@ -39,7 +42,20 @@ enum Quarter {
 
 class ScenarioService extends ChangeNotifier {
   Function? onNavigate; // 페이지 이동 함수
+  Function? updateUserBalanceWhenFinish; // 사용자 잔액 업데이트 함수
   Function? showTutorialPopup; // 튜토리얼 팝업 함수
+
+  //* MARK: - 시나리오 주제 제목
+  String getScenarioTitle(ScenarioType type) {
+    switch (type) {
+      case ScenarioType.covid:
+        return 'COVID-19 시나리오';
+      case ScenarioType.secondaryBattery:
+        return '2차 전지 시나리오';
+      default:
+        return '';
+    }
+  }
 
   //* MARK: - 시나리오 남은 시간 타이머
   Timer? _remainingTimeTimer;
@@ -193,13 +209,30 @@ class ScenarioService extends ChangeNotifier {
       dev.log('Error updating visible stock data: $e');
     }
 
+    // MARK: - 시나리오 사이클 종료
     if (allDataDisplayed) {
       stopDataUpdate(); // 모든 데이터를 표시했으면 타이머 중지
+
+      // 시나리오 종료 시 사용자가 구매한 주식의 평가 금액을 user balance에 반영
+
+      if (updateUserBalanceWhenFinish != null) {
+        updateUserBalanceWhenFinish!();
+      }
+
       if (onNavigate != null) {
         onNavigate!();
       }
     }
 
+    resetAllData();
+
+    notifyListeners();
+  }
+
+  int _originBalance = 0;
+  int get originBalance => _originBalance;
+  void setOriginBalance(int value) {
+    _originBalance = value;
     notifyListeners();
   }
 
@@ -231,11 +264,11 @@ class ScenarioService extends ChangeNotifier {
     // y축 범위 설정
     updateYAxisRangeLastData();
 
-    // // 주식 차트 타이머 시작
-    // startDataUpdate();
+    // 데이터 업데이트 타이머 시작
+    startDataUpdate();
 
-    // // 남은 시간 타이머 시작
-    // startRemainingTimeTimer();
+    // 남은 시간 타이머 시작
+    startRemainingTimeTimer();
 
     notifyListeners();
   }
@@ -244,7 +277,16 @@ class ScenarioService extends ChangeNotifier {
     List<String> storageFiles = [];
     try {
       final storage = FirebaseStorage.instance.ref();
-      final chartPathRef = storage.child('scenario/covid/chart/');
+      final Reference chartPathRef;
+      switch (_selectedScenario) {
+        case ScenarioType.covid:
+          chartPathRef = storage.child('scenario/covid/chart/');
+          break;
+        case ScenarioType.secondaryBattery:
+          chartPathRef = storage.child('scenario/secondary_battery/chart/');
+        default:
+          throw Exception('Invalid scenario type');
+      }
       final ListResult result = await chartPathRef.listAll();
 
       for (var item in result.items) {
@@ -277,7 +319,7 @@ class ScenarioService extends ChangeNotifier {
         await _loadNewsForStock();
       }).toList();
 
-      await Future.wait(futures); // 모든 작업이 완료될 때까지 기다립니다.
+      await Future.wait(futures); // 모든 작업이 완료될 때까지 기다립니다
     } catch (e) {
       dev.log('Unexpected error: $e');
     }
@@ -318,7 +360,7 @@ class ScenarioService extends ChangeNotifier {
         throw Exception('Failed to load CSV file for $stock');
       }
     } catch (e) {
-      dev.log('Error loading data for $stock : $e');
+      dev.log('Error loading DATA for $stock : $e');
     }
   }
 
@@ -616,6 +658,7 @@ class ScenarioService extends ChangeNotifier {
       final storageRef = FirebaseStorage.instance.ref();
       Reference pathRef;
       String stockID = stockCSVPaths[stock]![0];
+      dev.log('Stock ID when load INFO: $stockID');
       switch (_selectedScenario) {
         case ScenarioType.covid:
           pathRef = storageRef.child("scenario/covid/info/${stockID}_info.csv");
@@ -633,13 +676,10 @@ class ScenarioService extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         String csvString = response.body;
-
         // CSV Data
         List<List<dynamic>> csvStockData =
             const CsvToListConverter().convert(csvString, eol: '\n');
-
         _stockDataInfo[stock] = _parseCSVToStockInfo(csvStockData);
-
         dev.log('Loaded CSV file for $stock info');
 
         notifyListeners();
@@ -647,7 +687,7 @@ class ScenarioService extends ChangeNotifier {
         throw Exception('Failed to load CSV file for $stock');
       }
     } catch (e) {
-      dev.log('Error loading data for $stock : $e');
+      dev.log('Error loading INFO for $stock : $e');
     }
   }
 
@@ -739,7 +779,7 @@ class ScenarioService extends ChangeNotifier {
         throw Exception('Failed to load CSV file for $stock');
       }
     } catch (e) {
-      dev.log('Error loading data for $stock : $e');
+      dev.log('Error loading FINANCIAL for $stock : $e');
     }
   }
 
@@ -890,6 +930,7 @@ class ScenarioService extends ChangeNotifier {
 
   int realizedPnL = 0; // 실현 손익
 
+  // [주식명: [보유량, 총 구매 금액]]
   final Map<String, List<int>> _investStocks = {
     '관련주 A': [0, 0],
     '관련주 B': [0, 0],
@@ -970,8 +1011,14 @@ class ScenarioService extends ChangeNotifier {
   }
 
   void updateRealizedPnL(InvestRecord record) {
-    int averagePrice =
-        _investStocks[selectedStock]![1] ~/ _investStocks[selectedStock]![0];
+    int averagePrice;
+    if (_investStocks[selectedStock]![0] != 0) {
+      averagePrice =
+          _investStocks[selectedStock]![1] ~/ _investStocks[selectedStock]![0];
+    } else {
+      averagePrice = 0;
+    }
+
     int currentPrice = visibleAllStockData[selectedStock]!.last.close.toInt();
     int amount = record.amount;
 
@@ -981,6 +1028,32 @@ class ScenarioService extends ChangeNotifier {
     dev.log('This Realized PnL: ${(currentPrice - averagePrice) * amount}}');
 
     notifyListeners();
+  }
+
+  String currentPriceStr() {
+    if (totalRatingPrice - totalPurchasePrice == 0) {
+      return '0';
+    } else {
+      if (totalRatingPrice - totalPurchasePrice > 0) {
+        return '+${Formatter.format(totalRatingPrice - totalPurchasePrice)}';
+      } else {
+        return Formatter.format(totalRatingPrice - totalPurchasePrice.abs());
+      }
+    }
+  }
+
+  String currentPercentStr() {
+    if (totalRatingPrice - totalPurchasePrice == 0) {
+      return '0.0%';
+    } else {
+      double percent =
+          (totalRatingPrice - totalPurchasePrice) / totalPurchasePrice * 100;
+      if (percent > 0) {
+        return '+${percent.toStringAsFixed(1)}%';
+      } else {
+        return '${percent.toStringAsFixed(1)}%';
+      }
+    }
   }
 
   // MARK: - 시나리오 초기화

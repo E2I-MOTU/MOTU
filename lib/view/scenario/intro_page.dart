@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motu/service/auth_service.dart';
 import 'package:motu/service/scenario_service.dart';
 import 'package:motu/view/scenario/widget/tutorial_popup.dart';
 import 'package:motu/view/theme/color_theme.dart';
@@ -44,6 +45,14 @@ class IntroPage extends StatelessWidget {
               height: 55,
               child: TextButton(
                 onPressed: () {
+                  dev.log("📈 Start scenario");
+
+                  final auth = Provider.of<AuthService>(context, listen: false);
+                  final scenario =
+                      Provider.of<ScenarioService>(context, listen: false);
+
+                  scenario.setOriginBalance(auth.user.balance);
+
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(

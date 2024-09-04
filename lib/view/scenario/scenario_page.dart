@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:motu/model/balance_detail.dart';
+import 'package:motu/model/scenario_result.dart';
+import 'package:motu/service/auth_service.dart';
 import 'package:motu/view/scenario/balance/stock_balance.dart';
 import 'package:motu/view/scenario/news/stock_news_tab.dart';
 import 'package:motu/view/scenario/order/stock_order.dart';
@@ -26,10 +29,47 @@ class ScenarioPage extends StatelessWidget {
       );
     };
 
+    provider.updateUserBalanceWhenFinish = () {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      final scenarioService =
+          Provider.of<ScenarioService>(context, listen: false);
+
+      int change = authService.user.balance - scenarioService.originBalance;
+      bool isIncome = change > 0;
+      int amount = change.abs();
+
+      BalanceDetail thisDetail = BalanceDetail(
+        date: DateTime.now(),
+        content: "시나리오로 인한 잔고 변동",
+        amount: amount,
+        isIncome: isIncome,
+      );
+      authService.addBalanceDetail(thisDetail);
+
+      ScenarioResult result = ScenarioResult(
+        date: DateTime.now(),
+        subject:
+            scenarioService.getScenarioTitle(scenarioService.selectedScenario!),
+        isIncome: isIncome,
+        totalReturn: amount,
+        returnRate: scenarioService.totalPurchasePrice == 0
+            ? "0.0"
+            : ((scenarioService.totalRatingPrice -
+                        scenarioService.totalPurchasePrice) /
+                    scenarioService.totalPurchasePrice *
+                    100)
+                .toStringAsFixed(1),
+      );
+      authService.addScenarioRecord(result);
+    };
+
     return Consumer<ScenarioService>(builder: (context, service, child) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("COVID", style: TextStyle(fontSize: 18)),
+          title: Text(
+            service.getScenarioTitle(service.selectedScenario!),
+            style: const TextStyle(fontSize: 18),
+          ),
           leading: GestureDetector(
             onTap: () {
               showDialog(

@@ -24,16 +24,30 @@ class StockListView extends StatelessWidget {
               ),
             ),
             service.checkInvested()
-                ? const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        const Text(
+                          '관련주',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Text(
-                          '+9.5%\n+285,000',
+                          '${service.currentPercentStr()}\n${service.currentPriceStr()}',
                           style: TextStyle(
                             fontSize: 15,
-                            color: Colors.red,
+                            color:
+                                service.unrealizedPnL + service.realizedPnL == 0
+                                    ? Colors.black
+                                    : service.unrealizedPnL +
+                                                service.realizedPnL >
+                                            0
+                                        ? Colors.red
+                                        : Colors.blue,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.right,

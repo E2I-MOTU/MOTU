@@ -12,12 +12,12 @@ class TermQuizCompletedScreen extends StatelessWidget {
   final String uid;
 
   const TermQuizCompletedScreen({
-    Key? key,
+    super.key,
     required this.score,
     required this.totalQuestions,
     required this.incorrectAnswers,
     required this.uid,
-  }) : super(key: key);
+  });
 
   String getFeedbackMessage() {
     double percentage = (score / totalQuestions) * 100;
@@ -66,14 +66,14 @@ class TermQuizCompletedScreen extends StatelessWidget {
             Container(
               width: MediaQuery.of(context).size.width * 0.9,
               height: MediaQuery.of(context).size.height * 0.5,
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: ColorTheme.colorNeutral,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.3),
                     blurRadius: 10,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
                 borderRadius: BorderRadius.circular(20),
@@ -83,7 +83,7 @@ class TermQuizCompletedScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 60),
+                    const SizedBox(height: 60),
                     Transform.scale(
                       scale: 3,
                       child: CircularScoreIndicator(
@@ -92,7 +92,7 @@ class TermQuizCompletedScreen extends StatelessWidget {
                         isCompleted: isCompleted,
                       ),
                     ),
-                    SizedBox(height: 80),
+                    const SizedBox(height: 80),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -101,7 +101,7 @@ class TermQuizCompletedScreen extends StatelessWidget {
                           getFeedbackImage(),
                           width: 100,
                         ),
-                        SizedBox(width: 20),
+                        const SizedBox(width: 20),
                         SpeechBalloon(
                           nipLocation: NipLocation.left,
                           color: ColorTheme.colorPrimary,
@@ -111,7 +111,7 @@ class TermQuizCompletedScreen extends StatelessWidget {
                           child: Center(
                             child: Text(
                               getFeedbackMessage(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: ColorTheme.colorWhite,
                               ),
@@ -125,7 +125,7 @@ class TermQuizCompletedScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.8,
               height: 60,
@@ -136,7 +136,7 @@ class TermQuizCompletedScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  textStyle: TextStyle(
+                  textStyle: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -146,7 +146,7 @@ class TermQuizCompletedScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TermMain(uid: uid),
+                        builder: (context) => const TermMain(),
                       ),
                     );
                   } else {
@@ -160,10 +160,11 @@ class TermQuizCompletedScreen extends StatelessWidget {
                     ).then((_) => Navigator.pop(context));
                   }
                 },
-                child: Text(incorrectAnswers.isEmpty ? '다른 용어 배우러 가기' : '틀린 문제 보러가기'),
+                child: Text(
+                    incorrectAnswers.isEmpty ? '다른 용어 배우러 가기' : '틀린 문제 보러가기'),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (incorrectAnswers.isNotEmpty)
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.8,
@@ -175,7 +176,7 @@ class TermQuizCompletedScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    textStyle: TextStyle(
+                    textStyle: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -184,12 +185,12 @@ class TermQuizCompletedScreen extends StatelessWidget {
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TermMain(uid: uid),
+                        builder: (context) => const TermMain(),
                       ),
-                          (route) => false, // 모든 기존 경로를 제거
+                      (route) => false, // 모든 기존 경로를 제거
                     );
                   },
-                  child: Text('종료하기'),
+                  child: const Text('종료하기'),
                 ),
               ),
           ],
