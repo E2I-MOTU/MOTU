@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:motu/text_utils.dart';
+import 'package:motu/view/terminology/terminology_main.dart';
 import '../theme/color_theme.dart';
 import '../../widget/linear_indicator.dart';
 
@@ -15,10 +17,17 @@ class TermIncorrectAnswersScreen extends StatefulWidget {
 class _TermIncorrectAnswersScreenState extends State<TermIncorrectAnswersScreen> {
   PageController _pageController = PageController();
   int _currentPageIndex = 0;
+  String uid = "";
 
   @override
   void initState() {
     super.initState();
+
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      uid = user.uid;  // 로그인된 사용자의 uid를 저장
+    }
+
     _pageController.addListener(() {
       setState(() {
         _currentPageIndex = _pageController.page?.round() ?? 0;
@@ -35,8 +44,22 @@ class _TermIncorrectAnswersScreenState extends State<TermIncorrectAnswersScreen>
     }
   }
 
+  void _exitReview() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TermMain(uid: uid),
+      ),
+          (route) => false, // 모든 기존 경로를 제거
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double buttonWidth = screenWidth * 0.8;
+    final double buttonHeight = 60;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('오답 확인'),
@@ -184,17 +207,40 @@ class _TermIncorrectAnswersScreenState extends State<TermIncorrectAnswersScreen>
                           ),*/
                         ],
                         const SizedBox(height: 15),
-                        TextButton(
-                          onPressed: _goToNextPage,
-                          child: const Text(
-                            '다음 틀린 문제 확인하기',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Colors.grey,
+                        if (_currentPageIndex == widget.termIncorrectAnswers.length - 1) ...[
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            width: buttonWidth,
+                            height: buttonHeight,
+                            child: ElevatedButton(
+                              onPressed: _exitReview,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: ColorTheme.colorPrimary,
+                                foregroundColor: ColorTheme.colorWhite,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                textStyle: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              child: const Text('종료하기'),
                             ),
                           ),
-                        ),
+                        ] else ...[
+                          TextButton(
+                            onPressed: _goToNextPage,
+                            child: const Text(
+                              '다음 틀린 문제 확인하기',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
