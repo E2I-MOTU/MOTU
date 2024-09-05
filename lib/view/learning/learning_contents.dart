@@ -150,16 +150,34 @@ class LearningContentscreen extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
+      floatingActionButton: GestureDetector(
+        onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ChatbotScreen()),
           );
         },
-        child: const Icon(Icons.chat),
-        backgroundColor: ColorTheme.colorPrimary,
-        foregroundColor: Colors.white,
+        child: Container(
+          width: 60.0,
+          height: 60.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                spreadRadius: 2,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/chatbot.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
       ),
     );
   }
