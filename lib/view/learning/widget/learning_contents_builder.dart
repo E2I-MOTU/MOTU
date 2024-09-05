@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../theme/color_theme.dart';
 
-Widget buildCard(BuildContext context, String text, Color color, Widget? nextScreen, String imagePath) {
+Widget buildCard(
+    BuildContext context,
+    String text,
+    Color color,
+    Widget? nextScreen,
+    String imagePath,
+    {double? imageHeight}) {
+
   return Container(
     padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
@@ -38,7 +45,8 @@ Widget buildCard(BuildContext context, String text, Color color, Widget? nextScr
           padding: const EdgeInsets.only(top: 10.0),
           child: Image.asset(
             imagePath,
-            width: 100,
+            height: imageHeight,
+            fit: BoxFit.contain,
           ),
         ),
         ElevatedButton(
