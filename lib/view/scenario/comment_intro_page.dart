@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:motu/main.dart';
+import 'package:motu/provider/navigation_provider.dart';
 import 'package:motu/service/scenario_service.dart';
+import 'package:motu/view/main_page.dart';
 import 'package:motu/view/news/news_list_screen.dart';
 import 'package:motu/view/terminology/terminology_main.dart';
 import 'package:motu/view/theme/color_theme.dart';
@@ -28,7 +30,8 @@ class CommentIntroPage extends StatelessWidget {
                   width: size.width * 0.6,
                 ),
                 const SizedBox(height: 24),
-                _buildHeaderText(service.selectedScenario!),
+                _buildHeaderText(
+                    service.selectedScenario ?? ScenarioType.covid),
                 const SizedBox(height: 24),
                 TextButton(
                   onPressed: () {},
@@ -53,7 +56,41 @@ class CommentIntroPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 42),
-                _buildRecommendContent(context, service.selectedScenario!),
+                _buildRecommendContent(
+                    context, service.selectedScenario ?? ScenarioType.covid),
+                const SizedBox(height: 42),
+                TextButton(
+                  onPressed: () {
+                    Provider.of<NavigationService>(context, listen: false)
+                        .setSelectedIndex(0);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MainPage(),
+                      ),
+                      (route) => false, // 모든 기존 경로를 제거
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: ColorTheme.Purple1,
+                    backgroundColor: ColorTheme.White,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 48.0,
+                      vertical: 16.0,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.home_filled),
+                      SizedBox(width: 8),
+                      Text('메인 홈으로 돌아가기'),
+                    ],
+                  ),
+                ),
                 SizedBox(height: size.height * 0.1),
               ],
             ),
@@ -111,6 +148,8 @@ class CommentIntroPage extends StatelessWidget {
             ],
           ),
         );
+      default:
+        return const SizedBox();
     }
   }
 
@@ -159,7 +198,7 @@ class CommentIntroPage extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => NewsListScreen()));
+                            builder: (context) => const NewsListScreen()));
                   },
                 ),
                 const SizedBox(height: 8),
@@ -242,7 +281,7 @@ class CommentIntroPage extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => NewsListScreen()));
+                            builder: (context) => const NewsListScreen()));
                   },
                 ),
                 const SizedBox(height: 8),
@@ -282,6 +321,8 @@ class CommentIntroPage extends StatelessWidget {
             ),
           ),
         );
+      default:
+        return const SizedBox();
     }
   }
 }

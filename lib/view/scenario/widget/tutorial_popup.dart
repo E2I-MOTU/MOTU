@@ -85,9 +85,9 @@ class TutorialPopup extends StatelessWidget {
             ),
             Column(
               children: [
-                _buildTitle(service.selectedScenario!),
+                _buildTitle(service.selectedScenario ?? type),
                 const SizedBox(height: 24),
-                _buildContent(service.selectedScenario!),
+                _buildContent(service.selectedScenario ?? type),
               ],
             ),
           ],
@@ -114,6 +114,8 @@ class TutorialPopup extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         );
+      default:
+        return const SizedBox();
     }
   }
 
@@ -141,6 +143,8 @@ class TutorialPopup extends StatelessWidget {
           ],
         );
       case ScenarioType.secondaryBattery:
+        return const SizedBox();
+      default:
         return const SizedBox();
     }
   }

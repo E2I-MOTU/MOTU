@@ -73,9 +73,11 @@ class CompletedScenarioPage extends StatelessWidget {
                                           fontWeight: FontWeight.w700),
                                     ),
                                     Text(
-                                      result.isIncome
-                                          ? "+ ${Formatter.format(result.totalReturn)}"
-                                          : "- ${Formatter.format(result.totalReturn)}",
+                                      result.totalReturn == 0
+                                          ? "0"
+                                          : result.isIncome
+                                              ? "+${Formatter.format(result.totalReturn)}"
+                                              : "-${Formatter.format(result.totalReturn)}",
                                       style: const TextStyle(
                                           color: ColorTheme.White,
                                           fontWeight: FontWeight.w700),
@@ -93,9 +95,11 @@ class CompletedScenarioPage extends StatelessWidget {
                                           fontWeight: FontWeight.w700),
                                     ),
                                     Text(
-                                      result.isIncome
-                                          ? "+${result.returnRate}%"
-                                          : "-${result.returnRate}%",
+                                      result.totalReturn == 0
+                                          ? "0%"
+                                          : result.isIncome
+                                              ? "+${result.returnRate}%"
+                                              : "-${result.returnRate}%",
                                       style: const TextStyle(
                                           color: ColorTheme.White,
                                           fontWeight: FontWeight.w700),

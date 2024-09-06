@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motu/model/balance_detail.dart';
 import 'package:motu/service/auth_service.dart';
 import 'package:motu/service/scenario_service.dart';
 import 'package:motu/widget/motu_button.dart';
@@ -59,6 +60,13 @@ Widget CommonDialog(BuildContext context) {
                           Provider.of<AuthService>(context, listen: false);
                       authService.setUserBalance(
                           (scenarioService.originBalance * 0.9).toInt());
+
+                      authService.addBalanceDetail(BalanceDetail(
+                        date: DateTime.now(),
+                        content: "시나리오 중도 포기 패널티",
+                        amount: (scenarioService.originBalance * 0.1).toInt(),
+                        isIncome: false,
+                      ));
 
                       Navigator.replace(
                         context,

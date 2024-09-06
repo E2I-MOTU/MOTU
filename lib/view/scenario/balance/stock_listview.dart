@@ -80,7 +80,7 @@ class StockListView extends StatelessWidget {
                   switch (stock) {
                     case '관련주 A':
                       return StockItem(
-                        logo: Icons.web,
+                        logo: "assets/images/scenario/stock_a.png",
                         name: stock,
                         amount: service.investStocks[stock]![0],
                         value: Formatter.format(
@@ -90,7 +90,7 @@ class StockListView extends StatelessWidget {
                       );
                     case '관련주 B':
                       return StockItem(
-                        logo: Icons.business,
+                        logo: "assets/images/scenario/stock_b.png",
                         name: stock,
                         amount: service.investStocks[stock]![0],
                         value: Formatter.format(
@@ -100,7 +100,7 @@ class StockListView extends StatelessWidget {
                       );
                     case '관련주 C':
                       return StockItem(
-                        logo: Icons.account_balance,
+                        logo: "assets/images/scenario/stock_c.png",
                         name: stock,
                         amount: service.investStocks[stock]![0],
                         value: Formatter.format(
@@ -110,7 +110,7 @@ class StockListView extends StatelessWidget {
                       );
                     case '관련주 D':
                       return StockItem(
-                        logo: Icons.attach_money,
+                        logo: "assets/images/scenario/stock_d.png",
                         name: stock,
                         amount: service.investStocks[stock]![0],
                         value: Formatter.format(
@@ -120,7 +120,7 @@ class StockListView extends StatelessWidget {
                       );
                     case '관련주 E':
                       return StockItem(
-                        logo: Icons.trending_up,
+                        logo: "assets/images/scenario/stock_e.png",
                         name: stock,
                         amount: service.investStocks[stock]![0],
                         value: Formatter.format(
@@ -142,12 +142,16 @@ class StockListView extends StatelessWidget {
   }
 
   Widget StockItem(
-      {required IconData logo,
+      {required String logo,
       required String name,
       required int amount,
       required String value}) {
     return ListTile(
-      leading: Icon(logo, size: 40),
+      leading: Image.asset(
+        logo,
+        fit: BoxFit.contain,
+        width: 40,
+      ),
       title: Text(name),
       subtitle: Text('$amount주'),
       trailing: Text(value,

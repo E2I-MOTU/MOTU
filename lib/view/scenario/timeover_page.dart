@@ -3,6 +3,7 @@ import 'package:motu/service/auth_service.dart';
 import 'package:motu/service/scenario_service.dart';
 import 'package:motu/view/scenario/balance/investment_status_toggle.dart';
 import 'package:motu/view/scenario/balance/sales_record.dart';
+import 'package:motu/view/scenario/balance/stock_listview.dart';
 import 'package:motu/view/scenario/comment_intro_page.dart';
 import 'package:motu/view/theme/color_theme.dart';
 import 'package:provider/provider.dart';

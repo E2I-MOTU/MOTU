@@ -34,6 +34,9 @@ class ScenarioPage extends StatelessWidget {
       final scenarioService =
           Provider.of<ScenarioService>(context, listen: false);
 
+      int remainingStockPrice = scenarioService.getRemainStockToBalance();
+      authService.user.balance += remainingStockPrice;
+
       int change = authService.user.balance - scenarioService.originBalance;
       bool isIncome = change > 0;
       int amount = change.abs();
@@ -48,8 +51,8 @@ class ScenarioPage extends StatelessWidget {
 
       ScenarioResult result = ScenarioResult(
         date: DateTime.now(),
-        subject:
-            scenarioService.getScenarioTitle(scenarioService.selectedScenario!),
+        subject: scenarioService.getScenarioTitle(
+            scenarioService.selectedScenario ?? ScenarioType.covid),
         isIncome: isIncome,
         totalReturn: amount,
         returnRate: scenarioService.totalPurchasePrice == 0
@@ -67,7 +70,8 @@ class ScenarioPage extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           title: Text(
-            service.getScenarioTitle(service.selectedScenario!),
+            service.getScenarioTitle(
+                service.selectedScenario ?? ScenarioType.covid),
             style: const TextStyle(fontSize: 18),
           ),
           leading: GestureDetector(

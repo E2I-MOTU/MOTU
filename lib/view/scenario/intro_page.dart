@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:motu/service/auth_service.dart';
 import 'package:motu/service/scenario_service.dart';
@@ -52,6 +54,16 @@ class IntroPage extends StatelessWidget {
                       Provider.of<ScenarioService>(context, listen: false);
 
                   scenario.setOriginBalance(auth.user.balance);
+
+                  scenario.resetAllData();
+
+                  final random = Random();
+                  // ScenarioType의 길이를 구하고 그 중에서 랜덤 인덱스를 생성
+                  final randomIndex =
+                      random.nextInt(ScenarioType.values.length);
+                  ScenarioType type = ScenarioType.values[randomIndex];
+                  scenario.setSelectedScenario(type);
+                  dev.log("Selected Scenario: $type");
 
                   Navigator.pushAndRemoveUntil(
                     context,

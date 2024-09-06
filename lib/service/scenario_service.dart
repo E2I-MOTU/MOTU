@@ -213,8 +213,6 @@ class ScenarioService extends ChangeNotifier {
     if (allDataDisplayed) {
       stopDataUpdate(); // 모든 데이터를 표시했으면 타이머 중지
 
-      // 시나리오 종료 시 사용자가 구매한 주식의 평가 금액을 user balance에 반영
-
       if (updateUserBalanceWhenFinish != null) {
         updateUserBalanceWhenFinish!();
       }
@@ -223,8 +221,6 @@ class ScenarioService extends ChangeNotifier {
         onNavigate!();
       }
     }
-
-    resetAllData();
 
     notifyListeners();
   }
@@ -243,14 +239,8 @@ class ScenarioService extends ChangeNotifier {
 
   Future<void> initializeData() async {
     dev.log("Data initialized");
-    final random = Random();
-    // ScenarioType의 길이를 구하고 그 중에서 랜덤 인덱스를 생성
-    final randomIndex = random.nextInt(ScenarioType.values.length);
-    ScenarioType type = ScenarioType.values[randomIndex];
-    setSelectedScenario(type);
-    dev.log("Selected Scenario: $type");
 
-    showTutorialPopup!(type);
+    showTutorialPopup!(_selectedScenario);
 
     // 모든 관련주 데이터 불러오기
     await _loadAllData();
@@ -894,7 +884,7 @@ class ScenarioService extends ChangeNotifier {
           doc = await collection.doc('covid').get();
           break;
         case ScenarioType.secondaryBattery:
-          doc = await collection.doc('secondary_battery').get();
+          doc = await collection.doc('second_battery').get();
           break;
         default:
       }
@@ -1056,9 +1046,21 @@ class ScenarioService extends ChangeNotifier {
     }
   }
 
+  int getRemainStockToBalance() {
+    int total = 0;
+    for (String stock in _investStocks.keys) {
+      total += investStocks[stock]![0] *
+          visibleAllStockData[stock]!.last.close.toInt();
+    }
+
+    return total;
+  }
+
   // MARK: - 시나리오 초기화
   void resetAllData() {
     dev.log("Resetting all data");
+
+    _globalIndex = 20;
 
     _visibleAllStockData.clear();
     _visibleStockData.clear();
