@@ -7,6 +7,7 @@ import '../../provider/navigation_provider.dart';
 import '../../service/home_service.dart';
 import '../../service/auth_service.dart';
 import '../../text_utils.dart';
+import '../../widget/chatbot_fab.dart';
 import '../quiz/widget/quiz_category_builder.dart';
 import '../terminology/terminology_card.dart';
 import '../terminology/widget/terminology_category_card_builder.dart';
@@ -368,6 +369,7 @@ class _HomePageState extends State<HomePage> {
           }
         },
       ),
+      floatingActionButton: ChatbotFloatingActionButton(),
     );
   }
 

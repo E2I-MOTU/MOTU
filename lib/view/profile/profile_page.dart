@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../util/util.dart';
+import '../../widget/chatbot_fab.dart';
 import '../terminology/bookmark.dart';
 import '../theme/color_theme.dart';
 import 'FAQ_page.dart';
@@ -385,6 +386,7 @@ class ProfilePageState extends State<ProfilePage> {
             ],
           ),
         ),
+        floatingActionButton: ChatbotFloatingActionButton(),
       );
     });
   }
