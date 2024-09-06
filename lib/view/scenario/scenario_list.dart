@@ -3,6 +3,7 @@ import 'package:motu/service/scenario_service.dart';
 import 'package:motu/widget/motu_button.dart';
 import 'package:provider/provider.dart';
 
+import '../../widget/chatbot_fab.dart';
 import 'scenario_page.dart';
 
 class ScenarioList extends StatelessWidget {
@@ -40,6 +41,7 @@ class ScenarioList extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton: ChatbotFloatingActionButton(),
     );
   }
 }

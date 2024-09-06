@@ -45,7 +45,7 @@ class TermMain extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => const MainPage(),
               ),
-              (route) => false, // 모든 기존 경로를 제거
+                  (route) => false, // 모든 기존 경로를 제거
             );
           },
         ),
@@ -83,35 +83,51 @@ class TermMain extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
                 var documents = snapshot.data!.docs;
-                return GridView.count(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1.6 / 2,
-                  padding: const EdgeInsets.all(20),
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                  children: documents.map((doc) {
-                    var data = doc.data() as Map<String, dynamic>;
-                    return FutureBuilder<bool>(
-                      future: checkCompletionStatus(uid, doc.id),
-                      builder: (context, completionSnapshot) {
-                        if (completionSnapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        }
-                        return buildCategoryCard(
-                          context,
-                          data['title'],
-                          preventWordBreak(data['catchphrase']),
-                          Colors.white,
-                          TermCard(
-                              title: data['title'],
-                              documentName: doc.id,
-                              uid: uid),
-                          completionSnapshot.data ?? false,
-                        );
-                      },
+
+                List<Widget> completedCategories = [];
+                List<Widget> incompleteCategories = [];
+                List<Widget> newCategories = [];
+
+                return FutureBuilder<List<bool>>(
+                  future: Future.wait(documents.map((doc) => checkCompletionStatus(uid, doc.id)).toList()),
+                  builder: (context, completionSnapshots) {
+                    if (completionSnapshots.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    }
+
+                    for (var i = 0; i < documents.length; i++) {
+                      var doc = documents[i];
+                      var data = doc.data() as Map<String, dynamic>;
+                      var isCompleted = completionSnapshots.data?[i] ?? false;
+
+                      var categoryCard = buildCategoryCard(
+                        context,
+                        data['title'],
+                        preventWordBreak(data['catchphrase']),
+                        Colors.white,
+                        TermCard(
+                            title: data['title'],
+                            documentName: doc.id,
+                            uid: uid),
+                        isCompleted,
+                      );
+
+                      if (isCompleted) {
+                        completedCategories.add(categoryCard);
+                      } else {
+                        incompleteCategories.add(categoryCard);
+                      }
+                    }
+
+                    return GridView.count(
+                      crossAxisCount: 2,
+                      childAspectRatio: 1.6 / 2,
+                      padding: const EdgeInsets.all(20),
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                      children: incompleteCategories + completedCategories,
                     );
-                  }).toList(),
+                  },
                 );
               },
             ),

@@ -59,7 +59,7 @@ class CompletedQuizPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: ColorTheme.colorWhite,
         title: const Text(
-          '완료된 퀴즈 목록',
+          '해결한 퀴즈 목록',
           style: TextStyle(color: Colors.black),
         ),
         leading: IconButton(
