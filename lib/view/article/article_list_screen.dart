@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:motu/view/article/widget/article_list_builder.dart';
+import 'package:motu/view/article/widget/skeleton.dart';
 import '../../model/article_data.dart';
-
 import 'article_detail_screen.dart';
 
 class ArticleListScreen extends StatelessWidget {
@@ -10,8 +10,11 @@ class ArticleListScreen extends StatelessWidget {
 
   Future<List<Article>> fetchArticles() async {
     try {
-      QuerySnapshot querySnapshot = await _firestore.collection('financial_column').get();
-      return querySnapshot.docs.map((doc) => Article.fromFirestore(doc)).toList();
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('financial_column').get();
+      return querySnapshot.docs
+          .map((doc) => Article.fromFirestore(doc))
+          .toList();
     } catch (e) {
       print(e);
       return [];
@@ -41,7 +44,13 @@ class ArticleListScreen extends StatelessWidget {
         future: fetchArticles(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return ListView.builder(
+              itemCount: 4,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Skeleton(height: 200, width: double.infinity),
+              ),
+            );
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -59,7 +68,7 @@ class ArticleListScreen extends StatelessWidget {
                         const Text(
                           "회원님을 위한 추천 컨텐츠",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -72,93 +81,19 @@ class ArticleListScreen extends StatelessWidget {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return SliverToBoxAdapter(
-                        child: Container(
-                          height: 200,
-                          child: Center(child: CircularProgressIndicator()),
-                        ),
-                      );
-                    } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-                      return SliverToBoxAdapter(
-                        child: Container(
-                          height: 200,
-                          child: Center(child: Text('No recommendations available.')),
-                        ),
-                      );
-                    } else {
-                      final recommendedArticles = snapshot.data!;
-                      return SliverToBoxAdapter(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 16.0),
                           child: Container(
                             height: 200,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount: recommendedArticles.length,
+                              itemCount: 4,
                               itemBuilder: (context, index) {
-                                final article = recommendedArticles[index];
                                 return AspectRatio(
                                   aspectRatio: 2.6 / 3,
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ArticleDetailScreen(article: article),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      margin: const EdgeInsets.only(right: 15.0),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Stack(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(20),
-                                            child: ColorFiltered(
-                                              colorFilter: ColorFilter.mode(
-                                                Colors.black.withOpacity(0.5),
-                                                BlendMode.darken,
-                                              ),
-                                              child: FutureBuilder<String>(
-                                                future: getImageUrl(article.imageUrl),
-                                                builder: (context, snapshot) {
-                                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                                    return Center(child: CircularProgressIndicator());
-                                                  } else if (snapshot.hasError || !snapshot.hasData || snapshot.data == '') {
-                                                    return Icon(Icons.error, color: Colors.red);
-                                                  } else {
-                                                    return Image.network(
-                                                      snapshot.data!,
-                                                      fit: BoxFit.cover,
-                                                      width: double.infinity,
-                                                      height: double.infinity,
-                                                    );
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            left: 8,
-                                            bottom: 8,
-                                            right: 8,
-                                            child: Text(
-                                              article.title,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                              textAlign: TextAlign.right,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 15.0),
+                                    child: Skeleton(height: 200, width: 180),
                                   ),
                                 );
                               },
@@ -166,19 +101,33 @@ class ArticleListScreen extends StatelessWidget {
                           ),
                         ),
                       );
+                    } else if (snapshot.hasError ||
+                        !snapshot.hasData ||
+                        snapshot.data!.isEmpty) {
+                      return SliverToBoxAdapter(
+                        child: Container(
+                          height: 200,
+                          child: Center(
+                              child: Text('No recommendations available.')),
+                        ),
+                      );
+                    } else {
+                      final recommendedArticles = snapshot.data!;
+                      return buildRecommendedArticles(recommendedArticles);
                     }
                   },
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(
+                        top: 30.0, right: 16.0, left: 16.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           "경제/금융 상식",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -188,7 +137,7 @@ class ArticleListScreen extends StatelessWidget {
                 ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                        (context, index) {
+                    (context, index) {
                       final article = articles[index];
                       return articleListBuilder(context, article);
                     },
@@ -199,6 +148,107 @@ class ArticleListScreen extends StatelessWidget {
             );
           }
         },
+      ),
+    );
+  }
+
+  Widget buildRecommendedArticles(List<Article> recommendedArticles) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Container(
+          height: 200,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: recommendedArticles.length,
+            itemBuilder: (context, index) {
+              final article = recommendedArticles[index];
+              return AspectRatio(
+                aspectRatio: 2.6 / 3,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ArticleDetailScreen(article: article),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 15.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: FutureBuilder<String>(
+                            future: getImageUrl(article.imageUrl),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Skeleton(height: 200, width: 180);
+                              } else if (snapshot.hasError ||
+                                  !snapshot.hasData ||
+                                  snapshot.data == '') {
+                                return Icon(Icons.error, color: Colors.red);
+                              } else {
+                                return ColorFiltered(
+                                  colorFilter: ColorFilter.mode(
+                                    Colors.black.withOpacity(0.5),
+                                    BlendMode.darken,
+                                  ),
+                                  child: Image.network(
+                                    snapshot.data!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                        Positioned(
+                          left: 8,
+                          bottom: 8,
+                          right: 8,
+                          child: FutureBuilder<String>(
+                            future: getImageUrl(article.imageUrl),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Container();
+                              } else if (snapshot.hasError ||
+                                  !snapshot.hasData ||
+                                  snapshot.data == '') {
+                                return Container();
+                              } else {
+                                return Text(
+                                  article.title,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                  textAlign: TextAlign.right,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
