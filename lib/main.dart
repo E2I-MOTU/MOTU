@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:motu/service/auth_service.dart';
+import 'package:motu/service/common_service.dart';
 import 'package:motu/service/scenario_service.dart';
 import 'package:motu/firebase_options.dart';
 import 'package:motu/provider/terminology_quiz_provider.dart';
@@ -31,7 +32,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => ScenarioService()),
         ChangeNotifierProvider(create: (context) => ChatService()),
         ChangeNotifierProvider(create: (context) => NavigationService()),
-        ChangeNotifierProvider(create: (_) => TerminologyQuizService()),
+        ChangeNotifierProvider(create: (context) => TerminologyQuizService()),
+        ChangeNotifierProvider(create: (context) => CommonService()),
       ],
       builder: (context, child) => const App(),
     ),

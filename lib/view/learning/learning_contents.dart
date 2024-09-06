@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:motu/view/learning/widget/learning_contents_builder.dart';
 import 'package:motu/view/quiz/quiz_main.dart';
 import 'package:motu/view/terminology/terminology_main.dart';
-import '../../widget/drawer_menu.dart';
 import '../article/article_list_screen.dart';
 import '../news/news_list_screen.dart';
 import '../theme/color_theme.dart';
@@ -92,7 +91,7 @@ class LearningContentscreen extends StatelessWidget {
                       context,
                       '오늘의\n시사 정보\n확인하기',
                       ColorTheme.colorWhite,
-                      NewsListScreen(),
+                      const NewsListScreen(),
                       'assets/images/character/teaching_panda.png',
                     ),
                   ],

@@ -6,10 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:motu/model/scenario_result.dart';
 import 'package:motu/model/user_model.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../model/balance_detail.dart';
 
 class AuthService with ChangeNotifier {
+  Function? showAddInfoDialog;
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseAuth get auth => _auth;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -35,6 +38,7 @@ class AuthService with ChangeNotifier {
         password: password,
       );
       User? user = userCredential.user;
+      notifyListeners();
       return user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -42,20 +46,39 @@ class AuthService with ChangeNotifier {
       } else if (e.code == 'wrong-password') {
         log('Wrong password provided for that user.');
       }
+      notifyListeners();
       return null;
     }
   }
 
   Future<User?> registerWithEmailAndPassword(
-      String email, String password) async {
+      String email, String password, String name) async {
     try {
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      User? user = userCredential.user;
-      return user;
+
+      if (_auth.currentUser != null) {
+        log('Email Register Success: ${_auth.currentUser!}');
+
+        bool isUserInfoExists = await checkUserInfoExists();
+        if (isUserInfoExists) {
+          log("유저 정보가 이미 존재합니다.");
+          _user = await getUserInfo();
+        } else {
+          log("유저 정보가 없으므로 추가합니다.");
+          await addEmailUserInfo(name);
+        }
+
+        notifyListeners();
+        return _auth.currentUser;
+      } else {
+        log('Email Register Fail: No User Found');
+
+        notifyListeners();
+        return null;
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         log('The password provided is too weak.');
@@ -107,6 +130,44 @@ class AuthService with ChangeNotifier {
     }
   }
 
+  Future<User?> signInWithApple() async {
+    final AuthorizationCredentialAppleID appleCredential =
+        await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+    );
+
+    final OAuthCredential credential = OAuthProvider('apple.com').credential(
+      idToken: appleCredential.identityToken,
+      accessToken: appleCredential.authorizationCode,
+    );
+
+    await _auth.signInWithCredential(credential);
+
+    if (_auth.currentUser != null) {
+      log('Apple Login Success: ${_auth.currentUser!}');
+
+      bool isUserInfoExists = await checkUserInfoExists();
+      if (isUserInfoExists) {
+        log("유저 정보가 이미 존재합니다.");
+        _user = await getUserInfo();
+      } else {
+        log("유저 정보가 없음");
+        await addAppleUserInfo();
+      }
+
+      notifyListeners();
+      return _auth.currentUser;
+    } else {
+      log('Apple Login Fail: No User Found');
+
+      notifyListeners();
+      return null;
+    }
+  }
+
   Future<bool> checkUserInfoExists() async {
     // 현재 유저의 UID 가져오기
     if (_auth.currentUser != null) {
@@ -128,8 +189,8 @@ class AuthService with ChangeNotifier {
       UserModel currentUser = UserModel(
         uid: _auth.currentUser!.uid,
         email: _auth.currentUser!.email!,
-        name: _auth.currentUser!.displayName!,
-        photoUrl: _auth.currentUser!.photoURL!,
+        name: _auth.currentUser!.displayName ?? "",
+        photoUrl: _auth.currentUser!.photoURL ?? "",
         balance: 1000000,
         balanceHistory: [
           BalanceDetail(
@@ -153,6 +214,68 @@ class AuthService with ChangeNotifier {
     }
   }
 
+  Future<void> addEmailUserInfo(String name) async {
+    if (_auth.currentUser != null) {
+      UserModel currentUser = UserModel(
+        uid: _auth.currentUser!.uid,
+        email: _auth.currentUser!.email!,
+        name: name,
+        photoUrl: _auth.currentUser!.photoURL ?? "",
+        balance: 1000000,
+        balanceHistory: [
+          BalanceDetail(
+            date: DateTime.now(),
+            content: "초기 자금",
+            amount: 1000000,
+            isIncome: true,
+          ),
+        ],
+        attendance: [],
+        // completedTerminalogy: [],
+        // completedQuiz: [],
+        // bookmarks: [],
+        scenarioRecord: [],
+      );
+
+      await _firestore
+          .collection('user')
+          .doc(_auth.currentUser!.uid)
+          .set(currentUser.toMap());
+    }
+  }
+
+  Future<void> addAppleUserInfo() async {
+    if (_auth.currentUser != null) {
+      UserModel currentUser = UserModel(
+        uid: _auth.currentUser!.uid,
+        email: _auth.currentUser!.email!,
+        name: _auth.currentUser!.email!.split('@').first,
+        photoUrl: "",
+        balance: 1000000,
+        balanceHistory: [
+          BalanceDetail(
+            date: DateTime.now(),
+            content: "초기 자금",
+            amount: 1000000,
+            isIncome: true,
+          ),
+        ],
+        attendance: [],
+        // completedTerminalogy: [],
+        // completedQuiz: [],
+        // bookmarks: [],
+        scenarioRecord: [],
+      );
+
+      await _firestore
+          .collection('user')
+          .doc(_auth.currentUser!.uid)
+          .set(currentUser.toMap());
+    }
+
+    notifyListeners();
+  }
+
   Future<UserModel> getUserInfo() async {
     User? user = _auth.currentUser;
     if (user != null) {
@@ -164,7 +287,7 @@ class AuthService with ChangeNotifier {
         return UserModel.fromMap(user.uid, doc.data() as Map<String, dynamic>);
       }
     }
-    throw Exception("User not found");
+    throw signOut();
   }
 
   Future<void> updateUserInfo(String name) async {
@@ -180,6 +303,7 @@ class AuthService with ChangeNotifier {
 
   Future<void> signOut() async {
     await _auth.signOut();
+
     notifyListeners();
   }
 

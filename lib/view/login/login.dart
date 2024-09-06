@@ -1,11 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/widgets.dart';
 import 'package:motu/service/auth_service.dart';
+import 'package:motu/view/login/add_info_dialog.dart';
 import 'package:provider/provider.dart';
-import '../main_page.dart';
 import '../theme/color_theme.dart';
 import 'register.dart';
 
@@ -25,6 +24,14 @@ class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    final authService = Provider.of<AuthService>(context, listen: false);
+    authService.showAddInfoDialog = () {
+      Navigator.replace(context,
+          oldRoute: ModalRoute.of(context)!,
+          newRoute:
+              MaterialPageRoute(builder: (context) => const AddInfoDialog()));
+    };
 
     return Consumer<AuthService>(builder: (context, service, child) {
       return GestureDetector(
@@ -210,6 +217,51 @@ class LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  Platform.isIOS
+                      ? SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await service.signInWithApple();
+                              log("로그인 성공: ${service.auth.currentUser!.displayName}");
+                            },
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                side:
+                                    const BorderSide(color: ColorTheme.Black1),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              backgroundColor: ColorTheme.White,
+                              foregroundColor: ColorTheme.Black1,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Image.asset(
+                                  "assets/images/login/apple_logo.png",
+                                  width: 16,
+                                  fit: BoxFit.contain,
+                                ),
+                                const Text(
+                                  "Apple로 로그인",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                Opacity(
+                                  opacity: 0,
+                                  child: Image.asset(
+                                    "assets/images/login/apple_logo.png",
+                                    width: 16,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : const SizedBox(),
                 ],
               ),
             ),

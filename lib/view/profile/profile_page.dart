@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:motu/provider/navigation_provider.dart';
 import 'package:motu/service/auth_service.dart';
 import 'package:motu/view/profile/completed_quiz_page.dart';
 import 'package:motu/view/profile/completed_scenario_page.dart';
+import 'package:motu/view/profile/report_bug_page.dart';
 import 'package:motu/view/profile/widget/attendance_builder.dart';
 import 'package:motu/view/profile/widget/section_builder.dart';
 import 'package:provider/provider.dart';
@@ -47,6 +49,9 @@ class ProfilePageState extends State<ProfilePage> {
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () {
+                final navigation =
+                    Provider.of<NavigationService>(context, listen: false);
+                navigation.setSelectedIndex(0);
                 service.signOut();
               },
             ),
@@ -343,7 +348,14 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const ReportBugPage();
+                    }),
+                  );
+                },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   visualDensity: VisualDensity.compact,
@@ -352,7 +364,7 @@ class ProfilePageState extends State<ProfilePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "문의하기",
+                      "문의 및 개선 사항 요청",
                       style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
                     ),
                     Icon(
@@ -378,6 +390,27 @@ class ProfilePageState extends State<ProfilePage> {
                   children: [
                     Text(
                       "개인정보 처리방침",
+                      style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: ColorTheme.Black1,
+                    ),
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: _launchURL,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "회원 탈퇴하기",
                       style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
                     ),
                     Icon(
