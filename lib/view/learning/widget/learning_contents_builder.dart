@@ -13,7 +13,7 @@ Widget buildCard(
     padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
       color: color,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(15),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.2), // 그림자 색상
@@ -65,7 +65,7 @@ Widget buildCard(
             ),
             backgroundColor: ColorTheme.colorSecondary,
             foregroundColor: ColorTheme.colorWhite,
-            minimumSize: const Size(140, 40),
+            minimumSize: const Size(120, 36),
           ),
         ),
       ],
