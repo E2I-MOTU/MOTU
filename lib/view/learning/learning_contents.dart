@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:motu/view/learning/widget/learning_contents_builder.dart';
 import 'package:motu/view/quiz/quiz_main.dart';
 import 'package:motu/view/terminology/terminology_main.dart';
+import '../../widget/chatbot_fab.dart';
 import '../article/article_list_screen.dart';
 import '../news/news_list_screen.dart';
 import '../theme/color_theme.dart';
@@ -151,35 +152,7 @@ class LearningContentscreen extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ChatbotScreen()),
-          );
-        },
-        child: Container(
-          width: 60.0,
-          height: 60.0,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                spreadRadius: 2,
-                blurRadius: 6,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
-          child: ClipOval(
-            child: Image.asset(
-              'assets/images/chatbot.png',
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-      ),
+      floatingActionButton: ChatbotFloatingActionButton(),
     );
   }
 }
