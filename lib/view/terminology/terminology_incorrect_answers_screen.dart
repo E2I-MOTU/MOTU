@@ -1,24 +1,36 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:motu/text_utils.dart';
+import 'package:motu/view/terminology/terminology_main.dart';
 import '../theme/color_theme.dart';
 import '../../widget/linear_indicator.dart';
 
 class TermIncorrectAnswersScreen extends StatefulWidget {
   final List<Map<String, dynamic>> termIncorrectAnswers;
 
-  const TermIncorrectAnswersScreen({super.key, required this.termIncorrectAnswers});
+  const TermIncorrectAnswersScreen(
+      {super.key, required this.termIncorrectAnswers});
 
   @override
-  _TermIncorrectAnswersScreenState createState() => _TermIncorrectAnswersScreenState();
+  _TermIncorrectAnswersScreenState createState() =>
+      _TermIncorrectAnswersScreenState();
 }
 
-class _TermIncorrectAnswersScreenState extends State<TermIncorrectAnswersScreen> {
-  PageController _pageController = PageController();
+class _TermIncorrectAnswersScreenState
+    extends State<TermIncorrectAnswersScreen> {
+  final PageController _pageController = PageController();
   int _currentPageIndex = 0;
+  String uid = "";
 
   @override
   void initState() {
     super.initState();
+
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      uid = user.uid; // 로그인된 사용자의 uid를 저장
+    }
+
     _pageController.addListener(() {
       setState(() {
         _currentPageIndex = _pageController.page?.round() ?? 0;
@@ -35,8 +47,22 @@ class _TermIncorrectAnswersScreenState extends State<TermIncorrectAnswersScreen>
     }
   }
 
+  void _exitReview() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TermMain(),
+      ),
+      (route) => false, // 모든 기존 경로를 제거
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double buttonWidth = screenWidth * 0.8;
+    const double buttonHeight = 60;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('오답 확인'),
@@ -56,15 +82,26 @@ class _TermIncorrectAnswersScreenState extends State<TermIncorrectAnswersScreen>
               controller: _pageController,
               itemCount: widget.termIncorrectAnswers.length,
               itemBuilder: (context, index) {
-                final question = widget.termIncorrectAnswers[index]['question'] ?? '질문이 없습니다.';
-                final selectedAnswer = widget.termIncorrectAnswers[index]['selectedAnswer'] ?? '답변이 없습니다.';
-                final correctAnswer = widget.termIncorrectAnswers[index]['correctAnswer'] ?? '정답이 없습니다.';
-                final options = widget.termIncorrectAnswers[index]['options'] as List<dynamic>?;
-                final type = widget.termIncorrectAnswers[index]['type'] ?? '타입이 없습니다.';
-                final situation = widget.termIncorrectAnswers[index]['situation'] ?? '상황 설명이 없습니다.';
+                final question = widget.termIncorrectAnswers[index]
+                        ['question'] ??
+                    '질문이 없습니다.';
+                final selectedAnswer = widget.termIncorrectAnswers[index]
+                        ['selectedAnswer'] ??
+                    '답변이 없습니다.';
+                final correctAnswer = widget.termIncorrectAnswers[index]
+                        ['correctAnswer'] ??
+                    '정답이 없습니다.';
+                final options = widget.termIncorrectAnswers[index]['options']
+                    as List<dynamic>?;
+                final type =
+                    widget.termIncorrectAnswers[index]['type'] ?? '타입이 없습니다.';
+                final situation = widget.termIncorrectAnswers[index]
+                        ['situation'] ??
+                    '상황 설명이 없습니다.';
 
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -104,10 +141,11 @@ class _TermIncorrectAnswersScreenState extends State<TermIncorrectAnswersScreen>
                                 child: ClipPath(
                                   clipper: ArrowClipper(),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 30, vertical: 8),
                                     color: ColorTheme.colorPrimary,
                                     child: Transform.translate(
-                                      offset: Offset(-4, 0),
+                                      offset: const Offset(-4, 0),
                                       child: const Text(
                                         '상황',
                                         style: TextStyle(
@@ -136,7 +174,8 @@ class _TermIncorrectAnswersScreenState extends State<TermIncorrectAnswersScreen>
                           ...options.map<Widget>((option) {
                             Color optionColor = ColorTheme.colorWhite;
                             if (option == selectedAnswer) {
-                              optionColor = ColorTheme.colorDisabled.withOpacity(0.7);
+                              optionColor =
+                                  ColorTheme.colorDisabled.withOpacity(0.7);
                             } /*else if (option == correctAnswer) {
                               optionColor = Colors.green.withOpacity(0.7);
                             }*/
@@ -154,7 +193,7 @@ class _TermIncorrectAnswersScreenState extends State<TermIncorrectAnswersScreen>
                                 textAlign: TextAlign.center,
                               ),
                             );
-                          }).toList(),
+                          }),
                         ] else if (type == '단답형') ...[
                           const SizedBox(height: 20),
                           Container(
@@ -167,7 +206,7 @@ class _TermIncorrectAnswersScreenState extends State<TermIncorrectAnswersScreen>
                             alignment: Alignment.center,
                             child: Text(
                               '입력한 답변: $selectedAnswer',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 color: ColorTheme.colorFont,
                               ),
@@ -184,17 +223,41 @@ class _TermIncorrectAnswersScreenState extends State<TermIncorrectAnswersScreen>
                           ),*/
                         ],
                         const SizedBox(height: 15),
-                        TextButton(
-                          onPressed: _goToNextPage,
-                          child: const Text(
-                            '다음 틀린 문제 확인하기',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Colors.grey,
+                        if (_currentPageIndex ==
+                            widget.termIncorrectAnswers.length - 1) ...[
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            width: buttonWidth,
+                            height: buttonHeight,
+                            child: ElevatedButton(
+                              onPressed: _exitReview,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: ColorTheme.colorPrimary,
+                                foregroundColor: ColorTheme.colorWhite,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                textStyle: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              child: const Text('종료하기'),
                             ),
                           ),
-                        ),
+                        ] else ...[
+                          TextButton(
+                            onPressed: _goToNextPage,
+                            child: const Text(
+                              '다음 틀린 문제 확인하기',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -214,7 +277,8 @@ class ArrowClipper extends CustomClipper<Path> {
     final path = Path();
     path.lineTo(size.width - 20, 0); // Top-right corner minus triangle width
     path.lineTo(size.width, size.height / 2); // Midpoint of right edge
-    path.lineTo(size.width - 20, size.height); // Bottom-right corner minus triangle width
+    path.lineTo(size.width - 20,
+        size.height); // Bottom-right corner minus triangle width
     path.lineTo(0, size.height); // Bottom-left corner
     path.lineTo(0, 0); // Top-left corner
     path.close(); // Close the path

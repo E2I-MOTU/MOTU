@@ -7,6 +7,7 @@ import '../../provider/navigation_provider.dart';
 import '../../service/home_service.dart';
 import '../../service/auth_service.dart';
 import '../../text_utils.dart';
+import '../../widget/chatbot_fab.dart';
 import '../quiz/widget/quiz_category_builder.dart';
 import '../terminology/terminology_card.dart';
 import '../terminology/widget/terminology_category_card_builder.dart';
@@ -208,9 +209,10 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
+
+                  // 오늘의 추천 학습 섹션
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 8, horizontal: 20.0),
+                    padding: const EdgeInsets.only(top: 8, bottom: 8, left: 20.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -226,12 +228,12 @@ class _HomePageState extends State<HomePage> {
                             ),
                             TextButton(
                               onPressed: () {
-                                Provider.of<NavigationService>(context, listen: false)
-                                    .goToLearning();
+                                Provider.of<NavigationService>(context, listen: false).goToLearning();
                               },
                               child: const Text("전체보기"),
                               style: TextButton.styleFrom(
                                 foregroundColor: ColorTheme.colorFont,
+                                padding: const EdgeInsets.only(right: 20.0), // 오른쪽 패딩 설정
                               ),
                             ),
                           ],
@@ -241,57 +243,74 @@ class _HomePageState extends State<HomePage> {
                           future: _getRandomCategoriesAndQuizzes(),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
+                              return const Center(child: CircularProgressIndicator());
                             }
                             final documents = snapshot.data!;
                             return Container(
                               height: 240,
-                              child: ListView(
+                              child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                children: documents.map((data) {
-                                  return AspectRatio(
-                                    aspectRatio: 1.6 / 2,
-                                    child: Container(
-                                      margin: const EdgeInsets.only(top: 10,
-                                          bottom: 10,
-                                          right: 10,
-                                          left: 4),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: data['type'] == 'terminology'
-                                          ? buildCategoryCard(
-                                        context,
-                                        data['title'],
-                                        preventWordBreak(data['catchphrase']),
-                                        Colors.white,
-                                        TermCard(
-                                          title: data['title'],
-                                          documentName: data['id'],
-                                          uid: Provider.of<AuthService>(context, listen: false).user.uid,
+                                itemCount: documents.length,
+                                itemBuilder: (context, index) {
+                                  final data = documents[index];
+                                  return Row(
+                                    children: [
+                                      AspectRatio(
+                                        aspectRatio: 1.6 / 2,
+                                        child: Container(
+                                          margin: const EdgeInsets.only(
+                                            top: 10,
+                                            bottom: 10,
+                                            right: 8,
+                                            left: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: data['type'] == 'terminology'
+                                              ? buildCategoryCard(
+                                            context,
+                                            data['title'],
+                                            preventWordBreak(data['catchphrase']),
+                                            Colors.white,
+                                            TermCard(
+                                              title: data['title'],
+                                              documentName: data['id'],
+                                              uid: Provider.of<AuthService>(context, listen: false).user.uid,
+                                            ),
+                                            false,
+                                          )
+                                              : buildQuizCard(
+                                            context: context,
+                                            uid: Provider.of<AuthService>(context, listen: false).user.uid,
+                                            quizId: data['id'],
+                                            catchphrase: data['catchphrase'] ?? '설명 없음',
+                                            score: 0,
+                                            totalQuestions: 15,
+                                            isCompleted: false,
+                                            isNewQuiz: true,
+                                          ),
                                         ),
-                                        false,
-                                      )
-                                          : buildQuizCard(
-                                        context: context,
-                                        uid: Provider.of<AuthService>(context, listen: false).user.uid,
-                                        quizId: data['id'],
-                                        catchphrase: data['catchphrase'] ??
-                                            '설명 없음',
-                                        score: 0,
-                                        totalQuestions: 15,
-                                        isCompleted: false,
-                                        isNewQuiz: true,
                                       ),
-                                    ),
+                                      if (index < documents.length - 1) // 마지막 카드 제외 간격 추가
+                                        const SizedBox(width: 4),
+                                    ],
                                   );
-                                }).toList(),
+                                },
                               ),
                             );
                           },
                         ),
-                        const SizedBox(height: 30),
+                      ],
+                    ),
+                  ),
+
+                  // 학습 진도율 섹션
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         const Text(
                           "학습 진도율",
                           style: TextStyle(
@@ -304,8 +323,7 @@ class _HomePageState extends State<HomePage> {
                           future: _getCompletedCounts(),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
+                              return const Center(child: CircularProgressIndicator());
                             }
 
                             final counts = snapshot.data!;
@@ -351,6 +369,7 @@ class _HomePageState extends State<HomePage> {
           }
         },
       ),
+      floatingActionButton: ChatbotFloatingActionButton(),
     );
   }
 
