@@ -5,6 +5,8 @@ import '../../service/news_service.dart';
 import 'news_list_item.dart';
 
 class NewsListScreen extends StatefulWidget {
+  const NewsListScreen({super.key});
+
   @override
   _NewsListScreenState createState() => _NewsListScreenState();
 }
@@ -33,7 +35,7 @@ class _NewsListScreenState extends State<NewsListScreen> {
     } else {
       print('Could not launch $url');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not launch the URL')),
+        const SnackBar(content: Text('Could not launch the URL')),
       );
     }
   }
@@ -44,12 +46,12 @@ class _NewsListScreenState extends State<NewsListScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
-        title: Text(
+        title: const Text(
           '오늘의 시사',
           style: TextStyle(color: Colors.black),
         ),
@@ -72,10 +74,9 @@ class _NewsListScreenState extends State<NewsListScreen> {
                     child: ElevatedButton(
                       onPressed: () => _onTopicSelected(topic),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isSelected
-                            ? Color(0xff701FFF)
-                            : Colors.white,
-                        side: BorderSide(
+                        backgroundColor:
+                            isSelected ? const Color(0xff701FFF) : Colors.white,
+                        side: const BorderSide(
                           color: Color(0xff701FFF),
                           width: 1.5,
                         ),
@@ -83,7 +84,9 @@ class _NewsListScreenState extends State<NewsListScreen> {
                       child: Text(
                         topic,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : Color(0xff701FFF),
+                          color: isSelected
+                              ? Colors.white
+                              : const Color(0xff701FFF),
                         ),
                       ),
                     ),
@@ -97,15 +100,15 @@ class _NewsListScreenState extends State<NewsListScreen> {
               future: _newsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No news available'));
+                  return const Center(child: Text('No news available'));
                 } else {
                   return ListView.separated(
                     itemCount: snapshot.data!.length,
-                    separatorBuilder: (context, index) => Divider(
+                    separatorBuilder: (context, index) => const Divider(
                       color: Colors.grey,
                       thickness: 1.0,
                       indent: 16.0,

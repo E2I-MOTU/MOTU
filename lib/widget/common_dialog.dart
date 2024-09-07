@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:motu/model/balance_detail.dart';
+import 'package:motu/service/auth_service.dart';
+import 'package:motu/service/scenario_service.dart';
 import 'package:motu/widget/motu_button.dart';
 import 'package:provider/provider.dart';
 
@@ -48,12 +51,29 @@ Widget CommonDialog(BuildContext context) {
                       final navService = Provider.of<NavigationService>(context,
                           listen: false);
                       navService.setSelectedIndex(2);
-                      Navigator.pushAndRemoveUntil(
+
+                      final scenarioService =
+                          Provider.of<ScenarioService>(context, listen: false);
+                      scenarioService.resetAllData();
+
+                      final authService =
+                          Provider.of<AuthService>(context, listen: false);
+                      authService.setUserBalance(
+                          (scenarioService.originBalance * 0.9).toInt());
+
+                      authService.addBalanceDetail(BalanceDetail(
+                        date: DateTime.now(),
+                        content: "시나리오 중도 포기 패널티",
+                        amount: (scenarioService.originBalance * 0.1).toInt(),
+                        isIncome: false,
+                      ));
+
+                      Navigator.replace(
                         context,
-                        MaterialPageRoute(
+                        oldRoute: ModalRoute.of(context)!,
+                        newRoute: MaterialPageRoute(
                           builder: (context) => const MainPage(),
                         ),
-                        (route) => false, // 모든 기존 경로를 제거
                       );
                     },
                   ),
@@ -63,20 +83,20 @@ Widget CommonDialog(BuildContext context) {
           ),
         ),
         SizedBox(
-          height: size.height * 0.3,
-          width: size.width * 0.8,
+          height: size.height * 0.4,
+          width: size.width * 0.7,
           child: const Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 32),
               Text(
                 "정말 나가실 건가요?",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 32),
               Text(
-                "중도 포기하면 투자했던 금액이 사라져요.",
-                style: TextStyle(fontSize: 14),
+                "중도 포기하면 수수료로 기존 자산의 10% 금액만큼 차감됩니다.",
+                style: TextStyle(fontSize: 16),
               ),
             ],
           ),

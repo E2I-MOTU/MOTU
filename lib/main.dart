@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:motu/service/auth_service.dart';
+import 'package:motu/service/common_service.dart';
 import 'package:motu/service/scenario_service.dart';
 import 'package:motu/firebase_options.dart';
 import 'package:motu/provider/terminology_quiz_provider.dart';
@@ -31,7 +33,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => ScenarioService()),
         ChangeNotifierProvider(create: (context) => ChatService()),
         ChangeNotifierProvider(create: (context) => NavigationService()),
-        ChangeNotifierProvider(create: (_) => TerminologyQuizService()),
+        ChangeNotifierProvider(create: (context) => TerminologyQuizService()),
+        ChangeNotifierProvider(create: (context) => CommonService()),
       ],
       builder: (context, child) => const App(),
     ),
@@ -50,6 +53,7 @@ class App extends StatelessWidget {
     return ToastificationWrapper(
       child: MaterialApp(
         title: 'MOTU',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
           primaryColor: ColorTheme.Purple1,
@@ -59,12 +63,27 @@ class App extends StatelessWidget {
           ),
           scaffoldBackgroundColor: ColorTheme.White,
           fontFamily: "Pretendard",
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
         ),
-        home: Consumer<AuthService>(builder: (context, service, child) {
-          return service.auth.currentUser != null
-              ? const MainPage()
-              : const LoginPage();
-        }),
+        home: StreamBuilder<User?>(
+          stream: authService.auth.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+
+            if (snapshot.hasData) {
+              return const MainPage();
+            } else {
+              return const LoginPage();
+            }
+          },
+        ),
       ),
     );
   }

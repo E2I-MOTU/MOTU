@@ -24,16 +24,30 @@ class StockListView extends StatelessWidget {
               ),
             ),
             service.checkInvested()
-                ? const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        const Text(
+                          '관련주',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Text(
-                          '+9.5%\n+285,000',
+                          '${service.currentPercentStr()}\n${service.currentPriceStr()}',
                           style: TextStyle(
                             fontSize: 15,
-                            color: Colors.red,
+                            color:
+                                service.unrealizedPnL + service.realizedPnL == 0
+                                    ? Colors.black
+                                    : service.unrealizedPnL +
+                                                service.realizedPnL >
+                                            0
+                                        ? Colors.red
+                                        : Colors.blue,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.right,
@@ -42,11 +56,11 @@ class StockListView extends StatelessWidget {
                     ),
                   )
                 : SizedBox(
-                    height: screenSize.height * 0.07,
+                    height: screenSize.height * 0.1,
                     child: const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(height: 20),
+                        SizedBox(height: 32),
                         Center(
                           child: Text(
                             "투자한 종목이 없습니다.",
@@ -59,14 +73,16 @@ class StockListView extends StatelessWidget {
                       ],
                     ),
                   ),
-            const SizedBox(height: 16),
+            service.checkInvested()
+                ? const SizedBox(height: 16)
+                : const SizedBox(),
             Column(
               children: service.investStocks.keys.map<Widget>((stock) {
                 if (service.investStocks[stock]![0] != 0) {
                   switch (stock) {
                     case '관련주 A':
                       return StockItem(
-                        logo: Icons.web,
+                        logo: "assets/images/scenario/stock_a.png",
                         name: stock,
                         amount: service.investStocks[stock]![0],
                         value: Formatter.format(
@@ -76,7 +92,7 @@ class StockListView extends StatelessWidget {
                       );
                     case '관련주 B':
                       return StockItem(
-                        logo: Icons.business,
+                        logo: "assets/images/scenario/stock_b.png",
                         name: stock,
                         amount: service.investStocks[stock]![0],
                         value: Formatter.format(
@@ -86,7 +102,7 @@ class StockListView extends StatelessWidget {
                       );
                     case '관련주 C':
                       return StockItem(
-                        logo: Icons.account_balance,
+                        logo: "assets/images/scenario/stock_c.png",
                         name: stock,
                         amount: service.investStocks[stock]![0],
                         value: Formatter.format(
@@ -96,7 +112,7 @@ class StockListView extends StatelessWidget {
                       );
                     case '관련주 D':
                       return StockItem(
-                        logo: Icons.attach_money,
+                        logo: "assets/images/scenario/stock_d.png",
                         name: stock,
                         amount: service.investStocks[stock]![0],
                         value: Formatter.format(
@@ -106,7 +122,7 @@ class StockListView extends StatelessWidget {
                       );
                     case '관련주 E':
                       return StockItem(
-                        logo: Icons.trending_up,
+                        logo: "assets/images/scenario/stock_e.png",
                         name: stock,
                         amount: service.investStocks[stock]![0],
                         value: Formatter.format(
@@ -128,12 +144,16 @@ class StockListView extends StatelessWidget {
   }
 
   Widget StockItem(
-      {required IconData logo,
+      {required String logo,
       required String name,
       required int amount,
       required String value}) {
     return ListTile(
-      leading: Icon(logo, size: 40),
+      leading: Image.asset(
+        logo,
+        fit: BoxFit.contain,
+        width: 40,
+      ),
       title: Text(name),
       subtitle: Text('$amount주'),
       trailing: Text(value,

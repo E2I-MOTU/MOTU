@@ -7,7 +7,6 @@ import '../../widget/chatbot_fab.dart';
 import '../article/article_list_screen.dart';
 import '../news/news_list_screen.dart';
 import '../theme/color_theme.dart';
-import 'chat_screen.dart';
 
 class LearningContentscreen extends StatelessWidget {
   const LearningContentscreen({super.key});
@@ -25,43 +24,43 @@ class LearningContentscreen extends StatelessWidget {
           Column(
             children: [
               Container(
-                width: screenWidth,
-                height: screenHeight * 0.25,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(40),
-                    bottomRight: Radius.circular(40),
+                  width: screenWidth,
+                  height: screenHeight * 0.25,
+                  padding: const EdgeInsets.all(20),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(40),
+                      bottomRight: Radius.circular(40),
+                    ),
+                    color: ColorTheme.colorSecondary,
                   ),
-                  color: ColorTheme.colorSecondary,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 60),
-                      child: Container(
-                        alignment: Alignment.centerLeft,
-                        child: Transform.translate(
-                          offset: const Offset(20, 0),
-                          child: const Text(
-                            '오늘의 공부\n함께 시작해볼까요?',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 60),
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          child: Transform.translate(
+                            offset: const Offset(20, 0),
+                            child: const Text(
+                              '오늘의 공부\n함께 시작해볼까요?',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-              ),
+                    ],
+                  )),
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,
-                  padding: const EdgeInsets.only(top: 50, bottom: 20, right: 20, left: 20),
+                  padding: const EdgeInsets.only(
+                      top: 50, bottom: 20, right: 20, left: 20),
                   crossAxisSpacing: 15,
                   mainAxisSpacing: 20,
                   childAspectRatio: 3 / 4,
@@ -70,34 +69,30 @@ class LearningContentscreen extends StatelessWidget {
                         context,
                         '용어\n공부하기',
                         ColorTheme.colorWhite,
-                        TermMain(uid: auth.currentUser!.uid),
+                        const TermMain(),
                         'assets/images/character/curious_panda.png',
-                        imageHeight: 76
-                    ),
+                        imageHeight: 76),
                     buildCard(
                         context,
                         '퀴즈 풀며\n내 실력\n확인해보기',
                         ColorTheme.colorWhite,
                         QuizSelectionScreen(uid: auth.currentUser!.uid),
                         'assets/images/character/study_panda.png',
-                        imageHeight: 76
-                    ),
+                        imageHeight: 76),
                     buildCard(
                         context,
                         '꼭 필요한\n경제꿀팁 읽으며\n경제지식 쌓기',
                         ColorTheme.colorWhite,
                         ArticleListScreen(),
                         'assets/images/character/news_panda.png',
-                        imageHeight: 76
-                    ),
+                        imageHeight: 76),
                     buildCard(
                         context,
                         '오늘의\n시사 정보\n확인하기',
                         ColorTheme.colorWhite,
-                        NewsListScreen(),
+                        const NewsListScreen(),
                         'assets/images/character/teaching_panda.png',
-                        imageHeight: 76
-                    ),
+                        imageHeight: 76),
                   ],
                 ),
               ),

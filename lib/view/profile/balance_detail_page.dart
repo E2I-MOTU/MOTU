@@ -239,12 +239,15 @@ class _BalanceDetailPageState extends State<BalanceDetailPage> {
                               ),
                             ),
                             trailing: Text(
-                              '${detail.isIncome ? '+' : '-'} ${Formatter.format(detail.amount)}',
+                              '${detail.amount == 0 ? '' : detail.isIncome ? '+' : '-'} ${Formatter.format(detail.amount)}',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color:
-                                    detail.isIncome ? Colors.green : Colors.red,
+                                color: detail.amount == 0
+                                    ? Colors.black
+                                    : detail.isIncome
+                                        ? Colors.green
+                                        : Colors.red,
                               ),
                             ),
                             dense: true,

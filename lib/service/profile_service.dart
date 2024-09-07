@@ -7,38 +7,6 @@ class ProfileService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final UserService _userService = UserService();
 
-  // Future<UserModel?> getUserInfo() async {
-  //   User? user = _auth.currentUser;
-  //   if (user != null) {
-  //     DocumentSnapshot doc =
-  //         await _firestore.collection('user').doc(user.uid).get();
-  //     if (doc.exists) {
-  //       return UserModel.fromMap(user.uid, doc.data() as Map<String, dynamic>);
-  //     }
-  //   }
-  //   return null;
-  // }
-
-  // Future<void> updateName(String newName) async {
-  //   User? user = _auth.currentUser;
-  //   if (user != null) {
-  //     await _firestore.collection('user').doc(user.uid).update({
-  //       'name': newName,
-  //     });
-  //   }
-  // }
-
-  // Future<void> updateUserInfo(String uid, String name, String email) async {
-  //   User? user = _auth.currentUser;
-  //   if (user != null) {
-  //     DocumentReference userDoc = _firestore.collection('user').doc(uid);
-  //     await userDoc.update({
-  //       'name': name,
-  //       'email': email,
-  //     });
-  //   }
-  // }
-
   Future<void> checkAttendance() async {
     User? user = _auth.currentUser;
     if (user != null) {
@@ -69,7 +37,8 @@ class ProfileService {
       }
 
       // 출석 기록을 날짜 순으로 정렬
-      attendance.sort((a, b) => (a as Timestamp).toDate().compareTo((b as Timestamp).toDate()));
+      attendance.sort((a, b) =>
+          (a as Timestamp).toDate().compareTo((b as Timestamp).toDate()));
 
       // 7일 연속 출석 여부 확인
       bool isConsecutive = true;
@@ -102,8 +71,6 @@ class ProfileService {
       print("Attendance updated successfully");
     }
   }
-
-
 
   Future<List<DateTime>> getAttendance() async {
     User? user = _auth.currentUser;

@@ -15,12 +15,19 @@ class StockNewsTab extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
           child: service.sortNewsList().isEmpty
-              ? const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Center(child: Text('뉴스가 없습니다.')),
-                  ],
+              ? SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: Text(
+                          '현재 업데이트된 뉴스가 없습니다',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               : Column(
                   children: [
