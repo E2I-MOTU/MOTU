@@ -15,7 +15,7 @@ class StockBalanceTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const MyStatus(),
-          const InvestmentStatusToggle(),
+          InvestmentStatusToggle(haveTitle: true),
           CustomDivider(),
           const StockListView(),
           CustomDivider(),

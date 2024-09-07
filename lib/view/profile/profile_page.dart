@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:motu/provider/navigation_provider.dart';
 import 'package:motu/service/auth_service.dart';
 import 'package:motu/view/profile/completed_quiz_page.dart';
+import 'package:motu/view/profile/completed_scenario_page.dart';
+import 'package:motu/view/profile/report_bug_page.dart';
 import 'package:motu/view/profile/widget/attendance_builder.dart';
 import 'package:motu/view/profile/widget/section_builder.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +27,8 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   // 개인정보 처리방침 URL
-  final String _privacyPolicyUrl = "https://amused-power-1c0.notion.site/5704c05a8fdb471a8b23f38b3ecb77f1";
+  final String _privacyPolicyUrl =
+      "https://amused-power-1c0.notion.site/5704c05a8fdb471a8b23f38b3ecb77f1";
 
   void _launchURL() async {
     if (await canLaunch(_privacyPolicyUrl)) {
@@ -46,6 +50,9 @@ class ProfilePageState extends State<ProfilePage> {
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () {
+                final navigation =
+                    Provider.of<NavigationService>(context, listen: false);
+                navigation.setSelectedIndex(0);
                 service.signOut();
               },
             ),
@@ -63,10 +70,10 @@ class ProfilePageState extends State<ProfilePage> {
                   width: 48,
                   height: 48,
                 ),
-                title: Text(service.user.name,
+                title: Text(service.user!.name,
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold)),
-                subtitle: Text(service.user.email),
+                subtitle: Text(service.user!.email),
                 trailing: const Icon(Icons.arrow_forward_ios,
                     size: 16.0, color: Colors.grey),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -74,7 +81,7 @@ class ProfilePageState extends State<ProfilePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) {
-                      return ProfileDetailPage(userName: service.user.name);
+                      return ProfileDetailPage(userName: service.user!.name);
                     }),
                   );
                 },
@@ -138,7 +145,7 @@ class ProfilePageState extends State<ProfilePage> {
                           ),
                           const SizedBox(height: 4.0),
                           Text(
-                            Formatter.format(service.user.balance),
+                            Formatter.format(service.user!.balance),
                             style: const TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.w500,
@@ -280,7 +287,11 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const CompletedScenarioPage();
+                  }));
+                },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   visualDensity: VisualDensity.compact,
@@ -338,7 +349,14 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const ReportBugPage();
+                    }),
+                  );
+                },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   visualDensity: VisualDensity.compact,
@@ -347,7 +365,7 @@ class ProfilePageState extends State<ProfilePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "문의하기",
+                      "문의 및 개선 사항 요청",
                       style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
                     ),
                     Icon(
@@ -373,6 +391,27 @@ class ProfilePageState extends State<ProfilePage> {
                   children: [
                     Text(
                       "개인정보 처리방침",
+                      style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: ColorTheme.Black1,
+                    ),
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: _launchURL,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "회원 탈퇴하기",
                       style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
                     ),
                     Icon(

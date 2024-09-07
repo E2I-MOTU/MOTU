@@ -44,7 +44,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           width: screenSize.width * 0.8,
-          height: screenSize.height * 0.4,
+          height: screenSize.height * 0.55,
           child: Column(
             children: [
               Text(
@@ -151,7 +151,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
                       alignment: Alignment.centerRight,
                       child: Text(
                         widget.tradeType == StockTradeType.buy
-                            ? "최대 구매 가능 : ${(auth.user.balance / service.visibleStockData.last.close).truncate()}주"
+                            ? "최대 구매 가능 : ${(auth.user!.balance / service.visibleStockData.last.close).truncate()}주"
                             : "판매 가능 : ${service.investStocks[service.selectedStock]![0]}주",
                         style: const TextStyle(
                           fontSize: 13,
@@ -235,7 +235,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
                             log("매수 종목가 : ${service.visibleStockData.last.close}");
                             log("매수 금액 : ${_quantity * service.visibleStockData.last.close}");
 
-                            if ((auth.user.balance /
+                            if ((auth.user!.balance /
                                         service.visibleStockData.last.close)
                                     .truncate() <
                                 _quantity) {
@@ -251,7 +251,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
                               return;
                             } else {
                               // investStocks에 저장 & balance에서 뺌
-                              auth.setUserBalance(auth.user.balance -
+                              auth.setUserBalance(auth.user!.balance -
                                   (_quantity *
                                           service.visibleStockData.last.close)
                                       .toInt());
@@ -301,7 +301,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
                               return;
                             } else {
                               // investStocks에 저장 & balance에서 더함
-                              auth.setUserBalance(auth.user.balance +
+                              auth.setUserBalance(auth.user!.balance +
                                   (_quantity *
                                           service.visibleStockData.last.close)
                                       .toInt());

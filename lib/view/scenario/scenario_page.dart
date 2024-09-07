@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:motu/model/balance_detail.dart';
+import 'package:motu/model/scenario_result.dart';
+import 'package:motu/service/auth_service.dart';
 import 'package:motu/view/scenario/balance/stock_balance.dart';
 import 'package:motu/view/scenario/news/stock_news_tab.dart';
 import 'package:motu/view/scenario/order/stock_order.dart';
+import 'package:motu/view/scenario/timeover_page.dart';
+import 'package:motu/view/theme/color_theme.dart';
 import 'package:motu/widget/common_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -14,10 +19,61 @@ class ScenarioPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    final provider = Provider.of<ScenarioService>(context);
+
+    provider.onNavigate = () {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const TimeoverPage()),
+        (route) => false,
+      );
+    };
+
+    provider.updateUserBalanceWhenFinish = () {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      final scenarioService =
+          Provider.of<ScenarioService>(context, listen: false);
+
+      int remainingStockPrice = scenarioService.getRemainStockToBalance();
+      authService.user?.balance += remainingStockPrice;
+
+      int change = authService.user!.balance - scenarioService.originBalance;
+      bool isIncome = change > 0;
+      int amount = change.abs();
+
+      BalanceDetail thisDetail = BalanceDetail(
+        date: DateTime.now(),
+        content: "시나리오로 인한 잔고 변동",
+        amount: amount,
+        isIncome: isIncome,
+      );
+      authService.addBalanceDetail(thisDetail);
+
+      ScenarioResult result = ScenarioResult(
+        date: DateTime.now(),
+        subject: scenarioService.getScenarioTitle(
+            scenarioService.selectedScenario ?? ScenarioType.covid),
+        isIncome: isIncome,
+        totalReturn: amount,
+        returnRate: scenarioService.totalPurchasePrice == 0
+            ? "0.0"
+            : ((scenarioService.totalRatingPrice -
+                        scenarioService.totalPurchasePrice) /
+                    scenarioService.totalPurchasePrice *
+                    100)
+                .toStringAsFixed(1),
+      );
+      authService.addScenarioRecord(result);
+    };
+
     return Consumer<ScenarioService>(builder: (context, service, child) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("COVID", style: TextStyle(fontSize: 18)),
+          title: Text(
+            service.getScenarioTitle(
+                service.selectedScenario ?? ScenarioType.covid),
+            style: const TextStyle(fontSize: 18),
+          ),
           leading: GestureDetector(
             onTap: () {
               showDialog(
@@ -92,7 +148,7 @@ class ScenarioPage extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.bold))),
                   ),
                 ],
-                indicatorColor: Theme.of(context).primaryColor,
+                indicatorColor: ColorTheme.Purple1,
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicatorWeight: 5,
                 isScrollable: true,

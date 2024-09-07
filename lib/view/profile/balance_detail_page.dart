@@ -76,7 +76,7 @@ class _BalanceDetailPageState extends State<BalanceDetailPage> {
                           ),
                           const SizedBox(height: 4.0),
                           Text(
-                            Formatter.format(service.user.balance),
+                            Formatter.format(service.user!.balance),
                             style: const TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.w500,
@@ -195,16 +195,16 @@ class _BalanceDetailPageState extends State<BalanceDetailPage> {
                 const SizedBox(height: 16.0),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: service.user.balanceHistory.length,
+                    itemCount: service.user!.balanceHistory.length,
                     itemBuilder: (context, index) {
                       List<BalanceDetail> sortedBalanceHistory;
                       if (selectedValue == '최신순') {
                         sortedBalanceHistory =
-                            List.from(service.user.balanceHistory)
+                            List.from(service.user!.balanceHistory)
                               ..sort((a, b) => b.date.compareTo(a.date));
                       } else {
                         sortedBalanceHistory =
-                            List.from(service.user.balanceHistory)
+                            List.from(service.user!.balanceHistory)
                               ..sort((a, b) => a.date.compareTo(b.date));
                       }
                       final detail = sortedBalanceHistory[index];
@@ -239,12 +239,15 @@ class _BalanceDetailPageState extends State<BalanceDetailPage> {
                               ),
                             ),
                             trailing: Text(
-                              '${detail.isIncome ? '+' : '-'} ${Formatter.format(detail.amount)}',
+                              '${detail.amount == 0 ? '' : detail.isIncome ? '+' : '-'} ${Formatter.format(detail.amount)}',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color:
-                                    detail.isIncome ? Colors.green : Colors.red,
+                                color: detail.amount == 0
+                                    ? Colors.black
+                                    : detail.isIncome
+                                        ? Colors.green
+                                        : Colors.red,
                               ),
                             ),
                             dense: true,

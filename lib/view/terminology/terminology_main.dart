@@ -9,11 +9,12 @@ import 'package:motu/view/theme/color_theme.dart';
 import 'terminology_card.dart';
 import 'bookmark.dart';
 import 'terminology_search.dart';
+import 'package:motu/widget/bottom_nav_bar.dart';
+import 'package:provider/provider.dart';
+import '../../service/auth_service.dart';
 
 class TermMain extends StatelessWidget {
-  final String uid;
-
-  const TermMain({super.key, required this.uid});
+  const TermMain({super.key});
 
   Future<bool> checkCompletionStatus(String uid, String docId) async {
     final firestore = FirebaseFirestore.instance;
@@ -31,6 +32,8 @@ class TermMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final service = Provider.of<AuthService>(context, listen: false);
+
     return Scaffold(
       backgroundColor: ColorTheme.colorNeutral,
       appBar: AppBar(
@@ -45,7 +48,7 @@ class TermMain extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => const MainPage(),
               ),
-                  (route) => false, // 모든 기존 경로를 제거
+              (route) => false, // 모든 기존 경로를 제거
             );
           },
         ),
@@ -56,7 +59,7 @@ class TermMain extends StatelessWidget {
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: TermSearchDelegate(uid: uid),
+                delegate: TermSearchDelegate(uid: service.user!.uid),
               );
             },
           ),
@@ -65,7 +68,7 @@ class TermMain extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => BookmarkPage()),
+                MaterialPageRoute(builder: (context) => const BookmarkPage()),
               );
             },
           ),
@@ -89,9 +92,13 @@ class TermMain extends StatelessWidget {
                 List<Widget> newCategories = [];
 
                 return FutureBuilder<List<bool>>(
-                  future: Future.wait(documents.map((doc) => checkCompletionStatus(uid, doc.id)).toList()),
+                  future: Future.wait(documents
+                      .map((doc) =>
+                          checkCompletionStatus(service.user!.uid, doc.id))
+                      .toList()),
                   builder: (context, completionSnapshots) {
-                    if (completionSnapshots.connectionState == ConnectionState.waiting) {
+                    if (completionSnapshots.connectionState ==
+                        ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     }
 
@@ -106,9 +113,10 @@ class TermMain extends StatelessWidget {
                         preventWordBreak(data['catchphrase']),
                         Colors.white,
                         TermCard(
-                            title: data['title'],
-                            documentName: doc.id,
-                            uid: uid),
+                          title: data['title'],
+                          documentName: doc.id,
+                          uid: service.user!.uid,
+                        ),
                         isCompleted,
                       );
 
