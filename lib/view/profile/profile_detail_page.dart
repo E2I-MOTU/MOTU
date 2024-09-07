@@ -65,7 +65,7 @@ class ProfileDetailPageState extends State<ProfileDetailPage> {
                       children: [
                         _buildLabeledTextField(
                           controller:
-                              TextEditingController(text: service.user.email),
+                              TextEditingController(text: service.user!.email),
                           label: '이메일',
                           width: textFieldWidth,
                           labelWidth: labelWidth,

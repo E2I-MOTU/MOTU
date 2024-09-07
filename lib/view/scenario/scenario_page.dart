@@ -35,9 +35,9 @@ class ScenarioPage extends StatelessWidget {
           Provider.of<ScenarioService>(context, listen: false);
 
       int remainingStockPrice = scenarioService.getRemainStockToBalance();
-      authService.user.balance += remainingStockPrice;
+      authService.user?.balance += remainingStockPrice;
 
-      int change = authService.user.balance - scenarioService.originBalance;
+      int change = authService.user!.balance - scenarioService.originBalance;
       bool isIncome = change > 0;
       int amount = change.abs();
 

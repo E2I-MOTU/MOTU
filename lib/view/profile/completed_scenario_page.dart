@@ -21,11 +21,11 @@ class CompletedScenarioPage extends StatelessWidget {
             const SizedBox(height: 24),
             Expanded(
               child: ListView.builder(
-                itemCount: service.user.scenarioRecord.length,
+                itemCount: service.user!.scenarioRecord.length,
                 itemBuilder: (context, index) {
                   Size size = MediaQuery.of(context).size;
 
-                  ScenarioResult result = service.user.scenarioRecord[index];
+                  ScenarioResult result = service.user!.scenarioRecord[index];
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
                     child: Container(

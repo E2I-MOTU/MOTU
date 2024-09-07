@@ -70,10 +70,10 @@ class ProfilePageState extends State<ProfilePage> {
                   width: 48,
                   height: 48,
                 ),
-                title: Text(service.user.name,
+                title: Text(service.user!.name,
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold)),
-                subtitle: Text(service.user.email),
+                subtitle: Text(service.user!.email),
                 trailing: const Icon(Icons.arrow_forward_ios,
                     size: 16.0, color: Colors.grey),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -81,7 +81,7 @@ class ProfilePageState extends State<ProfilePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) {
-                      return ProfileDetailPage(userName: service.user.name);
+                      return ProfileDetailPage(userName: service.user!.name);
                     }),
                   );
                 },
@@ -145,7 +145,7 @@ class ProfilePageState extends State<ProfilePage> {
                           ),
                           const SizedBox(height: 4.0),
                           Text(
-                            Formatter.format(service.user.balance),
+                            Formatter.format(service.user!.balance),
                             style: const TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.w500,

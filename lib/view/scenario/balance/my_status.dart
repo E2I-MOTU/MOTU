@@ -72,7 +72,7 @@ class MyStatus extends StatelessWidget {
                       ),
                       const SizedBox(height: 4.0),
                       Text(
-                        Formatter.format(service.user.balance),
+                        Formatter.format(service.user!.balance),
                         style: const TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.w500,

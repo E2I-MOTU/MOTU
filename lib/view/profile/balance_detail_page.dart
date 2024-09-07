@@ -76,7 +76,7 @@ class _BalanceDetailPageState extends State<BalanceDetailPage> {
                           ),
                           const SizedBox(height: 4.0),
                           Text(
-                            Formatter.format(service.user.balance),
+                            Formatter.format(service.user!.balance),
                             style: const TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.w500,
@@ -195,16 +195,16 @@ class _BalanceDetailPageState extends State<BalanceDetailPage> {
                 const SizedBox(height: 16.0),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: service.user.balanceHistory.length,
+                    itemCount: service.user!.balanceHistory.length,
                     itemBuilder: (context, index) {
                       List<BalanceDetail> sortedBalanceHistory;
                       if (selectedValue == '최신순') {
                         sortedBalanceHistory =
-                            List.from(service.user.balanceHistory)
+                            List.from(service.user!.balanceHistory)
                               ..sort((a, b) => b.date.compareTo(a.date));
                       } else {
                         sortedBalanceHistory =
-                            List.from(service.user.balanceHistory)
+                            List.from(service.user!.balanceHistory)
                               ..sort((a, b) => a.date.compareTo(b.date));
                       }
                       final detail = sortedBalanceHistory[index];

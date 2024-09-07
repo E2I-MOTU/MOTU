@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:motu/model/user_model.dart';
 import 'package:motu/service/auth_service.dart';
 import 'package:motu/service/common_service.dart';
 import 'package:motu/service/scenario_service.dart';
@@ -73,6 +74,14 @@ class App extends StatelessWidget {
               return const Scaffold(
                 body: Center(
                   child: CircularProgressIndicator(),
+                ),
+              );
+            }
+
+            if (snapshot.hasError) {
+              return const Scaffold(
+                body: Center(
+                  child: Text('Error'),
                 ),
               );
             }
