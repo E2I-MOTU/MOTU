@@ -18,8 +18,8 @@ class AuthService with ChangeNotifier {
   FirebaseAuth get auth => _auth;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  late UserModel _user;
-  UserModel get user => _user;
+  UserModel? _user;
+  UserModel? get user => _user;
 
   Future<void> initialize() async {
     log("🏁 Initializing MOTU...");
@@ -322,10 +322,12 @@ class AuthService with ChangeNotifier {
       DocumentSnapshot doc =
           await _firestore.collection('user').doc(user.uid).get();
       if (doc.exists) {
-        log("🔍 User Info found: ${doc.data()}");
+        log("🔍 User Info found");
         notifyListeners();
         _user = UserModel.fromMap(user.uid, doc.data() as Map<String, dynamic>);
       }
+    } else {
+      log("🔍 User Info not found");
     }
   }
 
@@ -335,7 +337,7 @@ class AuthService with ChangeNotifier {
         'name': name,
       });
       await getUserInfo();
-      log("🔄 User Info Updated: ${_user.name}");
+      log("🔄 User Info Updated: ${_user?.name}");
       notifyListeners();
     }
   }
@@ -364,7 +366,7 @@ class AuthService with ChangeNotifier {
   }
 
   void setUserBalance(int amount) {
-    _user.balance = amount;
+    _user?.balance = amount;
 
     _firestore.collection('user').doc(_auth.currentUser!.uid).update({
       'balance': amount,
@@ -374,7 +376,7 @@ class AuthService with ChangeNotifier {
   }
 
   void addBalanceDetail(BalanceDetail detail) {
-    _user.balanceHistory.add(detail);
+    _user?.balanceHistory.add(detail);
 
     _firestore.collection('user').doc(_auth.currentUser!.uid).update({
       'balanceHistory': FieldValue.arrayUnion([detail.toMap()]),
@@ -384,7 +386,7 @@ class AuthService with ChangeNotifier {
   }
 
   void addScenarioRecord(ScenarioResult result) {
-    _user.scenarioRecord.add(result);
+    _user?.scenarioRecord.add(result);
 
     _firestore.collection('user').doc(_auth.currentUser!.uid).update({
       'scenarioRecord': FieldValue.arrayUnion([result.toMap()]),

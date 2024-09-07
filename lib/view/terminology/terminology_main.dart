@@ -59,7 +59,7 @@ class TermMain extends StatelessWidget {
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: TermSearchDelegate(uid: service.user.uid),
+                delegate: TermSearchDelegate(uid: service.user!.uid),
               );
             },
           ),
@@ -94,7 +94,7 @@ class TermMain extends StatelessWidget {
                 return FutureBuilder<List<bool>>(
                   future: Future.wait(documents
                       .map((doc) =>
-                          checkCompletionStatus(service.user.uid, doc.id))
+                          checkCompletionStatus(service.user!.uid, doc.id))
                       .toList()),
                   builder: (context, completionSnapshots) {
                     if (completionSnapshots.connectionState ==
@@ -115,7 +115,7 @@ class TermMain extends StatelessWidget {
                         TermCard(
                           title: data['title'],
                           documentName: doc.id,
-                          uid: service.user.uid,
+                          uid: service.user!.uid,
                         ),
                         isCompleted,
                       );

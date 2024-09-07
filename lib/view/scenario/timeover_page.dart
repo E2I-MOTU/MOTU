@@ -40,7 +40,7 @@ class TimeoverPage extends StatelessWidget {
                       children: [
                         const SizedBox(height: 48),
                         Text(
-                          "${auth.user.name}님의 결과",
+                          "${auth.user?.name}님의 결과",
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w600,

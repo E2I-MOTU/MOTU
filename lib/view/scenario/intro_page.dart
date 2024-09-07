@@ -54,7 +54,7 @@ class IntroPage extends StatelessWidget {
                   final scenario =
                       Provider.of<ScenarioService>(context, listen: false);
 
-                  scenario.setOriginBalance(auth.user.balance);
+                  scenario.setOriginBalance(auth.user!.balance);
 
                   scenario.resetAllData();
 
