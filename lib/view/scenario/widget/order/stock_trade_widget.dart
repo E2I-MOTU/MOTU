@@ -44,7 +44,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           width: screenSize.width * 0.8,
-          height: screenSize.height * 0.4,
+          height: screenSize.height * 0.55,
           child: Column(
             children: [
               Text(

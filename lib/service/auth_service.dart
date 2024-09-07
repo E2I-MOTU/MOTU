@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:motu/main.dart';
 import 'package:motu/model/scenario_result.dart';
 import 'package:motu/model/user_model.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -24,7 +25,7 @@ class AuthService with ChangeNotifier {
     log("🏁 Initializing MOTU...");
     if (auth.currentUser != null) {
       log("🔑 User is already signed in: ${auth.currentUser!.uid}");
-      _user = await getUserInfo();
+      await getUserInfo();
     } else {
       log("🔑 No user is signed in.");
     }
@@ -65,7 +66,7 @@ class AuthService with ChangeNotifier {
         bool isUserInfoExists = await checkUserInfoExists();
         if (isUserInfoExists) {
           log("유저 정보가 이미 존재합니다.");
-          _user = await getUserInfo();
+          await getUserInfo();
         } else {
           log("유저 정보가 없으므로 추가합니다.");
           await addEmailUserInfo(name);
@@ -92,6 +93,45 @@ class AuthService with ChangeNotifier {
     }
   }
 
+  Future<User?> signInWithEmail(String email, String password) async {
+    await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    if (_auth.currentUser != null) {
+      log('Email Login Success: ${_auth.currentUser!.displayName}');
+
+      bool isUserInfoExists = await checkUserInfoExists();
+      if (isUserInfoExists) {
+        log("유저 정보가 이미 존재합니다.");
+        await getUserInfo();
+      } else {
+        await addEmailUserInfo(_auth.currentUser!.displayName ?? "");
+        log("유저 정보가 없으므로 추가합니다.");
+      }
+
+      notifyListeners();
+      return _auth.currentUser;
+    } else {
+      log('Email Login Fail: No User Found');
+
+      notifyListeners();
+      return null;
+    }
+  }
+
+  dynamic verifyCheck(BuildContext context) {
+    if (_auth.currentUser != null) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const App()), // MyApp 를 메인 페이지로 교체해 주세요.
+        (route) => false, // 모든 이전 루트를 제거하여 새로운 페이지로 이동합니다
+      );
+    }
+  }
+
   Future<User?> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -114,7 +154,7 @@ class AuthService with ChangeNotifier {
       bool isUserInfoExists = await checkUserInfoExists();
       if (isUserInfoExists) {
         log("유저 정보가 이미 존재합니다.");
-        _user = await getUserInfo();
+        await getUserInfo();
       } else {
         await addUserInfo();
         log("유저 정보가 없으므로 추가합니다.");
@@ -152,7 +192,7 @@ class AuthService with ChangeNotifier {
       bool isUserInfoExists = await checkUserInfoExists();
       if (isUserInfoExists) {
         log("유저 정보가 이미 존재합니다.");
-        _user = await getUserInfo();
+        await getUserInfo();
       } else {
         log("유저 정보가 없음");
         await addAppleUserInfo();
@@ -276,7 +316,7 @@ class AuthService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<UserModel> getUserInfo() async {
+  Future<void> getUserInfo() async {
     User? user = _auth.currentUser;
     if (user != null) {
       DocumentSnapshot doc =
@@ -284,10 +324,9 @@ class AuthService with ChangeNotifier {
       if (doc.exists) {
         log("🔍 User Info found: ${doc.data()}");
         notifyListeners();
-        return UserModel.fromMap(user.uid, doc.data() as Map<String, dynamic>);
+        _user = UserModel.fromMap(user.uid, doc.data() as Map<String, dynamic>);
       }
     }
-    throw signOut();
   }
 
   Future<void> updateUserInfo(String name) async {
@@ -295,7 +334,7 @@ class AuthService with ChangeNotifier {
       await _firestore.collection('user').doc(_auth.currentUser!.uid).update({
         'name': name,
       });
-      _user = await getUserInfo();
+      await getUserInfo();
       log("🔄 User Info Updated: ${_user.name}");
       notifyListeners();
     }

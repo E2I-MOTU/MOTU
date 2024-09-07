@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -65,11 +66,24 @@ class App extends StatelessWidget {
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
         ),
-        home: Consumer<AuthService>(builder: (context, service, child) {
-          return service.auth.currentUser != null
-              ? const MainPage()
-              : const LoginPage();
-        }),
+        home: StreamBuilder<User?>(
+          stream: authService.auth.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+
+            if (snapshot.hasData) {
+              return const MainPage();
+            } else {
+              return const LoginPage();
+            }
+          },
+        ),
       ),
     );
   }

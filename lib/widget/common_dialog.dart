@@ -83,7 +83,7 @@ Widget CommonDialog(BuildContext context) {
           ),
         ),
         SizedBox(
-          height: size.height * 0.3,
+          height: size.height * 0.4,
           width: size.width * 0.7,
           child: const Column(
             crossAxisAlignment: CrossAxisAlignment.center,

@@ -53,7 +53,7 @@ class SalesRecord extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(height: 20),
+                        SizedBox(height: 32),
                         Text(
                           "투자한 기록이 없습니다.",
                           style: TextStyle(

@@ -56,11 +56,11 @@ class StockListView extends StatelessWidget {
                     ),
                   )
                 : SizedBox(
-                    height: screenSize.height * 0.07,
+                    height: screenSize.height * 0.1,
                     child: const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(height: 20),
+                        SizedBox(height: 32),
                         Center(
                           child: Text(
                             "투자한 종목이 없습니다.",
@@ -73,7 +73,9 @@ class StockListView extends StatelessWidget {
                       ],
                     ),
                   ),
-            const SizedBox(height: 16),
+            service.checkInvested()
+                ? const SizedBox(height: 16)
+                : const SizedBox(),
             Column(
               children: service.investStocks.keys.map<Widget>((stock) {
                 if (service.investStocks[stock]![0] != 0) {

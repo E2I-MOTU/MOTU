@@ -157,7 +157,7 @@ class FirstPageView extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: screenSize.height * 0.43,
+                      height: screenSize.height * 0.42,
                       child: service.isChangeStock
                           ? const Center(
                               child: Column(
@@ -217,19 +217,11 @@ class FirstPageView extends StatelessWidget {
                                   highValueMapper: (StockData data, _) =>
                                       data.high,
                                   enableSolidCandles: true,
-                                  bullColor: Colors.blue,
+                                  bearColor: Colors.blue,
+                                  bullColor: Colors.red,
                                   animationDelay: 0,
                                   animationDuration: 500,
                                 ),
-                                // ColumnSeries<StockData, DateTime>(
-                                //   dataSource: service.visibleStockData,
-                                //   yAxisName: 'Volume',
-                                //   xValueMapper: (StockData data, _) => data.x,
-                                //   yValueMapper: (StockData data, _) => data.volume,
-                                //   animationDelay: 0,
-                                //   animationDuration: 500,
-                                //   opacity: 0.8,
-                                // ),
                               ],
                               // 십자선 설정
                               crosshairBehavior: CrosshairBehavior(

@@ -16,10 +16,10 @@ class TutorialPopup extends StatelessWidget {
     return Consumer<ScenarioService>(builder: (context, service, child) {
       return Container(
         padding: EdgeInsets.symmetric(
-          horizontal: size.width * 0.1,
-          vertical: size.height * 0.03,
+          horizontal: size.width * 0.03,
+          vertical: size.height * 0.01,
         ),
-        width: size.width * 0.8,
+        width: size.width * 0.9,
         height: size.height * 0.6,
         child: Stack(
           children: [
@@ -45,32 +45,26 @@ class TutorialPopup extends StatelessWidget {
                         style: TextButton.styleFrom(
                           foregroundColor: ColorTheme.Purple1,
                           backgroundColor: ColorTheme.Purple5,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12.0,
+                          padding: EdgeInsets.symmetric(
+                            vertical: size.height * 0.01,
                           ),
                         ),
                         child: const Text("튜토리얼 보러가기"),
                       ),
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 1),
                     SizedBox(
-                      width: size.width * 0.8,
+                      width: size.width * 0.9,
                       child: TextButton(
                         onPressed: () {
-                          // service.setIsStartScenario(true);
-                          // // 주식 차트 타이머 시작
-                          // service.startDataUpdate();
-                          // // 남은 시간 타이머 시작
-                          // service.startRemainingTimeTimer();
-
                           // 튜토리얼 팝업 닫기
                           Navigator.pop(context);
                         },
                         style: TextButton.styleFrom(
                           foregroundColor: ColorTheme.White,
                           backgroundColor: ColorTheme.Purple1,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12.0,
+                          padding: EdgeInsets.symmetric(
+                            vertical: size.height * 0.01,
                           ),
                         ),
                         child: const Text(
@@ -83,12 +77,14 @@ class TutorialPopup extends StatelessWidget {
                 ),
               ),
             ),
-            Column(
-              children: [
-                _buildTitle(service.selectedScenario ?? type),
-                const SizedBox(height: 24),
-                _buildContent(service.selectedScenario ?? type),
-              ],
+            Center(
+              child: Column(
+                children: [
+                  _buildTitle(service.selectedScenario ?? type),
+                  const SizedBox(height: 24),
+                  _buildContent(service.selectedScenario ?? type),
+                ],
+              ),
             ),
           ],
         ),
@@ -105,6 +101,7 @@ class TutorialPopup extends StatelessWidget {
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
+          textAlign: TextAlign.center,
         );
       case ScenarioType.secondaryBattery:
         return const Text(
@@ -113,6 +110,7 @@ class TutorialPopup extends StatelessWidget {
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
+          textAlign: TextAlign.center,
         );
       default:
         return const SizedBox();
@@ -130,20 +128,44 @@ class TutorialPopup extends StatelessWidget {
                 fontSize: 13,
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 12),
             Text(
                 "👉 팬데믹 사태로 인한 사회적 거리두기 → 각국 정부의 코로나 확산 방지를 위해 출입국 금지 → 여행 불가 → 항공사, 여행사 타격 → 온라인 서비스 수요 증가 → 배달, 온라인 쇼핑 주가 상승",
-                style: TextStyle(fontSize: 13)),
+                style: TextStyle(fontSize: 12)),
             SizedBox(height: 5),
             Text("👉 사회적 거리두기로 인한 원격 근무, 원격 교육 수요 급증",
-                style: TextStyle(fontSize: 13)),
+                style: TextStyle(fontSize: 12)),
             SizedBox(height: 5),
             Text("👉 바이러스 백신 수요로 인한 제약회사 주가 상승",
-                style: TextStyle(fontSize: 13)),
+                style: TextStyle(fontSize: 12)),
           ],
         );
       case ScenarioType.secondaryBattery:
-        return const SizedBox();
+        return const Column(
+          children: [
+            Text(
+              "2차 전지 시장의 시대 흐름을 알려드려요.",
+              style: TextStyle(
+                fontSize: 13,
+              ),
+            ),
+            SizedBox(height: 12),
+            Text(
+              "👉 전기차 수요 증가 → 각국 정부의 친환경 정책 강화 → 2차 전지 제조업체의 성장 기대감 상승",
+              style: TextStyle(fontSize: 12),
+            ),
+            SizedBox(height: 5),
+            Text(
+              "👉 재생 가능 에너지 확산 → 배터리 저장 시스템 필요성 증가 → 2차 전지 산업의 확장",
+              style: TextStyle(fontSize: 12),
+            ),
+            SizedBox(height: 5),
+            Text(
+              "👉 기술 혁신과 생산 비용 절감으로 인한 경쟁력 강화",
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        );
       default:
         return const SizedBox();
     }

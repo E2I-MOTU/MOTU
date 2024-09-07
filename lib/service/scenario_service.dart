@@ -9,9 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:motu/model/invest_record.dart';
 import 'package:motu/model/stock_financial.dart';
 import 'package:motu/model/stock_info.dart';
-import 'package:motu/service/auth_service.dart';
 import 'package:motu/util/util.dart';
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:http/http.dart' as http;
 
@@ -127,7 +125,7 @@ class ScenarioService extends ChangeNotifier {
     setIsChangeStock(true);
 
     // 2초 후에 isChangeStock을 false로 변경
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(milliseconds: 1500), () {
       setIsChangeStock(false);
     });
 

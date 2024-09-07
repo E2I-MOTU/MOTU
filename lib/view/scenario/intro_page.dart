@@ -5,6 +5,7 @@ import 'package:motu/service/auth_service.dart';
 import 'package:motu/service/scenario_service.dart';
 import 'package:motu/view/scenario/widget/tutorial_popup.dart';
 import 'package:motu/view/theme/color_theme.dart';
+import 'package:motu/widget/chatbot_fab.dart';
 import 'package:provider/provider.dart';
 import 'dart:developer' as dev;
 
@@ -94,6 +95,7 @@ class IntroPage extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton: ChatbotFloatingActionButton(),
     );
   }
 }
