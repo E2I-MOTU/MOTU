@@ -113,97 +113,107 @@ class _HomePageState extends State<HomePage> {
                   // 상단 배너 컨테이너
                   Container(
                     width: screenWidth,
-                    height: screenHeight * 0.32,
+                    height: screenHeight * 0.35,
                     decoration: BoxDecoration(
                       color: ColorTheme.colorDisabled,
                       image: const DecorationImage(
-                        image: AssetImage(
-                            'assets/images/home_banner_background.png'),
+                        image: AssetImage('assets/images/home_banner_background.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
                     child: Stack(
                       children: [
-                        // 사용자 이름 및 문구
-                        Positioned(
-                          bottom: screenHeight * 0.32 / 3.5,
-                          left: 30,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                '안녕하세요 ${service.user.name}님',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
+                              // 상단 로고와 알림 아이콘
+                              Padding(
+                                padding: const EdgeInsets.only(top: 30),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    // 로고 이미지
+                                    Image.asset(
+                                      'assets/images/home_logo.png',
+                                      height: screenHeight * 0.03, // 화면 크기에 비례하여 크기 설정
+                                    ),
+                                    // 알림 아이콘
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.notifications_none,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => const NoticePage()),
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 2),
-                              const Text(
-                                '오늘도 MOTU에서\n투자 공부 함께해요!',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
+                              const SizedBox(height: 10), // 로고와 사용자 이름 사이 간격
+
+                              // 사용자 이름 및 문구와 출석체크 버튼
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // 사용자 이름 및 문구
+                                      Text(
+                                        '안녕하세요 ${service.user.name}님',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      const Text(
+                                        '오늘도 MOTU에서\n투자 공부 함께해요!',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10), // 문구와 버튼 사이 간격
+
+                                      // 출석체크 버튼
+                                      SizedBox(
+                                        width: screenWidth * 0.4,
+                                        height: 32,
+                                        child: ElevatedButton(
+                                          onPressed: () => _controller.checkAttendance(context),
+                                          child: const Text('출석체크 하기'),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: ColorTheme.colorPrimary,
+                                            foregroundColor: ColorTheme.colorWhite,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        // 출석체크 버튼
-                        Positioned(
-                          bottom: 30,
-                          left: 30,
-                          child: SizedBox(
-                            width: 140,
-                            height: 32,
-                            child: ElevatedButton(
-                              onPressed: () =>
-                                  _controller.checkAttendance(context),
-                              child: const Text('출석체크 하기'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: ColorTheme.colorPrimary,
-                                foregroundColor: ColorTheme.colorWhite,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        // 로고 이미지
-                        Positioned(
-                          top: 20,
-                          left: 10,
-                          child: Image.asset(
-                            'assets/images/motu_logo.png',
-                            height: 120,
-                          ),
-                        ),
-                        // 알림 아이콘
-                        Positioned(
-                          top: 50,
-                          right: 10,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.notifications_none,
-                              color: Colors.black,
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const NoticePage()),
-                              );
-                            },
-                          ),
-                        ),
+
                         // 캐릭터 이미지
                         Positioned(
                           right: 20,
-                          bottom: 20,
+                          bottom: 30,
                           child: Image.asset(
                             'assets/images/character/hi_panda.png',
-                            height: 120,
+                            height: screenHeight * 0.15, // 화면 크기에 비례한 캐릭터 크기 설정
                           ),
                         ),
                       ],
@@ -328,7 +338,7 @@ class _HomePageState extends State<HomePage> {
 
                             final counts = snapshot.data!;
                             return Container(
-                              height: screenHeight * 0.2,
+                              height: screenHeight * 0.25,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
