@@ -38,7 +38,7 @@ class LearningContentscreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 60),
+                        padding: EdgeInsets.only(top: screenHeight * 0.06),
                         child: Container(
                           alignment: Alignment.centerLeft,
                           child: Transform.translate(
@@ -50,6 +50,8 @@ class LearningContentscreen extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
@@ -112,7 +114,7 @@ class LearningContentscreen extends StatelessWidget {
               child: Row(
                 children: [
                   Transform.translate(
-                    offset: const Offset(-15, 0),
+                    offset: Offset(-15, 0),
                     child: Container(
                       width: screenWidth * 0.2,
                       height: screenWidth * 0.2,

@@ -156,99 +156,102 @@ class FirstPageView extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: screenSize.height * 0.42,
-                      child: service.isChangeStock
-                          ? const Center(
-                              child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CircularProgressIndicator(),
-                                SizedBox(height: 16),
-                                Text("관련주 불러오는 중.."),
-                              ],
-                            ))
-                          : SfCartesianChart(
-                              key: globalKey,
-                              // 주요 X축, Y축 설정
-                              primaryXAxis: DateTimeAxis(
-                                dateFormat: DateFormat.Md("ko_KR"),
-                                intervalType: DateTimeIntervalType.days,
-                                interval: 1,
-                                majorGridLines: const MajorGridLines(width: 0),
-                                edgeLabelPlacement: EdgeLabelPlacement.shift,
-                                initialVisibleMinimum: service
-                                    .visibleStockData.last.x
-                                    .subtract(const Duration(days: 20)),
-                                // initialVisibleMaximum:
-                                //     service.visibleStockData.last.x,
-                              ),
-                              primaryYAxis: NumericAxis(
-                                minimum: service.yMinimum,
-                                maximum: service.yMaximum,
-                                interval: service.yInterval,
-                                numberFormat: NumberFormat.currency(
-                                  locale: 'ko_KR',
-                                  symbol: '₩',
-                                  decimalDigits: 0,
+                    SingleChildScrollView(
+                      child: SizedBox(
+                        height: screenSize.height * 0.42,
+                        child: service.isChangeStock
+                            ? const Center(
+                                child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(),
+                                  SizedBox(height: 16),
+                                  Text("관련주 불러오는 중.."),
+                                ],
+                              ))
+                            : SfCartesianChart(
+                                key: globalKey,
+                                // 주요 X축, Y축 설정
+                                primaryXAxis: DateTimeAxis(
+                                  dateFormat: DateFormat.Md("ko_KR"),
+                                  intervalType: DateTimeIntervalType.days,
+                                  interval: 1,
+                                  majorGridLines:
+                                      const MajorGridLines(width: 0),
+                                  edgeLabelPlacement: EdgeLabelPlacement.shift,
+                                  initialVisibleMinimum: service
+                                      .visibleStockData.last.x
+                                      .subtract(const Duration(days: 20)),
+                                  // initialVisibleMaximum:
+                                  //     service.visibleStockData.last.x,
                                 ),
-                                opposedPosition: true,
-                              ),
-                              // 축 범위 설정
-                              axes: <ChartAxis>[
-                                NumericAxis(
-                                  name: 'Volume',
-                                  isVisible: false,
-                                  interval: 1000000000,
-                                  numberFormat: NumberFormat.compact(),
+                                primaryYAxis: NumericAxis(
+                                  minimum: service.yMinimum,
+                                  maximum: service.yMaximum,
+                                  interval: service.yInterval,
+                                  numberFormat: NumberFormat.currency(
+                                    locale: 'ko_KR',
+                                    symbol: '₩',
+                                    decimalDigits: 0,
+                                  ),
+                                  opposedPosition: true,
                                 ),
-                              ],
-                              // series 데이터 설정
-                              series: <CartesianSeries<StockData, DateTime>>[
-                                CandleSeries<StockData, DateTime>(
-                                  dataSource: service.visibleStockData,
-                                  xValueMapper: (StockData data, _) => data.x,
-                                  openValueMapper: (StockData data, _) =>
-                                      data.open,
-                                  closeValueMapper: (StockData data, _) =>
-                                      data.close,
-                                  lowValueMapper: (StockData data, _) =>
-                                      data.low,
-                                  highValueMapper: (StockData data, _) =>
-                                      data.high,
-                                  enableSolidCandles: true,
-                                  bearColor: Colors.blue,
-                                  bullColor: Colors.red,
-                                  animationDelay: 0,
-                                  animationDuration: 500,
+                                // 축 범위 설정
+                                axes: <ChartAxis>[
+                                  NumericAxis(
+                                    name: 'Volume',
+                                    isVisible: false,
+                                    interval: 1000000000,
+                                    numberFormat: NumberFormat.compact(),
+                                  ),
+                                ],
+                                // series 데이터 설정
+                                series: <CartesianSeries<StockData, DateTime>>[
+                                  CandleSeries<StockData, DateTime>(
+                                    dataSource: service.visibleStockData,
+                                    xValueMapper: (StockData data, _) => data.x,
+                                    openValueMapper: (StockData data, _) =>
+                                        data.open,
+                                    closeValueMapper: (StockData data, _) =>
+                                        data.close,
+                                    lowValueMapper: (StockData data, _) =>
+                                        data.low,
+                                    highValueMapper: (StockData data, _) =>
+                                        data.high,
+                                    enableSolidCandles: true,
+                                    bearColor: Colors.blue,
+                                    bullColor: Colors.red,
+                                    animationDelay: 0,
+                                    animationDuration: 500,
+                                  ),
+                                ],
+                                // 십자선 설정
+                                crosshairBehavior: CrosshairBehavior(
+                                  enable: true,
+                                  activationMode: ActivationMode.longPress,
+                                  lineType: CrosshairLineType.both,
+                                  lineColor: Colors.grey,
+                                  lineWidth: 1,
+                                  lineDashArray: <double>[5, 5],
                                 ),
-                              ],
-                              // 십자선 설정
-                              crosshairBehavior: CrosshairBehavior(
-                                enable: true,
-                                activationMode: ActivationMode.longPress,
-                                lineType: CrosshairLineType.both,
-                                lineColor: Colors.grey,
-                                lineWidth: 1,
-                                lineDashArray: <double>[5, 5],
+                                // 트랙볼 설정
+                                trackballBehavior: CustomTrackballBehavior(),
+                                // 줌 팬 설정
+                                zoomPanBehavior: ZoomPanBehavior(
+                                  enablePinching: true,
+                                  enablePanning: true,
+                                  zoomMode: ZoomMode.x,
+                                ),
+                                onActualRangeChanged:
+                                    (ActualRangeChangedArgs args) {
+                                  SchedulerBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    service.setActualArgs(args);
+                                    service.updateYAxisRange(args);
+                                  });
+                                },
                               ),
-                              // 트랙볼 설정
-                              trackballBehavior: CustomTrackballBehavior(),
-                              // 줌 팬 설정
-                              zoomPanBehavior: ZoomPanBehavior(
-                                enablePinching: true,
-                                enablePanning: true,
-                                zoomMode: ZoomMode.x,
-                              ),
-                              onActualRangeChanged:
-                                  (ActualRangeChangedArgs args) {
-                                SchedulerBinding.instance
-                                    .addPostFrameCallback((_) {
-                                  service.setActualArgs(args);
-                                  service.updateYAxisRange(args);
-                                });
-                              },
-                            ),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(

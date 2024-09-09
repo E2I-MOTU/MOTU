@@ -14,20 +14,24 @@ class HomeService {
           backgroundColor: Colors.white,
           contentPadding: const EdgeInsets.all(40.0),
           content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                '오늘의 출석 체크를 하시겠습니까?',
+                '오늘의 출석 체크를\n하시겠습니까?',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 32),
-              Image.asset(
-                'assets/images/stamp.png',
-                width: 100,
-                height: 100,
+              Align(
+                alignment: Alignment.center,
+                child: Image.asset(
+                  'assets/images/stamp.png',
+                  width: 100,
+                  height: 100,
+                ),
               ),
             ],
           ),
