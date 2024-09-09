@@ -1,4 +1,4 @@
-package com.example.motu
+package com.e2i.motu
 
 import io.flutter.embedding.android.FlutterActivity
 
