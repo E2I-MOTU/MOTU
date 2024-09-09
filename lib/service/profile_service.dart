@@ -7,7 +7,7 @@ class ProfileService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final UserService _userService = UserService();
 
-  Future<void> checkAttendance() async {
+  Future<bool> checkAttendance() async {
     User? user = _auth.currentUser;
     if (user != null) {
       DocumentReference userDoc = _firestore.collection('user').doc(user.uid);
@@ -26,10 +26,13 @@ class ProfileService {
             dateTime.day == now.day;
       });
 
-      // 사용자가 버튼을 눌렀을 때만 출석 기록을 추가
-      if (!hasAttendedToday) {
-        attendance.add(Timestamp.fromDate(now));
+      // 이미 출석한 경우 true 반환
+      if (hasAttendedToday) {
+        return true;
       }
+
+      // 출석 기록 추가
+      attendance.add(Timestamp.fromDate(now));
 
       // 최신 7개의 출석 기록만 유지
       if (attendance.length > 7) {
@@ -53,12 +56,10 @@ class ProfileService {
         }
       }
 
-      // 연속 7일 출석이 확인되면 보상 지급
+      // 연속 7일 출석 시 보상 지급
       if (attendance.length == 7 && isConsecutive) {
         try {
-          print("Updating user balance...");
           await _userService.updateUserBalance(user.uid, 50000, "7일 연속 출석 보상");
-          print("User balance updated successfully");
         } catch (e) {
           print('Error in updateUserBalance: $e');
         }
@@ -69,7 +70,11 @@ class ProfileService {
         'attendance': attendance,
       });
       print("Attendance updated successfully");
+
+      // 새로운 출석 기록이 추가되었음을 반환
+      return false;
     }
+    return false; // 유저가 없을 경우 출석 실패로 처리
   }
 
   Future<List<DateTime>> getAttendance() async {

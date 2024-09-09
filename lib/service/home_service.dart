@@ -81,24 +81,38 @@ class HomeService {
 
     if (confirmed) {
       try {
-        await _service.checkAttendance();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '출석 체크가 완료되었습니다!',
-              style: TextStyle(color: ColorTheme.colorWhite),
+        bool hasAttended = await _service.checkAttendance();
+        if (hasAttended) {
+          // 이미 출석한 경우
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '오늘은 이미 출석 체크가 완료되었습니다.',
+                style: TextStyle(color: ColorTheme.colorWhite),
+              ),
+              backgroundColor: ColorTheme.colorPrimary80,
             ),
-            backgroundColor: ColorTheme.colorPrimary80,
-          ),
-        );
+          );
+        } else {
+          // 출석이 완료된 경우
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '출석 체크가 완료되었습니다!',
+                style: TextStyle(color: ColorTheme.colorWhite),
+              ),
+              backgroundColor: ColorTheme.colorPrimary80,
+            ),
+          );
+        }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              '오늘은 이미 출석 체크가 완료되었습니다.',
+              '출석 체크 중 오류가 발생했습니다.',
               style: TextStyle(color: ColorTheme.colorWhite),
             ),
-            backgroundColor: ColorTheme.colorPrimary80,
+            backgroundColor: Colors.red,
           ),
         );
       }
