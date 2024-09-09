@@ -27,16 +27,20 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   // 개인정보 처리방침 URL
-  final String _privacyPolicyUrl =
-      "https://amused-power-1c0.notion.site/5704c05a8fdb471a8b23f38b3ecb77f1";
+  final Uri _privacyPolicyUrl = Uri.parse("https://amused-power-1c0.notion.site/5704c05a8fdb471a8b23f38b3ecb77f1");
 
   void _launchURL() async {
-    if (await canLaunch(_privacyPolicyUrl)) {
-      await launch(_privacyPolicyUrl);
-    } else {
-      throw 'Could not launch $_privacyPolicyUrl';
+    try {
+      if (await canLaunchUrl(_privacyPolicyUrl)) {
+        await launchUrl(_privacyPolicyUrl);
+      } else {
+        print("Could not launch the URL: $_privacyPolicyUrl");
+      }
+    } catch (e) {
+      print("Error occurred while trying to launch URL: $e");
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
