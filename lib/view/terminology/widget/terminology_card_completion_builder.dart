@@ -15,13 +15,11 @@ Widget buildCompletionPage(BuildContext context, String title, String documentNa
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(height: 40),
         Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Container(
             width: containerWidth,
             height: containerHeight,
-            padding: const EdgeInsets.all(20), // Add padding around the container
             decoration: BoxDecoration(
               color: Colors.white, // Set background color to white
               borderRadius: BorderRadius.circular(20), // Set border radius for rounded corners
