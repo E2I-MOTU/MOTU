@@ -55,7 +55,6 @@ Widget buildQuizCard({
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -68,15 +67,20 @@ Widget buildQuizCard({
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 5),
-                    child: Text(
-                      preventWordBreak(catchphrase),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: ColorTheme.colorWhite,
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        preventWordBreak(catchphrase),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: ColorTheme.colorWhite,
+                        ),
+                        textAlign: TextAlign.left,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
                       ),
-                      textAlign: TextAlign.left,
                     ),
                   ),
                 ],
@@ -136,3 +140,4 @@ Widget buildQuizCard({
     ],
   );
 }
+
