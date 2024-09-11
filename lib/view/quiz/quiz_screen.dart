@@ -212,7 +212,6 @@ class _QuizScreenState extends State<QuizScreen> {
                                     question['hint'] ?? '힌트가 없습니다.',
                                     style: const TextStyle(
                                       fontSize: 12,
-                                      fontStyle: FontStyle.italic,
                                       color: Colors.black54,
                                     ),
                                   ),
