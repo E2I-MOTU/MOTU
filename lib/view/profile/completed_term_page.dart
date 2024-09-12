@@ -19,7 +19,7 @@ class CompletedTermPage extends StatelessWidget {
     List<Map<String, dynamic>> completedCategories = [];
     for (var doc in querySnapshot.docs) {
       var categorySnapshot =
-      await firestore.collection('terminology').doc(doc.id).get();
+          await firestore.collection('terminology').doc(doc.id).get();
       if (categorySnapshot.exists) {
         completedCategories.add({
           'id': doc.id,
