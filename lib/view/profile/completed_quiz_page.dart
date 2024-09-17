@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:motu/provider/quiz_provider.dart';
 import 'dart:developer';
 import '../../service/user_service.dart';
 import '../theme/color_theme.dart';
@@ -10,7 +11,6 @@ class CompletedQuizPage extends StatelessWidget {
   const CompletedQuizPage({super.key});
 
   Future<List<Map<String, dynamic>>> _fetchCompletedQuizData(String uid) async {
-    final userService = UserService();
     final firestore = FirebaseFirestore.instance;
 
     // Fetch all quizzes
@@ -20,7 +20,7 @@ class CompletedQuizPage extends StatelessWidget {
     // Fetch progress for each quiz
     List<Future<Map<String, dynamic>?>> progressFutures = quizDocs.map((quiz) {
       var quizId = quiz.id;
-      return userService.getQuizProgress(uid, quizId);
+      return QuizService().getQuizProgress(uid, quizId);
     }).toList();
 
     // Wait for all progress queries to complete
@@ -31,11 +31,13 @@ class CompletedQuizPage extends StatelessWidget {
     for (var i = 0; i < quizDocs.length; i++) {
       var quiz = quizDocs[i];
       var progress = progressSnapshots[i];
-      var data = quiz.data() as Map<String, dynamic>;
+      var data = quiz.data();
       var quizId = quiz.id;
       var score = progress != null ? (progress['score'] ?? 0) : 0;
-      var totalQuestions = progress != null ? (progress['totalQuestions'] ?? 15) : 15;
-      var isCompleted = progress != null ? score >= totalQuestions * 0.9 : false;
+      var totalQuestions =
+          progress != null ? (progress['totalQuestions'] ?? 15) : 15;
+      var isCompleted =
+          progress != null ? score >= totalQuestions * 0.9 : false;
 
       log(progress.toString());
 

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:motu/service/auth_service.dart';
 import 'dart:math';
 import 'dart:developer' as dev;
-import '../service/user_service.dart';
 
 class TerminologyQuizService with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final UserService _userService = UserService();
   int _currentQuestionIndex = 0;
   int _score = 0;
   bool _answered = false;
@@ -121,7 +120,7 @@ class TerminologyQuizService with ChangeNotifier {
       });
 
       if (newCompleted && !wasPreviouslyCompleted) {
-        await _userService.updateUserBalance(
+        await AuthService().updateUserBalance(
             _uid, 100000, "용어 학습 완료 보상"); // Add 100,000 reward if completed
       }
     } catch (e) {

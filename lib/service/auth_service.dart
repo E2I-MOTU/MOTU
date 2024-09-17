@@ -1,4 +1,5 @@
-import 'dart:developer';
+import 'dart:developer' as dev;
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,12 +23,12 @@ class AuthService with ChangeNotifier {
   UserModel? get user => _user;
 
   Future<void> initialize() async {
-    log("🏁 Initializing MOTU...");
+    dev.log("🏁 Initializing MOTU...");
     if (auth.currentUser != null) {
-      log("🔑 User is already signed in: ${auth.currentUser!.uid}");
+      dev.log("🔑 User is already signed in: ${auth.currentUser!.uid}");
       await getUserInfo();
     } else {
-      log("🔑 No user is signed in.");
+      dev.log("🔑 No user is signed in.");
     }
   }
 
@@ -43,9 +44,9 @@ class AuthService with ChangeNotifier {
       return user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        log('No user found for that email.');
+        dev.log('No user found for that email.');
       } else if (e.code == 'wrong-password') {
-        log('Wrong password provided for that user.');
+        dev.log('Wrong password provided for that user.');
       }
       notifyListeners();
       return null;
@@ -61,34 +62,34 @@ class AuthService with ChangeNotifier {
       );
 
       if (_auth.currentUser != null) {
-        log('Email Register Success: ${_auth.currentUser!}');
+        dev.log('Email Register Success: ${_auth.currentUser!}');
 
         bool isUserInfoExists = await checkUserInfoExists();
         if (isUserInfoExists) {
-          log("유저 정보가 이미 존재합니다.");
+          dev.log("유저 정보가 이미 존재합니다.");
           await getUserInfo();
         } else {
-          log("유저 정보가 없으므로 추가합니다.");
+          dev.log("유저 정보가 없으므로 추가합니다.");
           await addEmailUserInfo(name);
         }
 
         notifyListeners();
         return _auth.currentUser;
       } else {
-        log('Email Register Fail: No User Found');
+        dev.log('Email Register Fail: No User Found');
 
         notifyListeners();
         return null;
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        log('The password provided is too weak.');
+        dev.log('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
-        log('The account already exists for that email.');
+        dev.log('The account already exists for that email.');
       }
       return null;
     } catch (e) {
-      log(e.toString());
+      dev.log(e.toString());
       return null;
     }
   }
@@ -100,21 +101,21 @@ class AuthService with ChangeNotifier {
     );
 
     if (_auth.currentUser != null) {
-      log('Email Login Success: ${_auth.currentUser!.displayName}');
+      dev.log('Email dev.login Success: ${_auth.currentUser!.displayName}');
 
       bool isUserInfoExists = await checkUserInfoExists();
       if (isUserInfoExists) {
-        log("유저 정보가 이미 존재합니다.");
+        dev.log("유저 정보가 이미 존재합니다.");
         await getUserInfo();
       } else {
         await addEmailUserInfo(_auth.currentUser!.displayName ?? "");
-        log("유저 정보가 없으므로 추가합니다.");
+        dev.log("유저 정보가 없으므로 추가합니다.");
       }
 
       notifyListeners();
       return _auth.currentUser;
     } else {
-      log('Email Login Fail: No User Found');
+      dev.log('Email dev.login Fail: No User Found');
 
       notifyListeners();
       return null;
@@ -149,21 +150,21 @@ class AuthService with ChangeNotifier {
     await _auth.signInWithCredential(credential);
 
     if (_auth.currentUser != null) {
-      log('Google Login Success: ${_auth.currentUser!.displayName}');
+      dev.log('Google dev.login Success: ${_auth.currentUser!.displayName}');
 
       bool isUserInfoExists = await checkUserInfoExists();
       if (isUserInfoExists) {
-        log("유저 정보가 이미 존재합니다.");
+        dev.log("유저 정보가 이미 존재합니다.");
         await getUserInfo();
       } else {
         await addUserInfo();
-        log("유저 정보가 없으므로 추가합니다.");
+        dev.log("유저 정보가 없으므로 추가합니다.");
       }
 
       notifyListeners();
       return _auth.currentUser;
     } else {
-      log('Google Login Fail: No User Found');
+      dev.log('Google dev.login Fail: No User Found');
 
       notifyListeners();
       return null;
@@ -187,21 +188,21 @@ class AuthService with ChangeNotifier {
     await _auth.signInWithCredential(credential);
 
     if (_auth.currentUser != null) {
-      log('Apple Login Success: ${_auth.currentUser!}');
+      dev.log('Apple dev.login Success: ${_auth.currentUser!}');
 
       bool isUserInfoExists = await checkUserInfoExists();
       if (isUserInfoExists) {
-        log("유저 정보가 이미 존재합니다.");
+        dev.log("유저 정보가 이미 존재합니다.");
         await getUserInfo();
       } else {
-        log("유저 정보가 없음");
+        dev.log("유저 정보가 없음");
         await addAppleUserInfo();
       }
 
       notifyListeners();
       return _auth.currentUser;
     } else {
-      log('Apple Login Fail: No User Found');
+      dev.log('Apple dev.login Fail: No User Found');
 
       notifyListeners();
       return null;
@@ -241,7 +242,7 @@ class AuthService with ChangeNotifier {
           ),
         ],
         attendance: [],
-        // completedTerminalogy: [],
+        // completedTerminadev.logy: [],
         // completedQuiz: [],
         // bookmarks: [],
         scenarioRecord: [],
@@ -271,7 +272,7 @@ class AuthService with ChangeNotifier {
           ),
         ],
         attendance: [],
-        // completedTerminalogy: [],
+        // completedTerminadev.logy: [],
         // completedQuiz: [],
         // bookmarks: [],
         scenarioRecord: [],
@@ -301,7 +302,7 @@ class AuthService with ChangeNotifier {
           ),
         ],
         attendance: [],
-        // completedTerminalogy: [],
+        // completedTerminadev.logy: [],
         // completedQuiz: [],
         // bookmarks: [],
         scenarioRecord: [],
@@ -322,12 +323,12 @@ class AuthService with ChangeNotifier {
       DocumentSnapshot doc =
           await _firestore.collection('user').doc(user.uid).get();
       if (doc.exists) {
-        log("🔍 User Info found");
+        dev.log("🔍 User Info found");
         notifyListeners();
         _user = UserModel.fromMap(user.uid, doc.data() as Map<String, dynamic>);
       }
     } else {
-      log("🔍 User Info not found");
+      dev.log("🔍 User Info not found");
     }
   }
 
@@ -337,7 +338,7 @@ class AuthService with ChangeNotifier {
         'name': name,
       });
       await getUserInfo();
-      log("🔄 User Info Updated: ${_user?.name}");
+      dev.log("🔄 User Info Updated: ${_user?.name}");
       notifyListeners();
     }
   }
@@ -375,6 +376,43 @@ class AuthService with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateUserBalance(
+      String uid, int additionalBalance, String content) async {
+    try {
+      final userRef = _firestore.collection('user').doc(uid);
+      await _firestore.runTransaction((transaction) async {
+        final snapshot = await transaction.get(userRef);
+        if (!snapshot.exists) {
+          throw Exception("User does not exist!");
+        }
+
+        final userData = snapshot.data()!;
+        final currentBalance = userData['balance'] ?? 0;
+        final newBalance = currentBalance + additionalBalance;
+
+        // 잔고 업데이트
+        transaction.update(userRef, {'balance': newBalance});
+
+        // BalanceDetail 객체 생성
+        BalanceDetail newBalanceDetail = BalanceDetail(
+          date: DateTime.now(),
+          content: content,
+          amount: additionalBalance,
+          isIncome: true,
+        );
+
+        // 기존 balanceHistory를 가져오고, 새로운 내역을 추가
+        final List<dynamic> balanceHistory = userData['balanceHistory'] ?? [];
+        balanceHistory.add(newBalanceDetail.toMap());
+
+        // 잔고 내역 업데이트
+        transaction.update(userRef, {'balanceHistory': balanceHistory});
+      });
+    } catch (e) {
+      print('Error updating user balance: $e');
+    }
+  }
+
   void addBalanceDetail(BalanceDetail detail) {
     _user?.balanceHistory.add(detail);
 
@@ -393,5 +431,39 @@ class AuthService with ChangeNotifier {
     });
 
     notifyListeners();
+  }
+
+  // 경제/금융 퀴즈
+  Future<void> saveQuizCompletion(
+      String uid, String quizId, int score, int questionLength) async {
+    try {
+      final userQuizRef = _firestore
+          .collection('user')
+          .doc(uid)
+          .collection('completedQuiz')
+          .doc(quizId);
+      final snapshot = await userQuizRef.get();
+
+      bool wasPreviouslyCompleted = false;
+      int previousScore = 0;
+      if (snapshot.exists) {
+        final quizData = snapshot.data()!;
+        wasPreviouslyCompleted = quizData['completed'] ?? false;
+        previousScore = quizData['score'] ?? 0;
+      }
+
+      final newCompleted =
+          wasPreviouslyCompleted || (score / questionLength >= 0.9);
+      final finalScore =
+          wasPreviouslyCompleted ? max(score, previousScore) : score;
+
+      await userQuizRef.set({
+        'score': finalScore,
+        'completedAt': Timestamp.now(),
+        'completed': newCompleted,
+      });
+    } catch (e) {
+      print('Error saving quiz completion: $e');
+    }
   }
 }

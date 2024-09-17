@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:motu/provider/quiz_provider.dart';
 import 'package:motu/view/quiz/widget/quiz_category_builder.dart';
 import '../../provider/navigation_provider.dart';
 import '../../service/user_service.dart';
@@ -74,7 +75,7 @@ class QuizSelectionScreen extends StatelessWidget {
               List<Future<Map<String, dynamic>?>> progressFutures =
                   quizCollections.map((quiz) {
                 var quizId = quiz.id;
-                return _userService.getQuizProgress(uid, quizId);
+                return QuizService().getQuizProgress(uid, quizId);
               }).toList();
 
               return FutureBuilder<List<Map<String, dynamic>?>>(
