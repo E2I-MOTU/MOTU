@@ -6,15 +6,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:motu/provider/quiz_provider.dart';
 import 'package:motu/view/quiz/widget/quiz_category_builder.dart';
 import '../../provider/navigation_provider.dart';
-import '../../service/user_service.dart';
 import '../main_page.dart';
 import '../theme/color_theme.dart';
 
 class QuizSelectionScreen extends StatelessWidget {
   final String uid;
-  final UserService _userService = UserService();
 
-  QuizSelectionScreen({super.key, required this.uid});
+  const QuizSelectionScreen({super.key, required this.uid});
 
   Future<Map<String, dynamic>> getProgress(String collectionName) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;

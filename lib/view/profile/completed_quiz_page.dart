@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:motu/provider/quiz_provider.dart';
 import 'dart:developer';
-import '../../service/user_service.dart';
 import '../theme/color_theme.dart';
 import '../quiz/widget/quiz_category_builder.dart';
 
