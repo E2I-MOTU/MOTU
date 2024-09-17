@@ -7,7 +7,8 @@ import '../model/balance_detail.dart';
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> updateUserBalance(String uid, int additionalBalance, String content) async {
+  Future<void> updateUserBalance(
+      String uid, int additionalBalance, String content) async {
     try {
       final userRef = _firestore.collection('user').doc(uid);
       await _firestore.runTransaction((transaction) async {
