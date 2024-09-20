@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:motu/service/bookmark_service.dart';
 import 'package:motu/text_utils.dart';
-import '../../../provider/bookmark_provider.dart';
+import 'package:provider/provider.dart';
 import '../../theme/color_theme.dart';
 
-Widget buildBookmarkTermCard(BuildContext context, String id, String term, String definition, String example, BookmarkProvider provider) {
+Widget buildBookmarkTermCard(BuildContext context, String id, String term,
+    String definition, String example) {
   final size = MediaQuery.of(context).size;
   final cardWidth = size.width * 0.9;
 
@@ -47,7 +49,9 @@ Widget buildBookmarkTermCard(BuildContext context, String id, String term, Strin
                     icon: const Icon(Icons.delete_outline, color: Colors.white),
                     padding: EdgeInsets.zero,
                     onPressed: () {
-                      provider.deleteBookmark(id);
+                      final service =
+                          Provider.of<BookmarkService>(context, listen: false);
+                      service.deleteBookmark(id);
                     },
                   ),
                 ],

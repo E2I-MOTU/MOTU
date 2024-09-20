@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:motu/service/auth_service.dart';
 import 'dart:math';
-import '../service/user_service.dart';
 import 'dart:developer' as dev;
 
 class QuizService with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final UserService _userService = UserService();
+
   int _currentQuestionIndex = 0;
   int _score = 0;
   bool _answered = false;
@@ -26,6 +26,23 @@ class QuizService with ChangeNotifier {
   bool get isLoading => _isLoading;
   List<Map<String, dynamic>> get incorrectAnswers => _incorrectAnswers;
   bool get isHintVisible => _isHintVisible; // 힌트 표시 여부
+
+  Future<Map<String, dynamic>?> getQuizProgress(
+      String uid, String quizId) async {
+    try {
+      final userQuizRef = _firestore
+          .collection('user')
+          .doc(uid)
+          .collection('completedQuiz')
+          .doc(quizId);
+      final snapshot = await userQuizRef.get();
+      // dev.log('Quiz progress: ${snapshot.data()}');
+      return snapshot.data();
+    } catch (e) {
+      print('Error getting quiz progress: $e');
+      return null;
+    }
+  }
 
   Future<void> loadQuestions(String collectionName) async {
     try {
@@ -87,10 +104,10 @@ class QuizService with ChangeNotifier {
 
     if (_currentQuestionIndex >= _questions.length) {
       if (_score / _questions.length >= 0.9) {
-        await _userService.updateUserBalance(uid, 100000, "퀴즈 학습 완료 보상");
+        await AuthService().updateUserBalance(uid, 100000, "퀴즈 학습 완료 보상");
       }
-      await _userService.saveQuizCompletion(
-          uid, collectionName, _score, _questions.length);
+      await AuthService()
+          .saveQuizCompletion(uid, collectionName, _score, _questions.length);
     }
 
     notifyListeners();
