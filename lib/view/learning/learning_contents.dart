@@ -7,6 +7,7 @@ import '../../widget/chatbot_fab.dart';
 import '../article/article_list_screen.dart';
 import '../news/news_list_screen.dart';
 import '../theme/color_theme.dart';
+import 'course_list_screen.dart'; // Import the course list screen
 
 class LearningContentscreen extends StatelessWidget {
   const LearningContentscreen({super.key});
@@ -83,6 +84,7 @@ class LearningContentscreen extends StatelessWidget {
                       ),
                     ),
 
+                    // Button to navigate to CourseListScreen
                     Positioned(
                       bottom: 10,
                       right: 10,
@@ -90,7 +92,7 @@ class LearningContentscreen extends StatelessWidget {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const TermMain()),
+                            MaterialPageRoute(builder: (context) => const CourseListScreen()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
