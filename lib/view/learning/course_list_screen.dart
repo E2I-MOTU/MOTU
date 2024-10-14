@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/color_theme.dart';
+import 'course_map_screen.dart';
 
 class CourseListScreen extends StatelessWidget {
   const CourseListScreen({super.key});
@@ -51,11 +52,11 @@ class CourseListScreen extends StatelessWidget {
         subtitle: Text(description),
         trailing: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white, // Button background color
-            elevation: 2, // Button elevation
+            backgroundColor: Colors.white,
+            elevation: 2,
           ),
           onPressed: () {
-            // Navigate to course details or lessons
+            navigateToCourseMap(context, title, description); // 설명 전달
           },
           child: Text(
             '시작하기',
@@ -63,8 +64,27 @@ class CourseListScreen extends StatelessWidget {
           ),
         ),
         onTap: () {
-          // Navigate to course details or content screen
+          navigateToCourseMap(context, title, description); // 설명 전달
         },
+      ),
+    );
+  }
+
+  void navigateToCourseMap(BuildContext context, String courseTitle, String description) {
+    List<String> stages = [];
+
+    if (courseTitle == '기초 경제 코스') {
+      stages = ['기초 개념', '경제 원리', '시장 구조', '거시 경제', '경제 실습'];
+    } else if (courseTitle == '주식 투자의 기초') {
+      stages = ['주식의 이해', '투자 전략', '포트폴리오 구성', '리스크 관리', '주식 실습'];
+    } else if (courseTitle == '기초 금융 코스') {
+      stages = ['금융의 이해', '자산 관리', '투자 기본', '금융 리스크', '금융 실습'];
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CourseMapScreen(courseName: courseTitle, courseDescription: description, stages: stages),
       ),
     );
   }
