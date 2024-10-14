@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:motu/service/user_service.dart';
+import 'package:motu/service/auth_service.dart';
 
 class ProfileService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final UserService _userService = UserService();
 
   Future<bool> checkAttendance() async {
     User? user = _auth.currentUser;
@@ -59,7 +58,9 @@ class ProfileService {
       // 연속 7일 출석 시 보상 지급
       if (attendance.length == 7 && isConsecutive) {
         try {
-          await _userService.updateUserBalance(user.uid, 50000, "7일 연속 출석 보상");
+          print("Updating user balance...");
+          await AuthService().updateUserBalance(user.uid, 50000, "7일 연속 출석 보상");
+          print("User balance updated successfully");
         } catch (e) {
           print('Error in updateUserBalance: $e');
         }

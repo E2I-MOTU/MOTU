@@ -17,97 +17,102 @@ class ReportBugPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(30, 50, 30, 50),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 34.0),
-                    child: Text(
-                      "불편하신 점이 있으신가요?",
-                      style: TextStyle(
-                        color: Color(0xff3E3E3E),
-                        fontSize: 24,
-                      ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 30, 30, 50),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 34.0),
+                  child: Text(
+                    "불편하신 점이 있으신가요?",
+                    style: TextStyle(
+                      color: ColorTheme.Black1,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 5),
-                    child: Text(
-                      '이용 중 불편한 점이나 문의 사항을 알려주세요!',
-                      style: TextStyle(
-                        color: Color(0xff717171),
-                        fontSize: 16,
-                      ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Text(
+                    '이용 중 불편한 점이나 문의 사항을 알려주세요!',
+                    style: TextStyle(
+                      color: Color(0xff717171),
+                      fontSize: 16,
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 5),
-                    child: Text(
-                      '확인 후 신속 정확하게 답변 드리도록 하겠습니다 :)',
-                      style: TextStyle(
-                        color: Color(0xff717171),
-                        fontSize: 16,
-                      ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Text(
+                    '확인 후 신속 정확하게 답변 드리도록 하겠습니다 :)',
+                    style: TextStyle(
+                      color: Color(0xff717171),
+                      fontSize: 16,
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 5),
-                    child: Text(
-                      '평일 (월-금) 10:00 ~ 18:00, 주말 및 공휴일 휴무',
-                      style: TextStyle(
-                        color: Color(0xff717171),
-                        fontSize: 16,
-                      ),
+                ),
+                const SizedBox(height: 24),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: Text(
+                    '평일 (월-금) 10:00 ~ 18:00, 주말 및 공휴일 휴무',
+                    style: TextStyle(
+                      color: Color(0xff717171),
+                      fontSize: 15,
                     ),
                   ),
-                  const SizedBox(
-                    height: 59,
-                  ),
-                  Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            backgroundColor: ColorTheme.Purple1,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.all(14),
-                          ),
-                          onPressed: () {
-                            sendEmail(context);
-                          },
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "이메일 보내기",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Icon(
-                                CupertinoIcons.chevron_forward,
-                                color: Colors.white,
-                                size: 13,
-                              ),
-                            ],
-                          ),
+                ),
+                const SizedBox(
+                  height: 59,
+                ),
+                Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          backgroundColor: ColorTheme.Purple1,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 40, vertical: 16),
                         ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                        onPressed: () {
+                          sendEmail(context);
+                        },
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "이메일 보내기",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Icon(
+                              CupertinoIcons.chevron_forward,
+                              color: Colors.white,
+                              size: 15,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
         ],
@@ -120,8 +125,8 @@ class ReportBugPage extends StatelessWidget {
 
     final Email email = Email(
       body: body,
-      subject: '[한밥 제보 및 문의]',
-      recipients: ['21900215@handong.ac.kr'],
+      subject: '[모투 문의 및 버그 제보]',
+      recipients: ['e2i.engagetoinnovate@gmail.com'],
       cc: [],
       bcc: [],
       attachmentPaths: [],
@@ -152,7 +157,10 @@ class ReportBugPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const InfoDialog();
+        return const AlertDialog(
+          backgroundColor: Colors.white,
+          content: InfoDialog(),
+        );
       },
     );
   }
@@ -220,6 +228,6 @@ class ReportBugPage extends StatelessWidget {
 
   Future<Map<String, dynamic>> _getAppInfo() async {
     PackageInfo info = await PackageInfo.fromPlatform();
-    return {"한밥 버전": info.version};
+    return {"모투 버전": info.version};
   }
 }

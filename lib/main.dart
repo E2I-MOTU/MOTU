@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:motu/model/user_model.dart';
 import 'package:motu/service/auth_service.dart';
 import 'package:motu/service/common_service.dart';
 import 'package:motu/service/scenario_service.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:motu/service/bookmark_service.dart';
 import 'package:motu/view/terminology/widget/bookmark_terminology_card_builder.dart';
 import 'package:provider/provider.dart';
-import '../../provider/bookmark_provider.dart';
 
 class BookmarkPage extends StatelessWidget {
   const BookmarkPage({super.key});
@@ -9,13 +9,13 @@ class BookmarkPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => BookmarkProvider(),
+      create: (_) => BookmarkService(),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
           title: const Text('용어 목록'),
         ),
-        body: Consumer<BookmarkProvider>(
+        body: Consumer<BookmarkService>(
           builder: (context, provider, child) {
             if (provider.isLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -39,7 +39,6 @@ class BookmarkPage extends StatelessWidget {
                     provider.bookmarks[index]['term'] ?? '',
                     provider.bookmarks[index]['definition'] ?? '',
                     provider.bookmarks[index]['example'] ?? '',
-                    provider,
                   ),
                 );
               },
