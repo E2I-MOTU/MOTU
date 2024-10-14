@@ -9,21 +9,21 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hive/hive.dart';
-import 'package:motu/scenario/background_service.dart';
-import 'package:motu/scenario/notifications.dart';
-import 'package:motu/service/auth_service.dart';
-import 'package:motu/service/common_service.dart';
-import 'package:motu/service/scenario_service.dart';
-import 'package:motu/firebase_options.dart';
-import 'package:motu/provider/terminology_quiz_provider.dart';
-import 'package:motu/view/login/login.dart';
-import 'package:motu/view/nav_page.dart';
-import 'package:motu/view/theme/color_theme.dart';
+import 'package:motu/src/common/service/background_service.dart';
+import 'package:motu/src/common/service/notifications.dart';
+import 'package:motu/src/features/login/service/auth_service.dart';
+import 'package:motu/src/features/profile/service/qna_service.dart';
+import 'package:motu/src/features/scenario/service/scenario_service.dart';
+import 'package:motu/src/common/firebase_options.dart';
+import 'package:motu/src/features/learning/term/service/term_quiz_service.dart';
+import 'package:motu/src/features/login/view/login.dart';
+import 'package:motu/src/common/view/nav_page.dart';
+import 'package:motu/src/design/color_theme.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:motu/service/navigation_service.dart';
-import 'package:motu/provider/chat_provider.dart';
+import 'package:motu/src/common/service/navigation_service.dart';
+import 'package:motu/src/common/service/chat_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:toastification/toastification.dart';
 
@@ -87,8 +87,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => ScenarioService()),
         ChangeNotifierProvider(create: (context) => ChatService()),
         ChangeNotifierProvider(create: (context) => NavigationService()),
-        ChangeNotifierProvider(create: (context) => TerminologyQuizService()),
-        ChangeNotifierProvider(create: (context) => CommonService()),
+        ChangeNotifierProvider(create: (context) => TermQuizService()),
       ],
       builder: (context, child) => const App(),
     ),
