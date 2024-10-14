@@ -6,6 +6,7 @@ import 'package:motu/text_utils.dart';
 import 'package:motu/view/main_page.dart';
 import 'package:motu/view/terminology/widget/terminology_category_card_builder.dart';
 import 'package:motu/view/theme/color_theme.dart';
+import 'package:shimmer/shimmer.dart'; // Make sure to add the shimmer package to your pubspec.yaml
 import 'terminology_card.dart';
 import 'bookmark.dart';
 import 'terminology_search.dart';
@@ -39,6 +40,7 @@ class TermMain extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: ColorTheme.colorWhite,
         title: const Text('용어학습'),
+        centerTitle: true, // Center the title
         leading: IconButton(
           icon: const Icon(CupertinoIcons.left_chevron),
           onPressed: () {
@@ -48,7 +50,7 @@ class TermMain extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => const MainPage(),
               ),
-              (route) => false, // 모든 기존 경로를 제거
+                  (route) => false, // Remove all existing routes
             );
           },
         ),
@@ -83,23 +85,60 @@ class TermMain extends StatelessWidget {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        childAspectRatio: 1.6 / 2,
+                        padding: const EdgeInsets.all(20),
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                        children: List.generate(6, (index) =>
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        ),
+                      ),
+                    ),
+                  );
                 }
                 var documents = snapshot.data!.docs;
 
                 List<Widget> completedCategories = [];
                 List<Widget> incompleteCategories = [];
-                List<Widget> newCategories = [];
 
                 return FutureBuilder<List<bool>>(
                   future: Future.wait(documents
                       .map((doc) =>
-                          checkCompletionStatus(service.user!.uid, doc.id))
+                      checkCompletionStatus(service.user!.uid, doc.id))
                       .toList()),
                   builder: (context, completionSnapshots) {
                     if (completionSnapshots.connectionState ==
                         ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          childAspectRatio: 1.6 / 2,
+                          padding: const EdgeInsets.all(20),
+                          crossAxisSpacing: 20,
+                          mainAxisSpacing: 20,
+                          children: List.generate(6, (index) =>
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          ),
+                        ),
+                      );
                     }
 
                     for (var i = 0; i < documents.length; i++) {

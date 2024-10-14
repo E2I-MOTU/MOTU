@@ -7,6 +7,7 @@ import '../../widget/chatbot_fab.dart';
 import '../article/article_list_screen.dart';
 import '../news/news_list_screen.dart';
 import '../theme/color_theme.dart';
+import 'course_list_screen.dart'; // Import the course list screen
 
 class LearningContentscreen extends StatelessWidget {
   const LearningContentscreen({super.key});
@@ -19,126 +20,39 @@ class LearningContentscreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: ColorTheme.colorNeutral,
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Container(
-                  width: screenWidth,
-                  height: screenHeight * 0.25,
-                  padding: const EdgeInsets.all(20),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(40),
-                      bottomRight: Radius.circular(40),
-                    ),
-                    color: ColorTheme.colorSecondary,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: screenHeight * 0.06),
-                        child: Container(
-                          alignment: Alignment.centerLeft,
-                          child: Transform.translate(
-                            offset: const Offset(20, 0),
-                            child: const Text(
-                              '오늘의 공부\n함께 시작해볼까요?',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  padding: const EdgeInsets.only(
-                      top: 50, bottom: 20, right: 20, left: 20),
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 20,
-                  childAspectRatio: 3 / 4,
-                  children: [
-                    buildCard(
-                        context,
-                        '용어\n공부하기',
-                        ColorTheme.colorWhite,
-                        const TermMain(),
-                        'assets/images/character/curious_panda.png',
-                        imageHeight: 76),
-                    buildCard(
-                        context,
-                        '퀴즈 풀며\n내 실력\n확인해보기',
-                        ColorTheme.colorWhite,
-                        QuizSelectionScreen(uid: auth.currentUser!.uid),
-                        'assets/images/character/study_panda.png',
-                        imageHeight: 76),
-                    buildCard(
-                        context,
-                        '꼭 필요한\n경제꿀팁 읽으며\n경제지식 쌓기',
-                        ColorTheme.colorWhite,
-                        ArticleListScreen(),
-                        'assets/images/character/news_panda.png',
-                        imageHeight: 76),
-                    buildCard(
-                        context,
-                        '오늘의\n시사 정보\n확인하기',
-                        ColorTheme.colorWhite,
-                        const NewsListScreen(),
-                        'assets/images/character/teaching_panda.png',
-                        imageHeight: 76),
-                  ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Header Section
+            Container(
+              width: screenWidth,
+              height: screenHeight * 0.3,
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
                 ),
+                color: ColorTheme.colorPrimary40,
               ),
-            ],
-          ),
-          Positioned(
-            top: screenHeight * 0.2,
-            left: (screenWidth - screenWidth * 0.8) / 2,
-            child: Container(
-              width: screenWidth * 0.8,
-              height: screenHeight * 0.09,
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              decoration: BoxDecoration(
-                color: ColorTheme.colorPrimary,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Transform.translate(
-                    offset: Offset(-15, 0),
+                  Padding(
+                    padding: EdgeInsets.only(top: screenHeight * 0.06),
                     child: Container(
-                      width: screenWidth * 0.2,
-                      height: screenWidth * 0.2,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.asset(
-                        'assets/images/character/face_circle.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Expanded(
-                    child: Transform.translate(
-                      offset: const Offset(-15, 0),
-                      child: const Text(
-                        '즐겁게 공부하고,\n모의투자 머니도 벌어봐요!',
-                        style: TextStyle(
-                          color: ColorTheme.colorWhite,
-                          fontSize: 16,
-                          height: 1.3,
-                          fontWeight: FontWeight.bold,
+                      alignment: Alignment.centerLeft,
+                      child: Transform.translate(
+                        offset: const Offset(20, 0),
+                        child: const Text(
+                          '오늘의 공부\n함께 시작해볼까요?',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
@@ -146,8 +60,108 @@ class LearningContentscreen extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ],
+
+            // Course Section with Button
+            Container(
+              width: screenWidth,
+              height: screenHeight * 0.24,
+              padding: const EdgeInsets.only(top: 20, bottom: 10, right: 20, left: 20),
+              child: Card(
+                color: ColorTheme.colorPrimary,
+                elevation: 3,
+                child: Stack(
+                  children: [
+                    // Course Text
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: const Text(
+                        '코스별 학습',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    // Button to navigate to CourseListScreen
+                    Positioned(
+                      bottom: 10,
+                      right: 10,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const CourseListScreen()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: const Text(
+                          '코스 보기',
+                          style: TextStyle(
+                            color: ColorTheme.colorPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Grid Section
+            GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 20,
+              childAspectRatio: 3 / 4,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(top: 10, bottom: 20, right: 20, left: 20),
+              children: [
+                buildCard(
+                  context,
+                  '용어\n공부하기',
+                  ColorTheme.colorWhite,
+                  const TermMain(),
+                  'assets/images/character/curious_panda.png',
+                  imageHeight: 76,
+                ),
+                buildCard(
+                  context,
+                  '퀴즈 풀며\n내 실력\n확인해보기',
+                  ColorTheme.colorWhite,
+                  QuizSelectionScreen(uid: auth.currentUser!.uid),
+                  'assets/images/character/study_panda.png',
+                  imageHeight: 76,
+                ),
+                buildCard(
+                  context,
+                  '꼭 필요한\n경제꿀팁 읽으며\n경제지식 쌓기',
+                  ColorTheme.colorWhite,
+                  ArticleListScreen(),
+                  'assets/images/character/news_panda.png',
+                  imageHeight: 76,
+                ),
+                buildCard(
+                  context,
+                  '오늘의\n시사 정보\n확인하기',
+                  ColorTheme.colorWhite,
+                  const NewsListScreen(),
+                  'assets/images/character/teaching_panda.png',
+                  imageHeight: 76,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       floatingActionButton: ChatbotFloatingActionButton(),
     );

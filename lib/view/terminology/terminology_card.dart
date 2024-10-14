@@ -17,7 +17,9 @@ class TermCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => TerminologyCardProvider()..fetchWords(title)..fetchBookmarkedWords(),
+      create: (_) => TerminologyCardProvider()
+        ..fetchWords(title)
+        ..fetchBookmarkedWords(),
       child: Scaffold(
         backgroundColor: ColorTheme.colorNeutral,
         appBar: AppBar(
@@ -72,36 +74,36 @@ class TermCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // PageView를 감싸는 Container의 여백을 조정
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.7, // 적절한 높이 설정
-                  margin: const EdgeInsets.only(bottom: 10.0), // 카드와 버튼 사이의 여백 조정
-                  child: PageView.builder(
-                    controller: wordsProvider.pageController,
-                    itemCount: wordsProvider.words.length + 1,
-                    onPageChanged: wordsProvider.setCurrentPage,
-                    itemBuilder: (context, index) {
-                      if (index == wordsProvider.words.length) {
-                        return buildCompletionPage(context, title, documentName, uid);
-                      } else {
-                        final word = wordsProvider.words[index];
-                        final isBookmarked = wordsProvider.bookmarkedWords.contains(word['term']);
-                        return buildTermCard(
-                          context,
-                          word['term']!,
-                          word['definition']!,
-                          word['example']!,
-                          isBookmarked,
-                              () {
-                            wordsProvider.toggleBookmark(word['term']!);
-                          },
-                        );
-                      }
-                    },
+                Expanded(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    child: PageView.builder(
+                      controller: wordsProvider.pageController,
+                      itemCount: wordsProvider.words.length + 1,
+                      onPageChanged: wordsProvider.setCurrentPage,
+                      itemBuilder: (context, index) {
+                        if (index == wordsProvider.words.length) {
+                          return buildCompletionPage(context, title, documentName, uid);
+                        } else {
+                          final word = wordsProvider.words[index];
+                          final isBookmarked = wordsProvider.bookmarkedWords.contains(word['term']);
+                          return buildTermCard(
+                            context,
+                            word['term']!,
+                            word['definition']!,
+                            word['example']!,
+                            isBookmarked,
+                                () {
+                              wordsProvider.toggleBookmark(word['term']!);
+                            },
+                          );
+                        }
+                      },
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // 버튼 여백 조정
+                  padding: const EdgeInsets.only(right: 20.0, left: 20.0, bottom: 16.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -114,7 +116,9 @@ class TermCard extends StatelessWidget {
                           height: 40.0,
                           fit: BoxFit.contain,
                         ),
-                        onPressed: wordsProvider.current > 0 ? wordsProvider.previousPage : null,
+                        onPressed: wordsProvider.current > 0
+                            ? wordsProvider.previousPage
+                            : null,
                       ),
                       IconButton(
                         icon: Image.asset(
@@ -125,7 +129,9 @@ class TermCard extends StatelessWidget {
                           height: 40.0,
                           fit: BoxFit.contain,
                         ),
-                        onPressed: wordsProvider.current < wordsProvider.words.length ? wordsProvider.nextPage : null,
+                        onPressed: wordsProvider.current < wordsProvider.words.length
+                            ? wordsProvider.nextPage
+                            : null,
                       ),
                     ],
                   ),

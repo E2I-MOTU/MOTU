@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:motu/provider/quiz_provider.dart';
 import 'package:motu/view/quiz/widget/quiz_category_builder.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../provider/navigation_provider.dart';
 import '../main_page.dart';
 import '../theme/color_theme.dart';
@@ -50,21 +51,42 @@ class QuizSelectionScreen extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => const MainPage(),
               ),
-              (route) => false, // 모든 기존 경로를 제거
+              (route) => false, // Remove all existing routes
             );
           },
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+      body: Column(children: [
+        Expanded(
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance.collection('quiz').snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                // Replace CircularProgressIndicator with Shimmer effect
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    childAspectRatio: 1.6 / 2,
+                    padding: const EdgeInsets.all(20),
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
+                    children: List.generate(
+                      6,
+                      (index) => // 6 shimmer containers
+                          Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
               }
+
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                 return const Center(child: Text("퀴즈 데이터를 불러올 수 없습니다."));
               }
@@ -81,7 +103,28 @@ class QuizSelectionScreen extends StatelessWidget {
                 builder: (context, progressSnapshots) {
                   if (progressSnapshots.connectionState ==
                       ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    // Replace CircularProgressIndicator with Shimmer effect
+                    return Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        childAspectRatio: 1.6 / 2,
+                        padding: const EdgeInsets.all(20),
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                        children: List.generate(
+                          6,
+                          (index) => // 6 shimmer containers
+                              Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
                   }
 
                   List<Widget> completedQuizzes = [];
@@ -129,14 +172,15 @@ class QuizSelectionScreen extends StatelessWidget {
                     mainAxisSpacing: 20.0,
                     crossAxisSpacing: 20.0,
                     childAspectRatio: 1.6 / 2,
+                    padding: const EdgeInsets.all(20),
                     children: newQuizzes + incompleteQuizzes + completedQuizzes,
                   );
                 },
               );
             },
           ),
-        ),
-      ),
+        )
+      ]),
     );
   }
 }
