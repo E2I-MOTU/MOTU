@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:motu/view/scenario/news/news_detail_page.dart';
-import '../../../../model/stock_news.dart';
+import '../../../../model/scenario/stock_news.dart';
 
 Widget NewsListTile(BuildContext context, StockNews news) {
   return IntrinsicHeight(

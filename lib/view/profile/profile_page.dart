@@ -1,10 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:motu/provider/navigation_provider.dart';
+import 'package:motu/service/navigation_service.dart';
 import 'package:motu/service/auth_service.dart';
 import 'package:motu/view/profile/completed_quiz_page.dart';
 import 'package:motu/view/profile/completed_scenario_page.dart';
 import 'package:motu/view/profile/report_bug_page.dart';
 import 'package:motu/view/profile/widget/attendance_builder.dart';
+import 'package:motu/view/profile/widget/logout_dialog.dart';
 import 'package:motu/view/profile/widget/section_builder.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,44 +30,33 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   // 개인정보 처리방침 URL
-  final Uri _privacyPolicyUrl = Uri.parse("https://amused-power-1c0.notion.site/5704c05a8fdb471a8b23f38b3ecb77f1");
+  final Uri _privacyPolicyUrl = Uri.parse(
+      "https://amused-power-1c0.notion.site/5704c05a8fdb471a8b23f38b3ecb77f1");
 
   void _launchURL() async {
     try {
       if (await canLaunchUrl(_privacyPolicyUrl)) {
         await launchUrl(_privacyPolicyUrl);
       } else {
-        print("Could not launch the URL: $_privacyPolicyUrl");
+        log("Could not launch the URL: $_privacyPolicyUrl");
       }
     } catch (e) {
-      print("Error occurred while trying to launch URL: $e");
+      log("Error occurred while trying to launch URL: $e");
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthService>(builder: (context, service, child) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('마이페이지'),
-          backgroundColor: ColorTheme.White,
-          scrolledUnderElevation: 0,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () {
-                final navigation =
-                    Provider.of<NavigationService>(context, listen: false);
-                navigation.setSelectedIndex(0);
-                service.signOut();
-              },
-            ),
-          ],
-          automaticallyImplyLeading: false,
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+    if (context.watch<AuthService>().user == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    String userName = context.watch<AuthService>().user!.name;
+
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -74,10 +66,10 @@ class ProfilePageState extends State<ProfilePage> {
                   width: 48,
                   height: 48,
                 ),
-                title: Text(service.user!.name,
+                title: Text(userName,
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold)),
-                subtitle: Text(service.user!.email),
+                subtitle: Text(context.watch<AuthService>().user!.email),
                 trailing: const Icon(Icons.arrow_forward_ios,
                     size: 16.0, color: Colors.grey),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -85,7 +77,8 @@ class ProfilePageState extends State<ProfilePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) {
-                      return ProfileDetailPage(userName: service.user!.name);
+                      return ProfileDetailPage(
+                          userName: context.watch<AuthService>().user!.name);
                     }),
                   );
                 },
@@ -149,7 +142,8 @@ class ProfilePageState extends State<ProfilePage> {
                           ),
                           const SizedBox(height: 4.0),
                           Text(
-                            Formatter.format(service.user!.balance),
+                            Formatter.format(
+                                context.watch<AuthService>().user!.balance),
                             style: const TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.w500,
@@ -174,7 +168,7 @@ class ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 16),
               FutureBuilder<List<DateTime>>(
-                future: service.getAttendance(),
+                future: context.watch<AuthService>().getAttendance(),
                 builder: (BuildContext context,
                     AsyncSnapshot<List<DateTime>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -426,11 +420,41 @@ class ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
+              TextButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return LogoutDialog(context);
+                    },
+                  );
+                },
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  visualDensity: VisualDensity.compact,
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "로그아웃하기",
+                      style: TextStyle(fontSize: 15, color: ColorTheme.Black1),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: ColorTheme.Black1,
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
-        floatingActionButton: ChatbotFloatingActionButton(),
-      );
-    });
+      ),
+      floatingActionButton: const ChatbotFloatingActionButton(
+        heroTag: 'profile',
+      ),
+    );
   }
 }

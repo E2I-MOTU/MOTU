@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motu/model/stock_news.dart';
+import 'package:motu/model/scenario/stock_news.dart';
 import 'package:motu/view/scenario/widget/news/news_tile.dart';
 import 'package:provider/provider.dart';
 

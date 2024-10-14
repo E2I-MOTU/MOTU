@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:motu/model/balance_detail.dart';
-import 'package:motu/model/scenario_result.dart';
+import 'package:motu/model/scenario/scenario_result.dart';
 
 class UserModel {
   final String uid; // 유저 ID

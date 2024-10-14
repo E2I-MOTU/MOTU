@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motu/model/scenario_result.dart';
+import 'package:motu/model/scenario/scenario_result.dart';
 import 'package:motu/service/auth_service.dart';
 import 'package:motu/service/scenario_service.dart';
 import 'package:motu/util/util.dart';

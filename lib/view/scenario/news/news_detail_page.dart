@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../model/stock_news.dart';
+import '../../../model/scenario/stock_news.dart';
 
 class NewsDetailPage extends StatelessWidget {
   final StockNews news;

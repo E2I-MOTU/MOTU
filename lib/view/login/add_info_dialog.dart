@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:motu/main.dart';
 import 'package:motu/service/auth_service.dart';
-import 'package:motu/view/main_page.dart';
+import 'package:motu/view/nav_page.dart';
 
 import 'package:motu/view/theme/color_theme.dart';
 import 'package:provider/provider.dart';

@@ -114,7 +114,7 @@ class LearningContentscreen extends StatelessWidget {
               child: Row(
                 children: [
                   Transform.translate(
-                    offset: Offset(-15, 0),
+                    offset: const Offset(-15, 0),
                     child: Container(
                       width: screenWidth * 0.2,
                       height: screenWidth * 0.2,
@@ -149,7 +149,9 @@ class LearningContentscreen extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: ChatbotFloatingActionButton(),
+      floatingActionButton: const ChatbotFloatingActionButton(
+        heroTag: 'learning',
+      ),
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../model/news_data.dart';
@@ -29,14 +31,18 @@ class _NewsListScreenState extends State<NewsListScreen> {
     });
   }
 
-  Future<void> _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      print('Could not launch $url');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not launch the URL')),
-      );
+  void _launchURL(String url) async {
+    try {
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url));
+      } else {
+        log("Could not launch the URL: $url");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not launch the URL')),
+        );
+      }
+    } catch (e) {
+      log("Error occurred while trying to launch URL: $e");
     }
   }
 

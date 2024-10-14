@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:motu/scenario/database.dart';
+import 'package:motu/service/auth_service.dart';
 import 'package:motu/service/scenario_service.dart';
 import 'package:motu/view/scenario/tutorial_page.dart';
 import 'package:motu/view/theme/color_theme.dart';
@@ -59,6 +61,25 @@ class TutorialPopup extends StatelessWidget {
                         onPressed: () {
                           // 튜토리얼 팝업 닫기
                           Navigator.pop(context);
+
+                          // 시나리오 기존데이터 초기화
+                          service.resetAllData();
+
+                          // 유저 기존 자금 저장
+                          service.setOriginBalance(
+                              Provider.of<AuthService>(context, listen: false)
+                                      .user
+                                      ?.balance ??
+                                  0);
+
+                          // 시나리오 지정
+                          service.setSelectedScenario(type);
+
+                          // 시나리오 초기 설정 시작
+                          service.initializeData();
+
+                          // 시나리오 진행중으로 설정
+                          setScenarioIsRunning(true);
                         },
                         style: TextButton.styleFrom(
                           foregroundColor: ColorTheme.White,
@@ -68,7 +89,7 @@ class TutorialPopup extends StatelessWidget {
                           ),
                         ),
                         child: const Text(
-                          "바로 시작",
+                          "시작하기",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -94,7 +115,7 @@ class TutorialPopup extends StatelessWidget {
 
   Widget _buildTitle(ScenarioType type) {
     switch (type) {
-      case ScenarioType.covid:
+      case ScenarioType.disease:
         return const Text(
           "COVID-19",
           style: TextStyle(
@@ -119,7 +140,7 @@ class TutorialPopup extends StatelessWidget {
 
   Widget _buildContent(ScenarioType type) {
     switch (type) {
-      case ScenarioType.covid:
+      case ScenarioType.disease:
         return const Column(
           children: [
             Text(

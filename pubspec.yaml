@@ -1,5 +1,5 @@
 name: motu
-description: "A new Flutter project."
+description: "MOTU는 사용자들이 실전 투자에 대비할 수 있도록 지원하는 플랫폼 입니다. 모의투자를 통해 투자의 진입장벽을 낮춰주고, 시나리오 시뮬레이션으로 짧은 시간 내에 장기투자를 경험할 수 있도록 서비스를 제공합니다. 주식 용어 학습과 경제 뉴스를 통한 자연스러운 경제 흐름 학습을 위해 다양한 자체 교육 콘텐츠와 교육용 AI 챗봇 서비스를 제공합니다."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.0.5+2
+version: 0.0.7+1
 
 environment:
   sdk: ">=3.4.3 <4.0.0"
@@ -31,40 +31,60 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.6
-
-  firebase_core: ^2.32.0
-  syncfusion_flutter_charts: ^25.2.4
-  flutter_dotenv: ^5.1.0
-  firebase_storage: ^11.7.7
-  cloud_firestore: ^4.17.5
-  provider: ^6.1.2
-  http: ^1.2.1
-  csv: ^5.1.1
-  firebase_auth: ^4.20.0
-  email_validator: ^3.0.0
-  carousel_slider: ^4.0.0
-  flip_card: ^0.6.0
-  google_sign_in: ^6.2.1
-  url_launcher: ^6.3.0
+  # 기본
   flutter_native_splash: ^2.4.0
-  table_calendar: ^3.1.1
-  event_bus: ^2.0.0
+  cupertino_icons: ^1.0.6
+  http: ^1.2.1
   intl: ^0.19.0
-  speech_balloon: ^0.0.4
-  flutter_markdown: ^0.7.3+1
-  charset: ^2.0.1
-  toastification: ^2.1.0
-  dropdown_button2: ^2.3.9
-  html_unescape: ^2.0.0
+  shimmer: ^3.0.0
+  introduction_screen: ^3.1.14
+  flutter_local_notifications: ^17.2.2
+
+  # 상태관리
+  provider: ^6.1.2
+  hive: ^4.0.0-dev.2
+  isar_flutter_libs: ^4.0.0-dev.13
+  path_provider: ^2.1.0
+
+  # 파이어베이스
+  firebase_core: ^3.5.0 # ^2.32.0
+  firebase_auth: ^5.3.0 # ^4.20.0
+  cloud_firestore: ^5.4.2 # ^4.17.5
+  firebase_storage: ^12.3.1 # ^11.7.7
+  google_sign_in: ^6.2.1
+  sign_in_with_apple: ^6.1.2
+
+  # 보안
+  flutter_dotenv: ^5.1.0
+
+  # 시나리오
+  syncfusion_flutter_charts: ^25.2.4
+  csv: ^5.1.1
+
+  # 프로필
+  table_calendar: ^3.1.1
+  url_launcher: ^6.3.0
   flutter_email_sender: ^5.0.0
   device_info_plus: ^10.1.2
   package_info_plus: ^8.0.2
   ios_utsname_ext: ^2.3.0
-  sign_in_with_apple: ^6.1.2
-  shimmer: ^3.0.0
+
+  # 배포
   flutter_launcher_icons: ^0.13.1
-  introduction_screen: ^3.1.14
+
+  email_validator: ^3.0.0
+  carousel_slider: ^4.0.0
+  flip_card: ^0.6.0
+  event_bus: ^2.0.0
+  speech_balloon: ^0.0.4
+  flutter_markdown: ^0.7.3+1
+  toastification: ^2.1.0
+  dropdown_button2: ^2.3.9
+  html_unescape: ^2.0.0
+
+  # 백그라운드 실행
+  flutter_background_service: ^5.0.10
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:

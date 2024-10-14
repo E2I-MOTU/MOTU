@@ -9,6 +9,7 @@ Widget MotuNormalButton(
   return ElevatedButton(
     style: ElevatedButton.styleFrom(
       minimumSize: const Size(50, 40),
+      elevation: 0,
       foregroundColor: Colors.white,
       backgroundColor: color,
       shape: RoundedRectangleBorder(

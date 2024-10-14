@@ -32,10 +32,8 @@ class _RegisterPageState extends State<RegisterPage> {
         "https://amused-power-1c0.notion.site/5704c05a8fdb471a8b23f38b3ecb77f1";
 
     void launchURL() async {
-      if (await canLaunch(privacyPolicyUrl)) {
-        await launch(privacyPolicyUrl);
-      } else {
-        throw 'Could not launch $privacyPolicyUrl';
+      if (!await launchUrl(Uri.parse(privacyPolicyUrl))) {
+        throw Exception('Could not launch $privacyPolicyUrl');
       }
     }
 

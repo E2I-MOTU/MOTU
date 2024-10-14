@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:motu/main.dart';
-import 'package:motu/provider/navigation_provider.dart';
+import 'package:motu/service/navigation_service.dart';
 import 'package:motu/service/scenario_service.dart';
-import 'package:motu/view/main_page.dart';
+import 'package:motu/view/nav_page.dart';
 import 'package:motu/view/news/news_list_screen.dart';
 import 'package:motu/view/terminology/terminology_main.dart';
 import 'package:motu/view/theme/color_theme.dart';
@@ -31,7 +30,7 @@ class CommentIntroPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 _buildHeaderText(
-                    service.selectedScenario ?? ScenarioType.covid),
+                    service.selectedScenario ?? ScenarioType.disease),
                 const SizedBox(height: 24),
                 TextButton(
                   onPressed: () {},
@@ -57,7 +56,7 @@ class CommentIntroPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 42),
                 _buildRecommendContent(
-                    context, service.selectedScenario ?? ScenarioType.covid),
+                    context, service.selectedScenario ?? ScenarioType.disease),
                 const SizedBox(height: 42),
                 TextButton(
                   onPressed: () {
@@ -66,7 +65,7 @@ class CommentIntroPage extends StatelessWidget {
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MainPage(),
+                        builder: (context) => const NavPage(),
                       ),
                       (route) => false, // 모든 기존 경로를 제거
                     );
@@ -102,7 +101,7 @@ class CommentIntroPage extends StatelessWidget {
 
   Widget _buildHeaderText(ScenarioType type) {
     switch (type) {
-      case ScenarioType.covid:
+      case ScenarioType.disease:
         return const Padding(
           padding: EdgeInsets.symmetric(horizontal: 70.0),
           child: Column(
@@ -155,7 +154,7 @@ class CommentIntroPage extends StatelessWidget {
 
   Widget _buildRecommendContent(BuildContext context, ScenarioType type) {
     switch (type) {
-      case ScenarioType.covid:
+      case ScenarioType.disease:
         return Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 48.0),

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:motu/provider/quiz_provider.dart';
 import 'package:motu/view/quiz/widget/quiz_category_builder.dart';
-import '../../provider/navigation_provider.dart';
-import '../main_page.dart';
+import '../../service/navigation_service.dart';
+import '../nav_page.dart';
 import '../theme/color_theme.dart';
 
 class QuizSelectionScreen extends StatelessWidget {
@@ -48,7 +48,7 @@ class QuizSelectionScreen extends StatelessWidget {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (context) => const MainPage(),
+                builder: (context) => const NavPage(),
               ),
               (route) => false, // 모든 기존 경로를 제거
             );

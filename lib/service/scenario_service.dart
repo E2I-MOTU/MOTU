@@ -7,30 +7,30 @@ import 'package:csv/csv.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:motu/model/invest_record.dart';
-import 'package:motu/model/stock_financial.dart';
-import 'package:motu/model/stock_info.dart';
+import 'package:motu/model/scenario/stock_financial.dart';
+import 'package:motu/model/scenario/stock_info.dart';
+import 'package:motu/scenario/database.dart';
+import 'package:motu/util/isolate_helper.dart';
 import 'package:motu/util/util.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:http/http.dart' as http;
 
-import '../model/stock_data.dart';
-import '../model/stock_news.dart';
+import '../model/scenario/stock_data.dart';
+import '../model/scenario/stock_news.dart';
 
-enum NoticeStatus {
-  timer,
-  news,
-}
-
+// 시나리오 타입
 enum ScenarioType {
-  covid,
+  disease,
   secondaryBattery,
 }
 
+// 거래 유형
 enum TransactionType {
   buy,
   sell,
 }
 
+// 분기
 enum Quarter {
   first,
   second,
@@ -38,20 +38,25 @@ enum Quarter {
   fourth,
 }
 
-class ScenarioService extends ChangeNotifier {
+class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
   Function? onNavigate; // 페이지 이동 함수
   Function? updateUserBalanceWhenFinish; // 사용자 잔액 업데이트 함수
-  Function? showTutorialPopup; // 튜토리얼 팝업 함수
+
+  bool _isRunning = false;
+  bool checkingScenarioIsRunning() {
+    _isRunning = getScenarioIsRunning();
+    return _isRunning;
+  }
 
   //* MARK: - 시나리오 주제 제목
   String getScenarioTitle(ScenarioType type) {
     switch (type) {
-      case ScenarioType.covid:
-        return 'COVID-19 시나리오';
+      case ScenarioType.disease:
+        return '질병과 주식';
       case ScenarioType.secondaryBattery:
-        return '2차 전지 시나리오';
+        return '2차전지와 주식';
       default:
-        return '';
+        return '커밍 순...';
     }
   }
 
@@ -62,16 +67,20 @@ class ScenarioService extends ChangeNotifier {
 
   int millisecondsPeriod = 1500;
 
+  // 시나리오 시작할 때 남은시간 타이머 시작
   void startRemainingTimeTimer() {
-    dev.log("Starting remaining time timer");
+    // back
+    dev.log("⏱️ 시나리오 남은 시간 타이머 시작");
 
     if (_storedAllStockData.isEmpty) return;
 
+    // 전체 남은 시간 계산
     int totalMilliseconds =
         (_storedAllStockData[_selectedStock]!.length * millisecondsPeriod)
             .toInt();
     _remainingTime = Duration(milliseconds: totalMilliseconds);
 
+    // 0.1초마다 남은 시간을 감소시키는 타이머
     _remainingTimeTimer =
         Timer.periodic(const Duration(milliseconds: 100), (timer) {
       if (_remainingTime.inMilliseconds > 0) {
@@ -83,16 +92,13 @@ class ScenarioService extends ChangeNotifier {
     });
   }
 
+  // 시나리오 종료 시 남은 시간 타이머 중지
   void stopRemainingTimeTimer() {
     _remainingTimeTimer?.cancel();
     _remainingTimeTimer = null;
   }
 
   late DateTime currentStockTime;
-
-  // 메인 공지 상태 변수
-  final NoticeStatus _status = NoticeStatus.timer;
-  NoticeStatus get status => _status;
 
   // 선택한 시나리오 타입
   ScenarioType? _selectedScenario;
@@ -113,15 +119,18 @@ class ScenarioService extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 관련주 변경
+  // 드롭다운으로 관련주 변경
   void setSelectedStock(String value) {
     _selectedStock = value;
-    dev.log("Selected Stock ID: ${_stockCSVPaths[_selectedStock]![0]}");
+    dev.log("변경한 관련주: ${_stockCSVPaths[_selectedStock]![0]}");
 
+    // 선택된 주식의 visibleStockData 업데이트
     _updateAllVisibleData();
 
+    // y축 범위 업데이트
     updateYAxisRange(_actualArgs);
 
+    // 현재 주식 종목 정보 업데이트
     setIsChangeStock(true);
 
     // 2초 후에 isChangeStock을 false로 변경
@@ -156,22 +165,28 @@ class ScenarioService extends ChangeNotifier {
   double yMaximum = 100;
   double yInterval = 10;
 
-  DateTime xMinimum = DateTime.now().subtract(const Duration(days: 21));
+  DateTime xMinimum = DateTime.now().subtract(const Duration(days: 252));
   DateTime xMaximum = DateTime.now();
 
+  // 저장되어 있는 모든 관련주 주식 데이터
   final Map<String, List<StockData>> _storedAllStockData = {};
   Map<String, List<StockData>> get storedAllStockData => _storedAllStockData;
 
+  // 보여지고 있는 현재 관련주 주식 데이터
   final Map<String, List<StockData>> _visibleAllStockData = {};
   Map<String, List<StockData>> get visibleAllStockData => _visibleAllStockData;
+
+  // 보여지고 있는 현재 주식 데이터
   List<StockData> _visibleStockData = [];
   List<StockData> get visibleStockData => _visibleStockData;
 
 //* MARK: - 글로벌 타이머 및 인덱스
   Timer? _globalTimer;
-  int _globalIndex = 20;
+  // 시작 인덱스 -> 거래일 기준 1년 뒤
+  int _globalIndex = 251;
 
   void startDataUpdate() {
+    // back
     _globalTimer =
         Timer.periodic(Duration(milliseconds: millisecondsPeriod), (timer) {
       _updateAllVisibleData();
@@ -200,12 +215,8 @@ class ScenarioService extends ChangeNotifier {
       _globalIndex++;
     }
 
-    try {
-      // 선택된 주식의 visibleStockData 업데이트
-      _updateVisibleStockData();
-    } catch (e) {
-      dev.log('Error updating visible stock data: $e');
-    }
+    // 선택된 주식의 visibleStockData 업데이트
+    _updateVisibleStockData();
 
     // MARK: - 시나리오 사이클 종료
     if (allDataDisplayed) {
@@ -230,44 +241,38 @@ class ScenarioService extends ChangeNotifier {
     notifyListeners();
   }
 
-//* MARK: - Initialize
-  // ScenarioService() {
-  //   _initializeData();
-  // }
-
+  //* MARK: - Initialize
   Future<void> initializeData() async {
     dev.log("Data initialized");
-
-    showTutorialPopup!(_selectedScenario);
 
     // 모든 관련주 데이터 불러오기
     await _loadAllData();
 
-    // 불러온 데이터를 바탕으로 초기 데이터 설정 (21일 데이터)
-    _initializeVisibleData();
+    _updateAllVisibleData();
 
-    // selectedStock에 따라 visibleStockData 설정
-    _updateVisibleStockData();
+    // 데이터 업데이트 타이머 시작 (Back)
+    startDataUpdate();
+
+    // 남은 시간 타이머 시작 (Back)
+    startRemainingTimeTimer();
+
+    // 불러온 데이터를 바탕으로 초기 데이터 설정 (252일 데이터)
+    _initializeVisibleData();
 
     // y축 범위 설정
     updateYAxisRangeLastData();
 
-    // 데이터 업데이트 타이머 시작
-    startDataUpdate();
-
-    // 남은 시간 타이머 시작
-    startRemainingTimeTimer();
-
     notifyListeners();
   }
 
+  // 모든 관련주 데이터 불러오기
   Future<void> _loadAllData() async {
     List<String> storageFiles = [];
     try {
       final storage = FirebaseStorage.instance.ref();
       final Reference chartPathRef;
       switch (_selectedScenario) {
-        case ScenarioType.covid:
+        case ScenarioType.disease:
           chartPathRef = storage.child('scenario/covid/chart/');
           break;
         case ScenarioType.secondaryBattery:
@@ -299,15 +304,20 @@ class ScenarioService extends ChangeNotifier {
 
       dev.log('Loaded stock CSV paths: $_stockCSVPaths');
 
-      // Isolate를 사용하여 멀티스레드로 데이터 로드
-      List<Future<void>> futures = stockOptions.map((stock) async {
-        await _loadDataForStock(stock);
-        await _loadInfoForStock(stock);
-        await _loadFinancialForStock(stock);
-        await _loadNewsForStock();
-      }).toList();
+      List<Future<void>> futures = [];
 
-      await Future.wait(futures); // 모든 작업이 완료될 때까지 기다립니다
+      for (var stock in stockOptions) {
+        // stock을 인자로 직접 전달
+        futures.add(_loadDataForStock(stock));
+        futures.add(_loadInfoForStock(stock));
+        futures.add(_loadFinancialForStock(stock));
+      }
+      futures.add(_loadNewsForStock());
+
+      await Future.wait(futures);
+      for (var element in storedAllStockData['관련주 A']!) {
+        print(element.x);
+      }
     } catch (e) {
       dev.log('Unexpected error: $e');
     }
@@ -318,7 +328,7 @@ class ScenarioService extends ChangeNotifier {
       final storageRef = FirebaseStorage.instance.ref();
       Reference pathRef;
       switch (_selectedScenario) {
-        case ScenarioType.covid:
+        case ScenarioType.disease:
           pathRef =
               storageRef.child("scenario/covid/chart/${stockCSVPaths[stock]!}");
           break;
@@ -359,10 +369,12 @@ class ScenarioService extends ChangeNotifier {
   }
 
   void _initializeVisibleData() {
+    dev.log("stockdata length: ${_storedAllStockData[_selectedStock]!.length}");
+
     for (final stock in stockOptions) {
       if (_storedAllStockData.containsKey(stock)) {
         final stockData = _storedAllStockData[stock]!;
-        final int endIndex = stockData.length < 21 ? stockData.length : 21;
+        final int endIndex = stockData.length < 252 ? stockData.length : 252;
         _visibleAllStockData[stock] = stockData.sublist(0, endIndex);
       } else {
         // 해당 주식 데이터가 없는 경우 빈 리스트로 초기화
@@ -386,11 +398,13 @@ class ScenarioService extends ChangeNotifier {
     notifyListeners();
   }
 
-  //* MARK: - 시간 관리하는 부분
+  //* MARK: - 시간 관리하는 부분 (Back)
   void _updateVisibleStockData() {
-    dev.log("Updating visible stock data for $_selectedStock");
+    dev.log("$_selectedStock 보여지는 데이터 업데이트");
     if (_visibleAllStockData.containsKey(_selectedStock)) {
       _visibleStockData = _visibleAllStockData[_selectedStock]!;
+      dev.log(
+          "visibleStockData length in updateVisibleStockData(): ${_visibleStockData.length}");
 
       // 데이터가 비어있지 않은지 확인
       currentStockTime = _visibleStockData.last.x;
@@ -401,7 +415,7 @@ class ScenarioService extends ChangeNotifier {
         q04Financial.year = currentStockTime.year;
       }
 
-      // 뉴스 데이터 업데이트
+      // MARK: - 뉴스 데이터 업데이트
       List<String> toRemove = [];
       for (String newsDate in _allNewsKeys) {
         DateTime newsDateTime = DateTime.parse(newsDate);
@@ -506,16 +520,18 @@ class ScenarioService extends ChangeNotifier {
   }
 
   void updateYAxisRangeLastData() {
+    dev.log("visibleStockData length: ${_visibleStockData.length}");
+
     if (_visibleStockData.isEmpty) return;
 
-    // 전체 데이터에서 최근 21개의 데이터만 가져옵니다.
-    List<StockData> lastData = _visibleStockData.length > 21
-        ? _visibleStockData.sublist(_visibleStockData.length - 21)
+    // 전체 데이터에서 최근 252개의 데이터만 가져옵니다.
+    List<StockData> lastData = _visibleStockData.length > 252
+        ? _visibleStockData.sublist(_visibleStockData.length - 252)
         : _visibleStockData;
 
     if (lastData.length < 2) return; // 데이터가 없을 경우 종료
 
-    // 최근 21개 데이터의 최소값과 최대값을 찾습니다.
+    // 최근 252개 데이터의 최소값과 최대값을 찾습니다.
     double minLow =
         lastData.map((data) => data.low).reduce((a, b) => a < b ? a : b);
     double maxHigh =
@@ -646,9 +662,8 @@ class ScenarioService extends ChangeNotifier {
       final storageRef = FirebaseStorage.instance.ref();
       Reference pathRef;
       String stockID = stockCSVPaths[stock]![0];
-      dev.log('Stock ID when load INFO: $stockID');
       switch (_selectedScenario) {
-        case ScenarioType.covid:
+        case ScenarioType.disease:
           pathRef = storageRef.child("scenario/covid/info/${stockID}_info.csv");
           break;
         case ScenarioType.secondaryBattery:
@@ -736,7 +751,7 @@ class ScenarioService extends ChangeNotifier {
       Reference pathRef;
       String stockID = stockCSVPaths[stock]![0];
       switch (_selectedScenario) {
-        case ScenarioType.covid:
+        case ScenarioType.disease:
           pathRef = storageRef
               .child("scenario/covid/financial/${stockID}_financial.csv");
           break;
@@ -878,7 +893,7 @@ class ScenarioService extends ChangeNotifier {
       late DocumentSnapshot doc;
 
       switch (_selectedScenario) {
-        case ScenarioType.covid:
+        case ScenarioType.disease:
           doc = await collection.doc('covid').get();
           break;
         case ScenarioType.secondaryBattery:
@@ -1096,7 +1111,7 @@ class ScenarioService extends ChangeNotifier {
     String comment = "";
 
     switch (_selectedScenario) {
-      case ScenarioType.covid:
+      case ScenarioType.disease:
         comment =
             "코로나는 우리 일상에 많은 변화를 가져다주었어요.\n\n전 세계에 큰 변화를 불러온 코로나는 경제/주가에 어떤 영향을 미쳤는지 함께 알아볼까요?";
         break;
