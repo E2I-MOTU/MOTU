@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:motu/src/features/scenario/model/stock_data.dart';
 import 'package:motu/src/common/util/util.dart';
+import 'package:motu/src/features/scenario/view/widget/order/custom_date_format.dart';
 import 'package:motu/src/features/scenario/view/widget/order/keyword_popup.dart';
 import 'package:motu/src/features/scenario/view/widget/order/stock_trade_widget.dart';
 import 'package:motu/src/design/color_theme.dart';
@@ -192,24 +193,24 @@ class StockOrderTab extends StatelessWidget {
                                       key: globalKey,
                                       // 주요 X축, Y축 설정
                                       primaryXAxis: DateTimeCategoryAxis(
-                                        dateFormat: DateFormat.Md('ko_KR'),
-                                        intervalType: DateTimeIntervalType.days,
+                                        dateFormat: CustomDateFormat('custom'),
+                                        interval: 3,
                                         majorGridLines:
                                             const MajorGridLines(width: 0),
                                         edgeLabelPlacement:
                                             EdgeLabelPlacement.shift,
                                         initialVisibleMinimum: service
                                             .visibleStockData.last.x
-                                            .subtract(const Duration(days: 20)),
+                                            .subtract(const Duration(days: 21)),
                                         minimum:
                                             service.visibleStockData.first.x,
                                         maximum:
                                             service.visibleStockData.last.x,
                                       ),
                                       primaryYAxis: NumericAxis(
-                                        minimum: service.yMinimum,
-                                        maximum: service.yMaximum,
-                                        interval: service.yInterval,
+                                        anchorRangeToVisiblePoints: true,
+                                        rangePadding: ChartRangePadding.round,
+                                        // interval: ,
                                         numberFormat: NumberFormat.currency(
                                           locale: 'ko_KR',
                                           symbol: '₩',
@@ -218,14 +219,14 @@ class StockOrderTab extends StatelessWidget {
                                         opposedPosition: true,
                                       ),
                                       // 축 범위 설정
-                                      // axes: <ChartAxis>[
-                                      //   NumericAxis(
-                                      //     name: 'Volume',
-                                      //     isVisible: false,
-                                      //     interval: 1000000000,
-                                      //     numberFormat: NumberFormat.compact(),
-                                      //   ),
-                                      // ],
+                                      axes: <ChartAxis>[
+                                        NumericAxis(
+                                          name: 'Volume',
+                                          isVisible: false,
+                                          // interval: 1000000000,
+                                          numberFormat: NumberFormat.compact(),
+                                        ),
+                                      ],
                                       // series 데이터 설정
                                       series: <CartesianSeries<StockData,
                                           DateTime>>[
@@ -260,7 +261,7 @@ class StockOrderTab extends StatelessWidget {
                                         lineType: CrosshairLineType.both,
                                         lineColor: Colors.grey,
                                         lineWidth: 1,
-                                        lineDashArray: <double>[5, 5],
+                                        lineDashArray: const <double>[5, 5],
                                       ),
                                       // 트랙볼 설정
                                       trackballBehavior:
@@ -271,14 +272,15 @@ class StockOrderTab extends StatelessWidget {
                                         enablePanning: true,
                                         zoomMode: ZoomMode.x,
                                       ),
-                                      onActualRangeChanged:
-                                          (ActualRangeChangedArgs args) {
-                                        SchedulerBinding.instance
-                                            .addPostFrameCallback((_) {
-                                          service.setActualArgs(args);
-                                          service.updateYAxisRange(args);
-                                        });
-                                      },
+                                      // onActualRangeChanged:
+                                      //     (ActualRangeChangedArgs args) {
+                                      //   SchedulerBinding.instance
+                                      //       .addPostFrameCallback((_) {
+                                      //     log("ActualRangeChanged");
+                                      //     service.setActualArgs(args);
+                                      //     service.updateYAxisRange(args);
+                                      //   });
+                                      // },
                                     ),
                                   ),
                           ),

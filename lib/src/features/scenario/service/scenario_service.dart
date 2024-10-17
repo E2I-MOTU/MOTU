@@ -128,7 +128,7 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     _updateAllVisibleData();
 
     // y축 범위 업데이트
-    updateYAxisRange(_actualArgs);
+    // updateYAxisRange(_actualArgs);
 
     // 현재 주식 종목 정보 업데이트
     setIsChangeStock(true);
@@ -165,7 +165,7 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
   double yMaximum = 100;
   double yInterval = 10;
 
-  DateTime xMinimum = DateTime.now().subtract(const Duration(days: 252));
+  DateTime xMinimum = DateTime.now().subtract(const Duration(days: 21));
   DateTime xMaximum = DateTime.now();
 
   // 저장되어 있는 모든 관련주 주식 데이터
@@ -183,7 +183,7 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
 //* MARK: - 글로벌 타이머 및 인덱스
   Timer? _globalTimer;
   // 시작 인덱스 -> 거래일 기준 1년 뒤
-  int _globalIndex = 251;
+  int _globalIndex = 21;
 
   void startDataUpdate() {
     // back
@@ -260,7 +260,7 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     _initializeVisibleData();
 
     // y축 범위 설정
-    updateYAxisRangeLastData();
+    // updateYAxisRangeLastData();
 
     notifyListeners();
   }
@@ -315,9 +315,6 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
       futures.add(_loadNewsForStock());
 
       await Future.wait(futures);
-      for (var element in storedAllStockData['관련주 A']!) {
-        print(element.x);
-      }
     } catch (e) {
       dev.log('Unexpected error: $e');
     }
@@ -374,7 +371,7 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     for (final stock in stockOptions) {
       if (_storedAllStockData.containsKey(stock)) {
         final stockData = _storedAllStockData[stock]!;
-        final int endIndex = stockData.length < 252 ? stockData.length : 252;
+        final int endIndex = stockData.length < 21 ? stockData.length : 21;
         _visibleAllStockData[stock] = stockData.sublist(0, endIndex);
       } else {
         // 해당 주식 데이터가 없는 경우 빈 리스트로 초기화
@@ -400,11 +397,9 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
 
   //* MARK: - 시간 관리하는 부분 (Back)
   void _updateVisibleStockData() {
-    dev.log("$_selectedStock 보여지는 데이터 업데이트");
+    dev.log("$_selectedStock 업데이트");
     if (_visibleAllStockData.containsKey(_selectedStock)) {
       _visibleStockData = _visibleAllStockData[_selectedStock]!;
-      dev.log(
-          "visibleStockData length in updateVisibleStockData(): ${_visibleStockData.length}");
 
       // 데이터가 비어있지 않은지 확인
       currentStockTime = _visibleStockData.last.x;
@@ -473,91 +468,98 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     notifyListeners();
   }
 
-  void updateYAxisRange(ActualRangeChangedArgs args) {
-    if (_visibleStockData.isEmpty) return;
+  // void updateYAxisRange(ActualRangeChangedArgs args) {
+  //   if (_visibleStockData.isEmpty) return;
 
-    // 현재 보이는 x축 범위
-    final xMin = args.visibleMin;
-    final xMax = args.visibleMax;
+  //   // 현재 보이는 x축 범위
+  //   final xMin = args.visibleMin;
+  //   final xMax = args.visibleMax;
 
-    // x축 범위 내의 데이터 필터링
-    var filteredData = _visibleStockData.where((data) {
-      double dataXAsDouble =
-          data.x.millisecondsSinceEpoch.toDouble(); // DateTime을 double로 변환
-      return dataXAsDouble >= xMin && dataXAsDouble <= xMax;
-    }).toList();
+  //   print("xMin: $xMin, xMax: $xMax");
 
-    if (filteredData.length < 2) return; // 필터링된 데이터가 없을 경우 종료
+  //   // x축 범위 내의 데이터 필터링
+  //   var filteredData = _visibleStockData.where((data) {
+  //     // print("data.x: ${data.x.microsecondsSinceEpoch}");
+  //     double dataXAsDouble =
+  //         data.x.millisecondsSinceEpoch.toDouble(); // DateTime을 double로 변환
 
-    // 현재 보이는 데이터의 최소값과 최대값을 찾습니다.
-    double minLow =
-        filteredData.map((data) => data.low).reduce((a, b) => a < b ? a : b);
-    double maxHigh =
-        filteredData.map((data) => data.high).reduce((a, b) => a > b ? a : b);
+  //     print("dataXAsDouble: $dataXAsDouble");
+  //     return dataXAsDouble >= xMin && dataXAsDouble <= xMax;
+  //   }).toList();
 
-    // 값의 범위를 계산합니다.
-    double range = maxHigh - minLow;
+  //   if (filteredData.length < 2) return; // 필터링된 데이터가 없을 경우 종료
 
-    // 최소값과 최대값에 여유 공간을 추가합니다 (전체 범위의 20%).
-    double padding = range * 0.2;
-    yMinimum = (minLow - padding).floorToDouble();
-    yMaximum = (maxHigh + padding).ceilToDouble();
+  //   // 현재 보이는 데이터의 최소값과 최대값을 찾습니다.
+  //   double minLow =
+  //       filteredData.map((data) => data.low).reduce((a, b) => a < b ? a : b);
+  //   double maxHigh =
+  //       filteredData.map((data) => data.high).reduce((a, b) => a > b ? a : b);
 
-    // 간격을 계산합니다. 대략 5-7개의 간격이 생기도록 합니다.
-    double rawInterval = range / 6;
+  //   // 값의 범위를 계산합니다.
+  //   double range = maxHigh - minLow;
 
-    // 간격을 적절한 값으로 반올림합니다.
-    if (rawInterval > 10) {
-      yInterval = (rawInterval / 10).round() * 10.0;
-    } else if (rawInterval > 1) {
-      yInterval = (rawInterval).round().toDouble();
-    } else {
-      yInterval = (rawInterval * 10).round() / 10;
-    }
+  //   // 최소값과 최대값에 여유 공간을 추가합니다 (전체 범위의 20%).
+  //   double padding = range * 0.2;
+  //   yMinimum = (minLow - padding).floorToDouble();
+  //   yMaximum = (maxHigh + padding).ceilToDouble();
 
-    // yMinimum, yMaximum, yInterval 값을 업데이트한 후 리스너를 통지합니다.
-    notifyListeners();
-  }
+  //   print("yMinimum: $yMinimum, yMaximum: $yMaximum");
 
-  void updateYAxisRangeLastData() {
-    dev.log("visibleStockData length: ${_visibleStockData.length}");
+  //   // 간격을 계산합니다. 대략 5-7개의 간격이 생기도록 합니다.
+  //   double rawInterval = range / 6;
 
-    if (_visibleStockData.isEmpty) return;
+  //   // 간격을 적절한 값으로 반올림합니다.
+  //   if (rawInterval > 10) {
+  //     yInterval = (rawInterval / 10).round() * 10.0;
+  //   } else if (rawInterval > 1) {
+  //     yInterval = (rawInterval).round().toDouble();
+  //   } else {
+  //     yInterval = (rawInterval * 10).round() / 10;
+  //   }
 
-    // 전체 데이터에서 최근 252개의 데이터만 가져옵니다.
-    List<StockData> lastData = _visibleStockData.length > 252
-        ? _visibleStockData.sublist(_visibleStockData.length - 252)
-        : _visibleStockData;
+  //   // yMinimum, yMaximum, yInterval 값을 업데이트한 후 리스너를 통지합니다.
+  //   notifyListeners();
+  // }
 
-    if (lastData.length < 2) return; // 데이터가 없을 경우 종료
+  // void updateYAxisRangeLastData() {
+  //   dev.log("visibleStockData length: ${_visibleStockData.length}");
 
-    // 최근 252개 데이터의 최소값과 최대값을 찾습니다.
-    double minLow =
-        lastData.map((data) => data.low).reduce((a, b) => a < b ? a : b);
-    double maxHigh =
-        lastData.map((data) => data.high).reduce((a, b) => a > b ? a : b);
+  //   if (_visibleStockData.isEmpty) return;
 
-    // 값의 범위를 계산합니다.
-    double range = maxHigh - minLow;
+  //   // 전체 데이터에서 최근 252개의 데이터만 가져옵니다.
+  //   List<StockData> lastData = _visibleStockData.length > 21
+  //       ? _visibleStockData.sublist(_visibleStockData.length - 21)
+  //       : _visibleStockData;
 
-    // 최소값과 최대값에 여유 공간을 추가합니다 (전체 범위의 10%).
-    double padding = range * 0.2;
-    yMinimum = (minLow - padding).floorToDouble();
-    yMaximum = (maxHigh + padding).ceilToDouble();
+  //   if (lastData.length < 2) return; // 데이터가 없을 경우 종료
 
-    // 간격을 계산합니다. 대략 5-7개의 간격이 생기도록 합니다.
-    double rawInterval = range / 6;
-    // 간격을 적절한 값으로 반올림합니다.
-    if (rawInterval > 10) {
-      yInterval = (rawInterval / 10).round() * 10.0;
-    } else if (rawInterval > 1) {
-      yInterval = (rawInterval).round().toDouble();
-    } else {
-      yInterval = (rawInterval * 10).round() / 10;
-    }
-    // yMinimum, yMaximum, yInterval 값을 업데이트한 후 리스너를 통지합니다.
-    notifyListeners();
-  }
+  //   // 최근 252개 데이터의 최소값과 최대값을 찾습니다.
+  //   double minLow =
+  //       lastData.map((data) => data.low).reduce((a, b) => a < b ? a : b);
+  //   double maxHigh =
+  //       lastData.map((data) => data.high).reduce((a, b) => a > b ? a : b);
+
+  //   // 값의 범위를 계산합니다.
+  //   double range = maxHigh - minLow;
+
+  //   // 최소값과 최대값에 여유 공간을 추가합니다 (전체 범위의 10%).
+  //   double padding = range * 0.2;
+  //   yMinimum = (minLow - padding).floorToDouble();
+  //   yMaximum = (maxHigh + padding).ceilToDouble();
+
+  //   // 간격을 계산합니다. 대략 5-7개의 간격이 생기도록 합니다.
+  //   double rawInterval = range / 6;
+  //   // 간격을 적절한 값으로 반올림합니다.
+  //   if (rawInterval > 10) {
+  //     yInterval = (rawInterval / 10).round() * 10.0;
+  //   } else if (rawInterval > 1) {
+  //     yInterval = (rawInterval).round().toDouble();
+  //   } else {
+  //     yInterval = (rawInterval * 10).round() / 10;
+  //   }
+  //   // yMinimum, yMaximum, yInterval 값을 업데이트한 후 리스너를 통지합니다.
+  //   notifyListeners();
+  // }
 
   @override
   void dispose() {
