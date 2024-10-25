@@ -23,8 +23,8 @@ Widget CommonDialog(BuildContext context) {
         ),
         Positioned(
           bottom: 0,
-          left: 0,
-          right: 0,
+          left: 10,
+          right: 10,
           child: SizedBox(
             child: Row(
               children: [
@@ -52,34 +52,6 @@ Widget CommonDialog(BuildContext context) {
                       setScenarioIsRunning(false);
                       Provider.of<ScenarioService>(context, listen: false)
                           .checkingScenarioIsRunning();
-
-                      // final navService = Provider.of<NavigationService>(context,
-                      //     listen: false);
-                      // navService.setSelectedIndex(2);
-
-                      // final scenarioService =
-                      //     Provider.of<ScenarioService>(context, listen: false);
-                      // scenarioService.resetAllData();
-
-                      // final authService =
-                      //     Provider.of<AuthService>(context, listen: false);
-                      // authService.setUserBalance(
-                      //     (scenarioService.originBalance * 0.9).toInt());
-
-                      // authService.addBalanceDetail(BalanceDetail(
-                      //   date: DateTime.now(),
-                      //   content: "시나리오 중도 포기 패널티",
-                      //   amount: (scenarioService.originBalance * 0.1).toInt(),
-                      //   isIncome: false,
-                      // ));
-
-                      // Navigator.replace(
-                      //   context,
-                      //   oldRoute: ModalRoute.of(context)!,
-                      //   newRoute: MaterialPageRoute(
-                      //     builder: (context) => const NavPage(),
-                      //   ),
-                      // );
                     },
                   ),
                 ),
@@ -88,22 +60,25 @@ Widget CommonDialog(BuildContext context) {
           ),
         ),
         SizedBox(
-          height: size.height * 0.4,
+          height: size.height * 0.3,
           width: size.width * 0.7,
-          child: const Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: 32),
-              Text(
-                "정말 나가실 건가요?",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 32),
-              Text(
-                "중도 포기하면 수수료로 기존 자산의 10% 금액만큼 차감됩니다.",
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  "정말 나가실 건가요?",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "현재까지 진행했던 시나리오 데이터가 모두 초기화됩니다.",
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(),
+              ],
+            ),
           ),
         ),
       ],

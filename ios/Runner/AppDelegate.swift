@@ -2,7 +2,7 @@ import Flutter
 import flutter_local_notifications
 import UIKit
 
-@UIApplicationMain
+@main
 @objc class AppDelegate: FlutterAppDelegate {
     var applicationLifeCycleChannel: FlutterBasicMessageChannel!
 

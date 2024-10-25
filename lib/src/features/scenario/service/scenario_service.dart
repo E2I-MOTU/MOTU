@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:motu/src/common/service/notifications.dart';
 import 'package:motu/src/features/scenario/model/invest_record.dart';
 import 'package:motu/src/features/scenario/model/stock_financial.dart';
 import 'package:motu/src/features/scenario/model/stock_info.dart';
@@ -22,6 +23,7 @@ import '../model/stock_news.dart';
 enum ScenarioType {
   disease,
   secondaryBattery,
+  festival,
 }
 
 // 거래 유형
@@ -55,8 +57,8 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
         return '질병과 주식';
       case ScenarioType.secondaryBattery:
         return '2차전지와 주식';
-      default:
-        return '커밍 순...';
+      case ScenarioType.festival:
+        return '2024 한동대학교 가을축제 LISTEN';
     }
   }
 
@@ -65,7 +67,7 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
   Duration _remainingTime = Duration.zero;
   Duration get remainingTime => _remainingTime;
 
-  int millisecondsPeriod = 1500;
+  int millisecondsPeriod = 2000;
 
   // 시나리오 시작할 때 남은시간 타이머 시작
   void startRemainingTimeTimer() {
@@ -76,7 +78,8 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
 
     // 전체 남은 시간 계산
     int totalMilliseconds =
-        (_storedAllStockData[_selectedStock]!.length * millisecondsPeriod)
+        ((_storedAllStockData[_selectedStock]!.length - 1 - _globalIndex) *
+                millisecondsPeriod)
             .toInt();
     _remainingTime = Duration(milliseconds: totalMilliseconds);
 
@@ -101,8 +104,8 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
   late DateTime currentStockTime;
 
   // 선택한 시나리오 타입
-  ScenarioType? _selectedScenario;
-  ScenarioType? get selectedScenario => _selectedScenario;
+  late ScenarioType _selectedScenario;
+  ScenarioType get selectedScenario => _selectedScenario;
   void setSelectedScenario(ScenarioType scenario) {
     _selectedScenario = scenario;
     notifyListeners();
@@ -126,9 +129,6 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
 
     // 선택된 주식의 visibleStockData 업데이트
     _updateAllVisibleData();
-
-    // y축 범위 업데이트
-    updateYAxisRange(_actualArgs);
 
     // 현재 주식 종목 정보 업데이트
     setIsChangeStock(true);
@@ -165,7 +165,7 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
   double yMaximum = 100;
   double yInterval = 10;
 
-  DateTime xMinimum = DateTime.now().subtract(const Duration(days: 252));
+  DateTime xMinimum = DateTime.now().subtract(const Duration(days: 21));
   DateTime xMaximum = DateTime.now();
 
   // 저장되어 있는 모든 관련주 주식 데이터
@@ -183,7 +183,8 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
 //* MARK: - 글로벌 타이머 및 인덱스
   Timer? _globalTimer;
   // 시작 인덱스 -> 거래일 기준 1년 뒤
-  int _globalIndex = 251;
+  int _globalIndex = 20;
+  // int _globalIndex = 0;
 
   void startDataUpdate() {
     // back
@@ -198,8 +199,10 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     _globalTimer = null;
   }
 
-  void _updateAllVisibleData() {
+  Future<void> _updateAllVisibleData() async {
     bool allDataDisplayed = true;
+
+    await getStockDescription();
 
     for (final stock in stockOptions) {
       if (_globalIndex < _storedAllStockData[stock]!.length - 1) {
@@ -220,7 +223,10 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
 
     // MARK: - 시나리오 사이클 종료
     if (allDataDisplayed) {
+      dev.log('👏👏👏👏 시나리오 종료');
       stopDataUpdate(); // 모든 데이터를 표시했으면 타이머 중지
+
+      setScenarioIsRunning(false);
 
       if (updateUserBalanceWhenFinish != null) {
         updateUserBalanceWhenFinish!();
@@ -260,7 +266,7 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     _initializeVisibleData();
 
     // y축 범위 설정
-    updateYAxisRangeLastData();
+    // updateYAxisRangeLastData();
 
     notifyListeners();
   }
@@ -277,8 +283,9 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
           break;
         case ScenarioType.secondaryBattery:
           chartPathRef = storage.child('scenario/secondary_battery/chart/');
-        default:
-          throw Exception('Invalid scenario type');
+        case ScenarioType.festival:
+          chartPathRef = storage.child('scenario/festival/chart/');
+          break;
       }
       final ListResult result = await chartPathRef.listAll();
 
@@ -293,6 +300,7 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
       List<String> randomSelectedFiles = List.from(storageFiles)
         ..shuffle(random);
       randomSelectedFiles = randomSelectedFiles.sublist(0, 5);
+      dev.log('Random selected files: $randomSelectedFiles');
 
       _stockCSVPaths = {
         "관련주 A": randomSelectedFiles[0],
@@ -315,9 +323,6 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
       futures.add(_loadNewsForStock());
 
       await Future.wait(futures);
-      for (var element in storedAllStockData['관련주 A']!) {
-        print(element.x);
-      }
     } catch (e) {
       dev.log('Unexpected error: $e');
     }
@@ -336,8 +341,10 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
           pathRef = storageRef.child(
               "scenario/secondary_battery/chart/${stockCSVPaths[stock]!}");
           break;
-        default:
-          throw Exception('Invalid scenario type');
+        case ScenarioType.festival:
+          pathRef = storageRef
+              .child("scenario/festival/chart/${stockCSVPaths[stock]!}");
+          break;
       }
 
       final url = await pathRef.getDownloadURL();
@@ -374,7 +381,7 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     for (final stock in stockOptions) {
       if (_storedAllStockData.containsKey(stock)) {
         final stockData = _storedAllStockData[stock]!;
-        final int endIndex = stockData.length < 252 ? stockData.length : 252;
+        final int endIndex = stockData.length < 21 ? stockData.length : 21;
         _visibleAllStockData[stock] = stockData.sublist(0, endIndex);
       } else {
         // 해당 주식 데이터가 없는 경우 빈 리스트로 초기화
@@ -383,28 +390,11 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     }
   }
 
-  //* MARK: - 튜토리얼 관련
-  bool _isOnTutorial = false;
-  bool get isOnTutorial => _isOnTutorial;
-  void setIsOnTutorial(bool value) {
-    _isOnTutorial = value;
-    notifyListeners();
-  }
-
-  bool _isStartScenario = false;
-  bool get isStartScenario => _isStartScenario;
-  void setIsStartScenario(bool value) {
-    _isStartScenario = value;
-    notifyListeners();
-  }
-
   //* MARK: - 시간 관리하는 부분 (Back)
   void _updateVisibleStockData() {
-    dev.log("$_selectedStock 보여지는 데이터 업데이트");
+    dev.log("$_selectedStock 업데이트");
     if (_visibleAllStockData.containsKey(_selectedStock)) {
       _visibleStockData = _visibleAllStockData[_selectedStock]!;
-      dev.log(
-          "visibleStockData length in updateVisibleStockData(): ${_visibleStockData.length}");
 
       // 데이터가 비어있지 않은지 확인
       currentStockTime = _visibleStockData.last.x;
@@ -436,6 +426,12 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
           );
 
           _news.add(news);
+          LocalPushNotifications.showSimpleNotification(
+            title:
+                "${news.date.year}년 ${news.date.month}월 ${news.date.day}일 뉴스 업데이트",
+            body: news.title,
+            payload: "news",
+          );
 
           notifyListeners();
         }
@@ -473,97 +469,18 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     notifyListeners();
   }
 
-  void updateYAxisRange(ActualRangeChangedArgs args) {
-    if (_visibleStockData.isEmpty) return;
-
-    // 현재 보이는 x축 범위
-    final xMin = args.visibleMin;
-    final xMax = args.visibleMax;
-
-    // x축 범위 내의 데이터 필터링
-    var filteredData = _visibleStockData.where((data) {
-      double dataXAsDouble =
-          data.x.millisecondsSinceEpoch.toDouble(); // DateTime을 double로 변환
-      return dataXAsDouble >= xMin && dataXAsDouble <= xMax;
-    }).toList();
-
-    if (filteredData.length < 2) return; // 필터링된 데이터가 없을 경우 종료
-
-    // 현재 보이는 데이터의 최소값과 최대값을 찾습니다.
-    double minLow =
-        filteredData.map((data) => data.low).reduce((a, b) => a < b ? a : b);
-    double maxHigh =
-        filteredData.map((data) => data.high).reduce((a, b) => a > b ? a : b);
-
-    // 값의 범위를 계산합니다.
-    double range = maxHigh - minLow;
-
-    // 최소값과 최대값에 여유 공간을 추가합니다 (전체 범위의 20%).
-    double padding = range * 0.2;
-    yMinimum = (minLow - padding).floorToDouble();
-    yMaximum = (maxHigh + padding).ceilToDouble();
-
-    // 간격을 계산합니다. 대략 5-7개의 간격이 생기도록 합니다.
-    double rawInterval = range / 6;
-
-    // 간격을 적절한 값으로 반올림합니다.
-    if (rawInterval > 10) {
-      yInterval = (rawInterval / 10).round() * 10.0;
-    } else if (rawInterval > 1) {
-      yInterval = (rawInterval).round().toDouble();
-    } else {
-      yInterval = (rawInterval * 10).round() / 10;
-    }
-
-    // yMinimum, yMaximum, yInterval 값을 업데이트한 후 리스너를 통지합니다.
-    notifyListeners();
-  }
-
-  void updateYAxisRangeLastData() {
-    dev.log("visibleStockData length: ${_visibleStockData.length}");
-
-    if (_visibleStockData.isEmpty) return;
-
-    // 전체 데이터에서 최근 252개의 데이터만 가져옵니다.
-    List<StockData> lastData = _visibleStockData.length > 252
-        ? _visibleStockData.sublist(_visibleStockData.length - 252)
-        : _visibleStockData;
-
-    if (lastData.length < 2) return; // 데이터가 없을 경우 종료
-
-    // 최근 252개 데이터의 최소값과 최대값을 찾습니다.
-    double minLow =
-        lastData.map((data) => data.low).reduce((a, b) => a < b ? a : b);
-    double maxHigh =
-        lastData.map((data) => data.high).reduce((a, b) => a > b ? a : b);
-
-    // 값의 범위를 계산합니다.
-    double range = maxHigh - minLow;
-
-    // 최소값과 최대값에 여유 공간을 추가합니다 (전체 범위의 10%).
-    double padding = range * 0.2;
-    yMinimum = (minLow - padding).floorToDouble();
-    yMaximum = (maxHigh + padding).ceilToDouble();
-
-    // 간격을 계산합니다. 대략 5-7개의 간격이 생기도록 합니다.
-    double rawInterval = range / 6;
-    // 간격을 적절한 값으로 반올림합니다.
-    if (rawInterval > 10) {
-      yInterval = (rawInterval / 10).round() * 10.0;
-    } else if (rawInterval > 1) {
-      yInterval = (rawInterval).round().toDouble();
-    } else {
-      yInterval = (rawInterval * 10).round() / 10;
-    }
-    // yMinimum, yMaximum, yInterval 값을 업데이트한 후 리스너를 통지합니다.
-    notifyListeners();
-  }
-
   @override
   void dispose() {
     stopDataUpdate();
     stopRemainingTimeTimer();
     super.dispose();
+  }
+
+  ActualRangeChangedArgs _unifiedActualArgs = ActualRangeChangedArgs();
+  ActualRangeChangedArgs get unifiedActualArgs => _unifiedActualArgs;
+  void updateUnifiedActualArgs(ActualRangeChangedArgs args) {
+    _unifiedActualArgs = args;
+    notifyListeners();
   }
 
   String explainTextbyCell(String cell) {
@@ -590,6 +507,24 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
 
   //*---------------------------------------------------------------------------
   //* MARK: - 관련주 당 주식 종목 정보
+
+  String _selectedStockDescription = "";
+  String get selectedStockDescription => _selectedStockDescription;
+
+  Future<void> getStockDescription() async {
+    String stockID = stockCSVPaths[selectedStock]!.split('_').first;
+
+    final doc = await FirebaseFirestore.instance
+        .collection('stock_info')
+        .doc(stockID)
+        .get();
+
+    if (doc.exists) {
+      _selectedStockDescription = "$selectedStock는 ${doc['description']}";
+    } else {
+      _selectedStockDescription = '해당 관련주 정보 없음';
+    }
+  }
 
   final Map<String, List<StockInfo>> _stockDataInfo = {};
   get stockDataInfo => _stockDataInfo;
@@ -670,8 +605,10 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
           pathRef = storageRef
               .child("scenario/secondary_battery/info/${stockID}_info.csv");
           break;
-        default:
-          throw Exception('Invalid scenario type');
+        case ScenarioType.festival:
+          pathRef =
+              storageRef.child("scenario/festival/info/${stockID}_info.csv");
+          break;
       }
 
       final url = await pathRef.getDownloadURL();
@@ -759,8 +696,10 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
           pathRef = storageRef.child(
               "scenario/secondary_battery/financial/${stockID}_financial.csv");
           break;
-        default:
-          throw Exception('Invalid scenario type');
+        case ScenarioType.festival:
+          pathRef = storageRef
+              .child("scenario/festival/financial/${stockID}_financial.csv");
+          break;
       }
 
       final url = await pathRef.getDownloadURL();
@@ -899,7 +838,9 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
         case ScenarioType.secondaryBattery:
           doc = await collection.doc('second_battery').get();
           break;
-        default:
+        case ScenarioType.festival:
+          doc = await collection.doc('festival').get();
+          break;
       }
 
       if (doc.exists) {
@@ -1074,6 +1015,7 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     dev.log("Resetting all data");
 
     _globalIndex = 20;
+    // _globalIndex = 0;
 
     _visibleAllStockData.clear();
     _visibleStockData.clear();
@@ -1097,8 +1039,6 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     totalRatingPrice = 0;
     unrealizedPnL = 0;
     realizedPnL = 0;
-
-    _selectedScenario = null;
 
     stopDataUpdate();
     stopRemainingTimeTimer();

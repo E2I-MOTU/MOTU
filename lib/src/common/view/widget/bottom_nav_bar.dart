@@ -6,7 +6,7 @@ import '../../../design/color_theme.dart';
 Widget BottomNavBar() {
   return Consumer<NavigationService>(builder: (context, service, child) {
     return SizedBox(
-      height: 50,
+      height: MediaQuery.of(context).size.height * 0.1,
       child: BottomNavigationBar(
         backgroundColor: ColorTheme.colorWhite,
         selectedItemColor: ColorTheme.colorPrimary,

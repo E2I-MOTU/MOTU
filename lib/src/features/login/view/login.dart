@@ -3,7 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:hive/hive.dart';
+import 'package:motu/src/common/database.dart';
 import 'package:motu/src/features/login/service/auth_service.dart';
+import 'package:motu/src/features/login/view/onboarding/onboarding.dart';
 import 'package:motu/src/features/login/view/util/add_info_dialog.dart';
 import 'package:provider/provider.dart';
 import '../../../design/color_theme.dart';
