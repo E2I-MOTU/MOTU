@@ -2,6 +2,19 @@ import 'dart:developer';
 
 import 'package:hive/hive.dart';
 
+void setOnboardingDone() {
+  final box = Hive.box(name: 'onboarding');
+  box.put('done', true);
+  log("🐝 로컬DB 저장 : ${box.get('done')}");
+}
+
+bool getOnboardingDone() {
+  final box = Hive.box(name: 'onboarding');
+  bool result = box.get('done') ?? false;
+  // log("🐝 로컬DB 조회 : $result");
+  return result;
+}
+
 void initHiveDB() {
   final box = Hive.box(name: 'scenario');
   log("🐝 로컬DB 초기화 : $box");

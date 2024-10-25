@@ -39,6 +39,7 @@ dependencies:
   shimmer: ^3.0.0
   introduction_screen: ^3.1.14
   flutter_local_notifications: ^17.2.2
+  percent_indicator: ^4.0.1
 
   # 상태관리
   provider: ^6.1.2
@@ -113,7 +114,9 @@ flutter:
     - assets/logo/
     - assets/images/
     - assets/images/scenario/
+    - assets/images/scenario/tutorial/
     - assets/images/login/
+    - assets/images/login/onboarding/
     - assets/images/profile/
     - assets/images/character/
     - assets/images/icon/

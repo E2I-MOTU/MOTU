@@ -23,8 +23,8 @@ Widget LogoutDialog(BuildContext context) {
         ),
         Positioned(
           bottom: 0,
-          left: 0,
-          right: 0,
+          left: 10,
+          right: 10,
           child: SizedBox(
             child: Row(
               children: [
@@ -59,21 +59,21 @@ Widget LogoutDialog(BuildContext context) {
           ),
         ),
         SizedBox(
-          height: size.height * 0.4,
+          height: size.height * 0.3,
           width: size.width * 0.7,
           child: const Column(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              SizedBox(height: 32),
               Text(
                 "정말 로그아웃 하실 건가요?",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 32),
               Text(
                 "예를 누르시면 로그아웃 됩니다.",
                 style: TextStyle(fontSize: 16),
               ),
+              SizedBox(),
             ],
           ),
         ),
