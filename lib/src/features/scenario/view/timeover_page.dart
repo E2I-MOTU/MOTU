@@ -46,7 +46,20 @@ class TimeoverPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        InvestmentStatusToggle(haveTitle: false),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 32.0, top: 8),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "최종 수익률: ${((auth.user!.balance - scenario.originBalance) / scenario.originBalance * 100).toStringAsFixed(2)}%",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const InvestmentStatusToggle(haveTitle: false),
                         const SizedBox(height: 16),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 36),

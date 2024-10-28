@@ -167,6 +167,7 @@ class ProfilePageState extends State<ProfilePage> {
                 style: TextStyle(color: ColorTheme.Black2),
               ),
               const SizedBox(height: 16),
+
               FutureBuilder<List<DateTime>>(
                 future: context.watch<AuthService>().getAttendance(),
                 builder: (BuildContext context,

@@ -37,7 +37,9 @@ class StockListView extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${service.currentPercentStr()}\n${service.currentPriceStr()}',
+                          service.unrealizedPnL > 0
+                              ? '+${Formatter.format(service.unrealizedPnL)}\n+${service.totalEarningRate.toStringAsFixed(1)}%'
+                              : '${Formatter.format(service.unrealizedPnL)}\n${service.totalEarningRate.toStringAsFixed(1)}%',
                           style: TextStyle(
                             fontSize: 15,
                             color:
@@ -89,6 +91,8 @@ class StockListView extends StatelessWidget {
                             service.investStocks[stock]![0] *
                                 service.visibleAllStockData[stock]!.last.close
                                     .toInt()),
+                        rate:
+                            "${service.earningRates[stock].toStringAsFixed(1)}%",
                       );
                     case '관련주 B':
                       return StockItem(
@@ -99,6 +103,8 @@ class StockListView extends StatelessWidget {
                             service.investStocks[stock]![0] *
                                 service.visibleAllStockData[stock]!.last.close
                                     .toInt()),
+                        rate:
+                            "${service.earningRates[stock].toStringAsFixed(1)}%",
                       );
                     case '관련주 C':
                       return StockItem(
@@ -109,6 +115,8 @@ class StockListView extends StatelessWidget {
                             service.investStocks[stock]![0] *
                                 service.visibleAllStockData[stock]!.last.close
                                     .toInt()),
+                        rate:
+                            "${service.earningRates[stock].toStringAsFixed(1)}%",
                       );
                     case '관련주 D':
                       return StockItem(
@@ -119,6 +127,8 @@ class StockListView extends StatelessWidget {
                             service.investStocks[stock]![0] *
                                 service.visibleAllStockData[stock]!.last.close
                                     .toInt()),
+                        rate:
+                            "${service.earningRates[stock].toStringAsFixed(1)}%",
                       );
                     case '관련주 E':
                       return StockItem(
@@ -129,6 +139,8 @@ class StockListView extends StatelessWidget {
                             service.investStocks[stock]![0] *
                                 service.visibleAllStockData[stock]!.last.close
                                     .toInt()),
+                        rate:
+                            "${service.earningRates[stock].toStringAsFixed(1)}%",
                       );
                     default:
                       return const SizedBox.shrink(); // 기본적으로 빈 위젯 반환
@@ -143,11 +155,13 @@ class StockListView extends StatelessWidget {
     });
   }
 
-  Widget StockItem(
-      {required String logo,
-      required String name,
-      required int amount,
-      required String value}) {
+  Widget StockItem({
+    required String logo,
+    required String name,
+    required int amount,
+    required String value,
+    required String rate,
+  }) {
     return ListTile(
       leading: Image.asset(
         logo,
@@ -156,8 +170,22 @@ class StockListView extends StatelessWidget {
       ),
       title: Text(name),
       subtitle: Text('$amount주'),
-      trailing: Text(value,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(value,
+              style:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            rate,
+            style: TextStyle(
+              fontSize: 14,
+              color: rate.contains('-') ? Colors.blue : Colors.red,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

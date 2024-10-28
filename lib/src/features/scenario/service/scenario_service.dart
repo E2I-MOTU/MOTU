@@ -67,7 +67,7 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
   Duration _remainingTime = Duration.zero;
   Duration get remainingTime => _remainingTime;
 
-  int millisecondsPeriod = 2000;
+  int millisecondsPeriod = 4000;
 
   // 시나리오 시작할 때 남은시간 타이머 시작
   void startRemainingTimeTimer() {
@@ -448,6 +448,12 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
 
       // 현재 보유한 주식의 총 평가 금액 업데이트
       updateUnrealizedPnL();
+
+      // 현재 보유한 주식들의 각각 수익률 업데이트
+      setStockEarningRates();
+
+      // 현재 보유한 주식의 총 수익률 업데이트
+      setTotalEarningRate();
 
       // 분기 별 정보 업데이트
       int month = currentStockTime.month;
@@ -874,7 +880,11 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
 
   int realizedPnL = 0; // 실현 손익
 
-  // [주식명: [보유량, 총 구매 금액]]
+  double returnRate = 0; // 수익률
+
+  double totalEarningRate = 0; // 전체 수익률
+
+  // [주식명: [보유량, 매입단가 * 보유량]]
   final Map<String, List<int>> _investStocks = {
     '관련주 A': [0, 0],
     '관련주 B': [0, 0],
@@ -882,22 +892,52 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     '관련주 D': [0, 0],
     '관련주 E': [0, 0],
   };
+
+  final Map<String, double> _earningRates = {
+    '관련주 A': 0,
+    '관련주 B': 0,
+    '관련주 C': 0,
+    '관련주 D': 0,
+    '관련주 E': 0,
+  };
+  get earningRates => _earningRates;
+
+  // 전체 수익률 계산
+  void setTotalEarningRate() {
+    double profitContribution = 0;
+    int totalInvestPrice = 0;
+    if (totalPurchasePrice == 0) {
+      totalEarningRate = 0;
+    } else {
+      for (String stock in _investStocks.keys) {
+        double earningRate = _earningRates[stock]!;
+        if (earningRate.isNaN) {
+          earningRate = 0;
+        }
+        profitContribution += _investStocks[stock]![1] * earningRate;
+        totalInvestPrice += _investStocks[stock]![1];
+      }
+
+      totalEarningRate = profitContribution / totalInvestPrice;
+    }
+  }
+
   Map<String, List<int>> get investStocks => _investStocks;
   void setInvestStocks(String stock, TransactionType type, int amount) {
-    int currentAmount = _investStocks[stock]![0];
     if (type == TransactionType.buy) {
-      _investStocks[stock]![0] = currentAmount + amount;
+      _investStocks[stock]![0] += amount;
     } else {
-      _investStocks[stock]![0] = currentAmount - amount;
+      _investStocks[stock]![0] -= amount;
     }
 
-    int currentTotalPrice = _investStocks[stock]![1];
-    int price = _visibleAllStockData[stock]!.last.close.toInt();
+    int price = _visibleAllStockData[stock]!.last.close.toInt(); // 현재가
     if (type == TransactionType.buy) {
-      _investStocks[stock]![1] = currentTotalPrice + price * amount;
+      _investStocks[stock]![1] += price * amount;
     } else {
-      _investStocks[stock]![1] = currentTotalPrice - price * amount;
+      _investStocks[stock]![1] -= price * amount;
     }
+
+    print('보유 주식: $_investStocks');
 
     notifyListeners();
   }
@@ -932,8 +972,10 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
 
   void updateTotalPurchasePrice() {
     int total = 0;
-    for (String stock in _investStocks.keys) {
-      total += _investStocks[stock]![1];
+    for (InvestRecord record in _investRecords) {
+      if (record.type == TransactionType.buy) {
+        total += record.price * record.amount;
+      }
     }
     totalPurchasePrice = total;
 
@@ -941,11 +983,16 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
   }
 
   void updateUnrealizedPnL() {
+    if (totalRatingPrice == 0) {
+      unrealizedPnL = 0;
+      return;
+    }
+
     int total = 0;
     for (String stock in _investStocks.keys) {
       int currentValue = _investStocks[stock]![0] *
-          visibleAllStockData[stock]!.last.close.toInt();
-      int purchaseValue = _investStocks[stock]![1];
+          visibleAllStockData[stock]!.last.close.toInt(); // 현재가
+      int purchaseValue = _investStocks[stock]![1]; // 매입단가 * 보유량
       total += (currentValue - purchaseValue);
     }
 
@@ -954,22 +1001,24 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     notifyListeners();
   }
 
+  // 실현손익 업데이트
+  // 실현손익 = 매도 당시 가격 (현재가 * 매도종목수) - 매수 당시 가격 (매수가 * 매수종목수)
   void updateRealizedPnL(InvestRecord record) {
-    int averagePrice;
-    if (_investStocks[selectedStock]![0] != 0) {
-      averagePrice =
-          _investStocks[selectedStock]![1] ~/ _investStocks[selectedStock]![0];
-    } else {
-      averagePrice = 0;
+    int currentPrice = record.price; // 현재가
+    int purchasePrice;
+    try {
+      purchasePrice = _investStocks[record.stock]![1] ~/
+          _investStocks[record.stock]![0]; // 매입단가
+    } catch (e) {
+      if (e is UnsupportedError) {
+        purchasePrice = 0; // 기본값 설정
+        print("Error: Division by zero for stock: ${record.stock}");
+      } else {
+        rethrow;
+      }
     }
 
-    int currentPrice = visibleAllStockData[selectedStock]!.last.close.toInt();
-    int amount = record.amount;
-
-    if (record.type == TransactionType.sell) {
-      realizedPnL += (currentPrice - averagePrice) * amount;
-    }
-    dev.log('This Realized PnL: ${(currentPrice - averagePrice) * amount}}');
+    realizedPnL = (currentPrice - purchasePrice) * record.amount;
 
     notifyListeners();
   }
@@ -1008,6 +1057,29 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
     }
 
     return total;
+  }
+
+  void setStockEarningRates() {
+    for (String stock in _investStocks.keys) {
+      int totalInvestPrice = 0;
+      for (InvestRecord record in _investRecords) {
+        if (record.stock == stock) {
+          if (record.type == TransactionType.buy) {
+            totalInvestPrice += record.price * record.amount;
+          } else {
+            totalInvestPrice -= record.price * record.amount;
+          }
+        }
+      }
+      int totalValuationPrice =
+          (investStocks[stock]![0] * visibleAllStockData[stock]!.last.close)
+              .toInt();
+
+      double earningRate =
+          (totalValuationPrice - totalInvestPrice) / totalInvestPrice * 100;
+
+      _earningRates[stock] = earningRate;
+    }
   }
 
   // MARK: - 시나리오 초기화
@@ -1059,7 +1131,9 @@ class ScenarioService extends ChangeNotifier with IsolateHelperMixin {
         comment = "전기차 시대가 도래하면서 2차전지 관련주들이 주목받고 있어요.\n\n"
             "2차전지 관련주들의 주가는 어떻게 변화했는지 함께 알아볼까요?";
         break;
-      default:
+      case ScenarioType.festival:
+        comment = "다들 축제 재밌게 즐기고 계신가요?\n\n"
+            "MOTU앱을 통해 재밌게 주식 투자를 배워보시는 건 어떨까요?";
     }
 
     return comment;

@@ -1,7 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:motu/main.dart';
 import 'package:motu/src/common/database.dart';
+import 'package:motu/src/common/view/nav_page.dart';
 import 'package:motu/src/design/color_theme.dart';
+import 'package:motu/src/features/login/service/auth_service.dart';
 import 'package:motu/src/features/login/view/login.dart';
+import 'package:provider/provider.dart';
 
 class OnboardingPage extends StatelessWidget {
   final RichText description;
@@ -22,7 +28,7 @@ class OnboardingPage extends StatelessWidget {
             fit: BoxFit.contain,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 64, 24, 0),
+            padding: const EdgeInsets.fromLTRB(24, 48, 24, 0),
             child: description,
           ),
         ],
@@ -47,7 +53,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
       description: RichText(
         textAlign: TextAlign.center,
         text: const TextSpan(
-          style: TextStyle(fontSize: 18.0, color: Colors.black), // 기본 텍스트 스타일
+          style: TextStyle(fontSize: 16.0, color: Colors.black), // 기본 텍스트 스타일
           children: <TextSpan>[
             TextSpan(
               text:
@@ -69,7 +75,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
       description: RichText(
         textAlign: TextAlign.center,
         text: const TextSpan(
-          style: TextStyle(fontSize: 18.0, color: Colors.black),
+          style: TextStyle(fontSize: 16.0, color: Colors.black),
           children: <TextSpan>[
             TextSpan(
               text: '주식투자는 ',
@@ -100,7 +106,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
       description: RichText(
         textAlign: TextAlign.center,
         text: const TextSpan(
-          style: TextStyle(fontSize: 18.0, color: Colors.black), // 기본 텍스트 스타일
+          style: TextStyle(fontSize: 16.0, color: Colors.black), // 기본 텍스트 스타일
           children: <TextSpan>[
             TextSpan(
               text: 'MOTU는 단순히 주식 투자에 그치지 않고, ',
@@ -138,6 +144,8 @@ class OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+
     return Scaffold(
       body: Column(
         children: [
@@ -162,18 +170,39 @@ class OnboardingScreenState extends State<OnboardingScreen> {
               (index) => buildDot(index: index),
             ),
           ),
-          const SizedBox(height: 100.0),
+          const SizedBox(height: 32.0),
           _currentPage == _pages.length - 1
               ? Container(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      setOnboardingDone();
-                      Navigator.pushAndRemoveUntil(context,
-                          MaterialPageRoute(builder: (context) {
-                        return const LoginPage();
-                      }), (route) => false);
+                      // setOnboardingDone();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      );
+
+                      // if (authService.auth.currentUser == null) {
+                      //   Navigator.pushReplacement(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => const LoginPage(),
+                      //     ),
+                      //   );
+                      // } else {
+                      //   authService.getUserInfo().then((value) {
+                      //     log('🔓 사용자 정보 로드 완료');
+                      //   });
+                      //   Navigator.pushReplacement(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => const NavPage(),
+                      //     ),
+                      //   );
+                      // }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorTheme.Purple1,
@@ -214,7 +243,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
                   )),
-          const SizedBox(height: 48.0),
+          const SizedBox(height: 32.0),
         ],
       ),
     );

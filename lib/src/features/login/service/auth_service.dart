@@ -135,39 +135,51 @@ class AuthService with ChangeNotifier {
   }
 
   Future<User?> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    await _auth.signInWithCredential(credential);
-
-    if (_auth.currentUser != null) {
-      dev.log('Google dev.login Success: ${_auth.currentUser!.displayName}');
-
-      bool isUserInfoExists = await checkUserInfoExists();
-      if (isUserInfoExists) {
-        dev.log("유저 정보가 이미 존재합니다.");
-        await getUserInfo();
-      } else {
-        await addUserInfo();
-        dev.log("유저 정보가 없으므로 추가합니다.");
+      // Check if the user canceled the sign-in process
+      if (googleUser == null) {
+        dev.log('Google sign-in canceled by user');
+        return null; // User canceled the sign-in
       }
 
-      notifyListeners();
-      return _auth.currentUser;
-    } else {
-      dev.log('Google dev.login Fail: No User Found');
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
-      notifyListeners();
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+
+      if (userCredential.user != null) {
+        dev.log('Google login success: ${userCredential.user!.displayName}');
+
+        bool isUserInfoExists = await checkUserInfoExists();
+        if (isUserInfoExists) {
+          dev.log("User info already exists.");
+          await getUserInfo();
+        } else {
+          await addUserInfo();
+          dev.log("User info does not exist, adding user.");
+        }
+
+        notifyListeners(); // Notify listeners after state change
+        return userCredential.user; // Return the user
+      } else {
+        dev.log('Google login failed: No user found');
+        return null; // No user found
+      }
+    } catch (error) {
+      dev.log('Error during Google sign-in: $error');
+      // Handle error appropriately (e.g., show a message to the user)
       return null;
     }
   }
