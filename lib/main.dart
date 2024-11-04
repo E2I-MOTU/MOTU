@@ -82,6 +82,8 @@ Future<void> main() async {
 
   await initializeBackgroundService();
 
+  setScenarioIsRunning(false);
+
   runApp(
     MultiProvider(
       providers: [
@@ -188,11 +190,6 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         home: StreamBuilder<User?>(
           stream: authService.auth.authStateChanges(),
           builder: (context, snapshot) {
-            if (getOnboardingDone() == false) {
-              log('⭐️ 온보딩 화면으로 이동');
-              FlutterNativeSplash.remove();
-              return const OnboardingScreen();
-            }
             if (snapshot.hasData) {
               authService.getUserInfo().then((value) {
                 log('🔓 사용자 정보 로드 완료');
@@ -200,7 +197,13 @@ class _AppState extends State<App> with WidgetsBindingObserver {
               });
               return const NavPage();
             } else {
-              return const LoginPage();
+              if (getOnboardingDone() == false) {
+                log('⭐️ 온보딩 화면으로 이동');
+                FlutterNativeSplash.remove();
+                return const OnboardingScreen();
+              } else {
+                return const LoginPage();
+              }
             }
           },
         ),

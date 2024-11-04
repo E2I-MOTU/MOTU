@@ -24,7 +24,11 @@ class CompletedScenarioPage extends StatelessWidget {
                 itemBuilder: (context, index) {
                   Size size = MediaQuery.of(context).size;
 
-                  ScenarioResult result = service.user!.scenarioRecord[index];
+                  // ScenarioResult result = service.user!.scenarioRecord[index];
+                  // 인덱스를 반전시켜 마지막 요소부터 표시
+                  ScenarioResult result = service.user!.scenarioRecord[
+                      service.user!.scenarioRecord.length - 1 - index];
+
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
                     child: Container(

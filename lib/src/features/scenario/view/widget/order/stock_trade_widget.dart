@@ -305,8 +305,7 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
                                   (_quantity *
                                           service.visibleStockData.last.close)
                                       .toInt());
-                              service.setInvestStocks(service.selectedStock,
-                                  TransactionType.sell, _quantity);
+
                               // investRecord에 저장
                               InvestRecord record = InvestRecord(
                                 stock: service.selectedStock,
@@ -318,6 +317,9 @@ class StockTradeWidgetState extends State<StockTradeWidget> {
                               service.setInvestRecords(record);
                               service.updateTotalPurchasePrice();
                               service.updateRealizedPnL(record);
+
+                              service.setInvestStocks(service.selectedStock,
+                                  TransactionType.sell, _quantity);
 
                               toastification.show(
                                 type: ToastificationType.success,

@@ -99,70 +99,68 @@ class InvestmentStatusToggleState extends State<InvestmentStatusToggle> {
                           Padding(
                               padding: const EdgeInsets.fromLTRB(
                                   24.0, 0, 24.0, 16.0),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    service.totalRatingPrice -
-                                                service.totalPurchasePrice ==
-                                            0
-                                        ? '0'
-                                        : '${service.totalRatingPrice - service.totalPurchasePrice > 0 ? '+' : ''}${Formatter.format(service.totalRatingPrice - service.totalPurchasePrice.abs())}',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: service.totalRatingPrice -
-                                                  service.totalPurchasePrice ==
-                                              0
-                                          ? Colors.black
-                                          : service.totalRatingPrice -
-                                                      service
-                                                          .totalPurchasePrice >
-                                                  0
-                                              ? Colors.red
-                                              : Colors.blue,
-                                    ),
-                                  ),
-                                  service.totalPurchasePrice == 0
-                                      ? const SizedBox()
-                                      : Text(
-                                          service.totalPurchasePrice == 0
-                                              ? ' (0%)'
-                                              : ' (${((service.totalRatingPrice - service.totalPurchasePrice) / service.totalPurchasePrice * 100).toStringAsFixed(1)}%)',
+                              child: service.unrealizedPnL == 0
+                                  ? Text(
+                                      '실현 손익 : ${service.realizedPnL}',
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  : Row(
+                                      children: [
+                                        Text(
+                                          service.unrealizedPnL > 0
+                                              ? '+${Formatter.format(service.unrealizedPnL)}'
+                                              : Formatter.format(
+                                                  service.unrealizedPnL),
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
-                                            color: service.unrealizedPnL +
-                                                        service.realizedPnL ==
-                                                    0
+                                            color: service.unrealizedPnL == 0
                                                 ? Colors.black
-                                                : service.unrealizedPnL +
-                                                            service
-                                                                .realizedPnL >
-                                                        0
+                                                : service.unrealizedPnL > 0
                                                     ? Colors.red
                                                     : Colors.blue,
                                           ),
                                         ),
-                                  service.totalRatingPrice -
-                                              service.totalPurchasePrice ==
-                                          0
-                                      ? const SizedBox()
-                                      : Icon(
-                                          service.totalRatingPrice -
-                                                      service
-                                                          .totalPurchasePrice >
-                                                  0
-                                              ? Icons.arrow_drop_up_sharp
-                                              : Icons.arrow_drop_down_sharp,
-                                          color: service.totalRatingPrice -
-                                                      service
-                                                          .totalPurchasePrice >
-                                                  0
-                                              ? Colors.red
-                                              : Colors.blue,
-                                        ),
-                                ],
-                              )),
+                                        service.totalPurchasePrice == 0
+                                            ? const SizedBox()
+                                            : Text(
+                                                service.totalRatingPrice == 0
+                                                    ? ''
+                                                    : service.totalEarningRate >
+                                                            0
+                                                        ? ' (+${service.totalEarningRate.toStringAsFixed(1)}%)'
+                                                        : " (${service.totalEarningRate.toStringAsFixed(1)}%)",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: service.unrealizedPnL +
+                                                              service
+                                                                  .realizedPnL ==
+                                                          0
+                                                      ? Colors.black
+                                                      : service.unrealizedPnL +
+                                                                  service
+                                                                      .realizedPnL >
+                                                              0
+                                                          ? Colors.red
+                                                          : Colors.blue,
+                                                ),
+                                              ),
+                                        service.unrealizedPnL == 0
+                                            ? const SizedBox()
+                                            : Icon(
+                                                service.unrealizedPnL > 0
+                                                    ? Icons.arrow_drop_up_sharp
+                                                    : Icons
+                                                        .arrow_drop_down_sharp,
+                                                color: service.unrealizedPnL > 0
+                                                    ? Colors.red
+                                                    : Colors.blue,
+                                              ),
+                                      ],
+                                    )),
                         ],
                       ),
                     ),

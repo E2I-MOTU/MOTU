@@ -40,7 +40,7 @@ class LearningPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(top: screenHeight * 0.06),
+                    padding: EdgeInsets.only(top: screenHeight * 0.15),
                     child: Container(
                       alignment: Alignment.centerLeft,
                       child: Transform.translate(
@@ -62,63 +62,63 @@ class LearningPage extends StatelessWidget {
               ),
             ),
 
-            // Course Section with Button
-            Container(
-              width: screenWidth,
-              height: screenHeight * 0.24,
-              padding: const EdgeInsets.only(
-                  top: 20, bottom: 10, right: 20, left: 20),
-              child: Card(
-                color: ColorTheme.colorPrimary,
-                elevation: 3,
-                child: Stack(
-                  children: [
-                    // Course Text
-                    const Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Text(
-                        '코스별 학습',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+            // // Course Section with Button
+            // Container(
+            //   width: screenWidth,
+            //   height: screenHeight * 0.24,
+            //   padding: const EdgeInsets.only(
+            //       top: 20, bottom: 10, right: 20, left: 20),
+            //   child: Card(
+            //     color: ColorTheme.colorPrimary,
+            //     elevation: 3,
+            //     child: Stack(
+            //       children: [
+            //         // Course Text
+            //         const Padding(
+            //           padding: EdgeInsets.all(20),
+            //           child: Text(
+            //             '코스별 학습',
+            //             style: TextStyle(
+            //               fontSize: 16,
+            //               color: Colors.white,
+            //               fontWeight: FontWeight.bold,
+            //             ),
+            //           ),
+            //         ),
 
-                    // Button to navigate to CourseListScreen
-                    Positioned(
-                      bottom: 10,
-                      right: 10,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CourseListPage()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: const Text(
-                          '코스 보기',
-                          style: TextStyle(
-                            color: ColorTheme.colorPrimary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            //         // Button to navigate to CourseListScreen
+            //         Positioned(
+            //           bottom: 10,
+            //           right: 10,
+            //           child: ElevatedButton(
+            //             onPressed: () {
+            //               Navigator.push(
+            //                 context,
+            //                 MaterialPageRoute(
+            //                     builder: (context) => const CourseListPage()),
+            //               );
+            //             },
+            //             style: ElevatedButton.styleFrom(
+            //               backgroundColor: Colors.white,
+            //               padding: const EdgeInsets.symmetric(
+            //                   horizontal: 20, vertical: 10),
+            //               shape: RoundedRectangleBorder(
+            //                 borderRadius: BorderRadius.circular(20),
+            //               ),
+            //             ),
+            //             child: const Text(
+            //               '코스 보기',
+            //               style: TextStyle(
+            //                 color: ColorTheme.colorPrimary,
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
 
             // Grid Section
             GridView.count(
