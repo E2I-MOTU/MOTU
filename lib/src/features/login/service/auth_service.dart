@@ -72,6 +72,7 @@ class AuthService with ChangeNotifier {
         } else {
           dev.log("유저 정보가 없으므로 추가합니다.");
           await addEmailUserInfo(name);
+          await getUserInfo();
         }
 
         notifyListeners();
@@ -110,6 +111,7 @@ class AuthService with ChangeNotifier {
         await getUserInfo();
       } else {
         await addEmailUserInfo(_auth.currentUser!.displayName ?? "");
+        await getUserInfo();
         dev.log("유저 정보가 없으므로 추가합니다.");
       }
 
@@ -210,6 +212,7 @@ class AuthService with ChangeNotifier {
       } else {
         dev.log("유저 정보가 없음");
         await addAppleUserInfo();
+        await getUserInfo();
       }
 
       notifyListeners();
@@ -245,12 +248,12 @@ class AuthService with ChangeNotifier {
         email: _auth.currentUser!.email!,
         name: _auth.currentUser!.displayName ?? "",
         photoUrl: _auth.currentUser!.photoURL ?? "",
-        balance: 1000000,
+        balance: 10000000,
         balanceHistory: [
           BalanceDetail(
             date: DateTime.now(),
             content: "초기 자금",
-            amount: 1000000,
+            amount: 10000000,
             isIncome: true,
           ),
         ],
@@ -275,12 +278,12 @@ class AuthService with ChangeNotifier {
         email: _auth.currentUser!.email!,
         name: name,
         photoUrl: _auth.currentUser!.photoURL ?? "",
-        balance: 1000000,
+        balance: 10000000,
         balanceHistory: [
           BalanceDetail(
             date: DateTime.now(),
             content: "초기 자금",
-            amount: 1000000,
+            amount: 10000000,
             isIncome: true,
           ),
         ],
@@ -305,12 +308,12 @@ class AuthService with ChangeNotifier {
         email: _auth.currentUser!.email!,
         name: _auth.currentUser!.email!.split('@').first,
         photoUrl: "",
-        balance: 1000000,
+        balance: 10000000,
         balanceHistory: [
           BalanceDetail(
             date: DateTime.now(),
             content: "초기 자금",
-            amount: 1000000,
+            amount: 10000000,
             isIncome: true,
           ),
         ],

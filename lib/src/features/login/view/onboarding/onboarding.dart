@@ -177,32 +177,13 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      // setOnboardingDone();
+                      setOnboardingDone();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const LoginPage(),
                         ),
                       );
-
-                      // if (authService.auth.currentUser == null) {
-                      //   Navigator.pushReplacement(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => const LoginPage(),
-                      //     ),
-                      //   );
-                      // } else {
-                      //   authService.getUserInfo().then((value) {
-                      //     log('🔓 사용자 정보 로드 완료');
-                      //   });
-                      //   Navigator.pushReplacement(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => const NavPage(),
-                      //     ),
-                      //   );
-                      // }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorTheme.Purple1,

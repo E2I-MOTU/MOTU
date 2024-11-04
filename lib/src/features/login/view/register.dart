@@ -60,7 +60,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            '아이디',
+                            '이메일',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 15,
@@ -73,7 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               decoration: const InputDecoration(
                                 filled: true,
                                 fillColor: ColorTheme.Grey1,
-                                hintText: '아이디를 입력하세요',
+                                hintText: '이메일을 입력하세요',
                                 hintStyle: TextStyle(
                                   color: ColorTheme.Black5,
                                 ),

@@ -157,6 +157,8 @@ class LoginPageState extends State<LoginPage> {
                           onPressed: () {
                             authService.signInWithEmail(_emailController.text,
                                 _passwordController.text);
+                            _emailController.clear();
+                            _passwordController.clear();
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 0,

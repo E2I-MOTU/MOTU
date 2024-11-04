@@ -55,7 +55,10 @@ class RegisterSuccessPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
               child: TextButton(
                 onPressed: () {
-                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.popUntil(
+                    context,
+                    (route) => route.isFirst,
+                  );
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: ColorTheme.Purple1,
